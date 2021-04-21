@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -16,6 +15,9 @@ import {
   Text,
   useColorScheme,
   View,
+  Image,
+  Button,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -25,87 +27,60 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Logo from './src/assets/Logo.png';
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <Image style={styles.Logo} source={Logo}></Image>
+        <TouchableOpacity onPress={() => console.log('aaa')}>
+          <Text style={styles.buttonDN}>Đăng nhập</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={styles.buttonDK}>Đăng ký</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  Logo: {
+    width: 384,
+    height: 60,
+    marginBottom: 274,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0C2750',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  buttonDN: {
+    width: 362,
+    height: 80,
+    fontWeight: 'bold',
+    borderRadius: 40,
+    backgroundColor: '#F69314',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 19,
   },
-  highlight: {
-    fontWeight: '700',
+  buttonDK: {
+    marginTop: 21,
+    width: 362,
+    height: 80,
+    fontWeight: 'bold',
+    borderRadius: 40,
+    backgroundColor: '#04BDB5',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 19,
   },
 });
 
