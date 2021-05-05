@@ -7,14 +7,13 @@
  */
 
 import React from 'react';
-
-import Start from './src/components/Start';
+import StartNavigator from './src/navigators/StartNavigator';
 class App extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    return <Start></Start>;
+    return <StartNavigator></StartNavigator>;
   }
 }
 

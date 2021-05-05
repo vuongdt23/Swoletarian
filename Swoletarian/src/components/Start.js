@@ -27,6 +27,7 @@ class Start extends React.Component {
     super(props);
   }
   render() {
+    const {navigation} = this.props;
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -57,11 +58,14 @@ class Start extends React.Component {
             </Text>
             <Image></Image>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={styles.buttonDN}>Đăng nhập</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
             <Text style={styles.buttonDK}>Đăng ký</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.textContainer}>Quên mật khẩu?</Text>
           </TouchableOpacity>
         </ImageBackground>
       </View>
@@ -86,7 +90,7 @@ const styles = StyleSheet.create({
     width: 480,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#F69314',
+    backgroundColor: '#58DADA',
     textAlign: 'center',
     textAlignVertical: 'center',
     fontSize: 30,
@@ -97,11 +101,17 @@ const styles = StyleSheet.create({
     width: 480,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#04BDB5',
+    backgroundColor: '#C8FFFF',
     textAlign: 'center',
     textAlignVertical: 'center',
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
+  },
+  textContainer: {
+    fontFamily: 'Roboto-Thin',
+    color: 'white',
+    fontSize: 19,
+    marginTop: 30,
   },
 });
 
