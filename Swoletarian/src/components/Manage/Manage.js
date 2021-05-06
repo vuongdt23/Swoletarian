@@ -50,6 +50,7 @@ class Manage extends React.Component {
       },
     ];
 
+    const {navigation} = this.props;
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.headerTitle}> Quản lý </Text>
@@ -57,7 +58,9 @@ class Manage extends React.Component {
           showsVerticalScrollIndicator={false}
           data={DATA}
           renderItem={({item}) => (
-            <ManageComponent detail={item}></ManageComponent>
+            <ManageComponent
+              detail={item}
+              navigateTo={name => navigation.navigate(name)}></ManageComponent>
           )}
           keyExtractor={(item, index) => {
             return item.id.toString();
@@ -73,9 +76,15 @@ class ManageComponent extends React.Component {
   }
   render() {
     const {detail} = this.props;
+    let name;
+    if (detail.id == 1) name = 'Nutrions';
+    else if (detail.id == 2) name = 'Workout';
+    else if (detail.id == 3) name = 'Schedule';
+    else name = 'Menu';
+    const {navigateTo} = this.props;
     return (
       <View style={styles.componentContainer}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigateTo(name)}>
           <BackgroundImage
             source={detail.image}
             style={styles.backgroundImage}
@@ -92,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFDD93',
   },

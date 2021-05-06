@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Signin from '../components/Screen/Signin';
 import Login from '../components/Screen/Login';
 import Manage from '../components/Manage/Manage';
+import {NavigationContainer} from '@react-navigation/native';
+import ManageNavigator from './ManageNavigator';
 const Tab = createBottomTabNavigator();
 
 function MainBottomtabNavigator() {
@@ -40,7 +42,7 @@ function MainBottomtabNavigator() {
       }}>
       <Tab.Screen
         name="Manage"
-        component={Manage}
+        component={ManageNavigator}
         options={{
           tabBarBadge: 3,
           tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
