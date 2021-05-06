@@ -1,8 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import Signin from '../components/Screen/Signin';
 import Login from '../components/Screen/Login';
+import Manage from '../components/Manage/Manage';
 const Tab = createBottomTabNavigator();
 
 function MainBottomtabNavigator() {
@@ -15,7 +16,7 @@ function MainBottomtabNavigator() {
           if (route.name === 'Manage') {
             iconName = focused ? 'list' : 'list';
           } else if (route.name === 'Statistic') {
-            iconName = focused ? 'linechart' : 'linechart';
+            iconName = focused ? 'bar-chart-outline' : 'bar-chart-outline';
           } else if (route.name === 'Today') {
             iconName = focused ? 'checkmark-done' : 'checkmark-done';
           } else if (route.name === 'Myself') {
@@ -25,7 +26,7 @@ function MainBottomtabNavigator() {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'tomato',
+        activeTintColor: '#1CA2BB',
         inactiveTintColor: 'gray',
         labelStyle: {
           fontSize: 20,
@@ -37,8 +38,15 @@ function MainBottomtabNavigator() {
           height: 60,
         },
       }}>
-      <Tab.Screen name="Manage" component={Login} options={{tabBarBadge: 3}} />
-      <Tab.Screen name="Statistic" component={Login}></Tab.Screen>
+      <Tab.Screen
+        name="Manage"
+        component={Manage}
+        options={{
+          tabBarBadge: 3,
+          tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
+        }}
+      />
+      <Tab.Screen name="Statistic" component={Signin}></Tab.Screen>
       <Tab.Screen name="Today" component={Login} />
       <Tab.Screen name="Myself" component={Login} />
     </Tab.Navigator>

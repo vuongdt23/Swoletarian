@@ -22,6 +22,7 @@ import {
 } from 'react-native/Libraries/NewStartScreen';
 import Logo from '../assets/Logo.png';
 import Background from '../assets/Background.png';
+
 class Start extends React.Component {
   constructor(props) {
     super(props);
