@@ -59,10 +59,14 @@ class Start extends React.Component {
             </Text>
             <Image></Image>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={{width: '90%', height: '8%', marginBottom: '5%'}}>
             <Text style={styles.buttonDN}>Đăng nhập</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Signin')}
+            style={{width: '90%', height: '8%'}}>
             <Text style={styles.buttonDK}>Đăng ký</Text>
           </TouchableOpacity>
           <TouchableOpacity>
@@ -76,8 +80,8 @@ class Start extends React.Component {
 
 const styles = StyleSheet.create({
   Logo: {
-    width: 352,
-    height: 70,
+    width: '70%',
+    height: '8%',
     marginBottom: 162,
   },
   container: {
@@ -88,9 +92,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#0C2750',
   },
   buttonDN: {
-    width: 480,
-    height: 80,
-    borderRadius: 40,
+    width: '100%',
+    height: '100%',
+    borderRadius: 45,
     backgroundColor: '#58DADA',
     textAlign: 'center',
     textAlignVertical: 'center',
@@ -99,9 +103,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   buttonDK: {
-    width: 480,
-    height: 80,
-    borderRadius: 40,
+    width: '100%',
+    height: '100%',
+    borderRadius: 45,
     backgroundColor: '#C8FFFF',
     textAlign: 'center',
     textAlignVertical: 'center',

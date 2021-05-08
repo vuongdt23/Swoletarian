@@ -55,6 +55,7 @@ class Manage extends React.Component {
       <SafeAreaView style={styles.container}>
         <Text style={styles.headerTitle}> Quản lý </Text>
         <FlatList
+          style={styles.flatListStyle}
           showsVerticalScrollIndicator={false}
           data={DATA}
           renderItem={({item}) => (
@@ -83,16 +84,16 @@ class ManageComponent extends React.Component {
     else name = 'Menu';
     const {navigateTo} = this.props;
     return (
-      <View style={styles.componentContainer}>
-        <TouchableOpacity onPress={() => navigateTo(name)}>
-          <BackgroundImage
-            source={detail.image}
-            style={styles.backgroundImage}
-            imageStyle={{borderRadius: 20}}>
-            <Text style={styles.title}> {detail.name}</Text>
-          </BackgroundImage>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={() => navigateTo(name)}
+        style={styles.componentContainer}>
+        <BackgroundImage
+          source={detail.image}
+          style={styles.backgroundImage}
+          imageStyle={{borderRadius: 20}}>
+          <Text style={styles.title}> {detail.name}</Text>
+        </BackgroundImage>
+      </TouchableOpacity>
     );
   }
 }
@@ -105,13 +106,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFDD93',
   },
+  flatListStyle: {
+    width: '80%',
+    marginTop: '3%',
+  },
   backgroundImage: {
-    width: 450,
-    height: 200,
-    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  componentContainer: {
+    width: '100%',
+    height: 200,
     marginVertical: 20,
   },
   title: {
@@ -119,11 +127,11 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontFamily: 'Roboto-Bold',
   },
-  componentContainer: {},
   headerTitle: {
     fontSize: 45,
     color: '#000000',
     fontFamily: 'Roboto-Bold',
+    marginVertical: '2%',
   },
 });
 

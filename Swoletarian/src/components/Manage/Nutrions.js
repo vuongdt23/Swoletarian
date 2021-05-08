@@ -115,11 +115,10 @@ class Nutrions extends React.Component {
           <Icon name="search" size={28}></Icon>
           <TextInput
             style={{
-              width: 400,
+              width: '90%',
               fontSize: 20,
               fontFamily: 'Roboto-Bold',
               paddingLeft: 20,
-              paddingVertical: 0,
             }}></TextInput>
         </View>
 
@@ -134,6 +133,7 @@ class Nutrions extends React.Component {
           </TouchableOpacity>
         </View>
         <FlatList
+          style={{width: '90%'}}
           showsVerticalScrollIndicator={false}
           data={this.state.data}
           renderItem={({item}) => (
@@ -154,7 +154,7 @@ class Nutrions extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: 300,
+                  width: '70%',
                   margin: 10,
                 }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
@@ -167,7 +167,7 @@ class Nutrions extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: 300,
+                  width: '70%',
                   margin: 10,
                 }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
@@ -183,12 +183,13 @@ class Nutrions extends React.Component {
                 }}>
                 <Pressable
                   style={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 20,
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
                     backgroundColor: '#FFA693',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    marginRight: '5%',
                   }}
                   onPress={() => {
                     this.closeAddForm();
@@ -199,9 +200,9 @@ class Nutrions extends React.Component {
                 </Pressable>
                 <Pressable
                   style={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 20,
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
                     backgroundColor: '#C8FFFF',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -227,7 +228,7 @@ function Nutrion(props) {
       style={{
         backgroundColor: 'white',
         borderRadius: 10,
-        width: 500,
+        width: '100%',
         height: 150,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -275,10 +276,11 @@ const styles = StyleSheet.create({
     fontSize: 45,
     color: '#000000',
     fontFamily: 'Roboto-Bold',
+    marginVertical: '2%',
   },
   searchBarContainer: {
-    width: 500,
-    height: 60,
+    width: '90%',
+    height: '8%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -293,15 +295,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 500,
-    height: 150,
+    width: '90%',
+    height: '15%',
     marginVertical: 15,
   },
   modalContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -309,16 +310,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    height: 400,
-    marginTop: 200,
+    height: '60%',
+    marginTop: '30%',
   },
 });
 
