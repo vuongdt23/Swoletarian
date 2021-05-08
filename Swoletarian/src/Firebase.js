@@ -13,5 +13,5 @@ const config = {
     measurementId: "G-BEPGC7Y5F2"
 };
 firebase.initializeApp(config);
-
+firebase.firestore().settings(settings);
 export default firebase;
