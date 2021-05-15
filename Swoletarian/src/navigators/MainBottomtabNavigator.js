@@ -24,20 +24,23 @@ function MainBottomtabNavigator() {
           } else if (route.name === 'Myself') {
             iconName = focused ? 'person-outline' : 'person-outline';
           }
-          return <Icon name={iconName} size={35} color={color} />;
+          return <Icon name={iconName} size={40} color={color} />;
         },
       })}
       tabBarOptions={{
         activeTintColor: '#1CA2BB',
         inactiveTintColor: 'gray',
         labelStyle: {
-          fontSize: 20,
+          fontSize: 0,
           margin: 0,
           padding: 0,
-          fontFamily: 'Time New Roman',
+          fontFamily: 'Roboto-Bold',
         },
         style: {
           height: 60,
+          borderTopWidth: 0,
+          elevation: 0,
+          backgroundColor: '#FFDD93',
         },
       }}>
       <Tab.Screen

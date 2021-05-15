@@ -8,7 +8,6 @@ import {
   Pressable,
   Button,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {
   FlatList,
@@ -112,14 +111,17 @@ class Nutrions extends React.Component {
       <View style={styles.container}>
         <Text style={styles.headerTitle}> Dinh Dưỡng</Text>
         <View style={styles.searchBarContainer}>
-          <Icon name="search" size={28}></Icon>
           <TextInput
             style={{
               width: '90%',
+              height: 100,
               fontSize: 20,
               fontFamily: 'Roboto-Bold',
               paddingLeft: 20,
             }}></TextInput>
+          <TouchableOpacity>
+            <Icon name="search" size={28}></Icon>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.addNewContainer}>

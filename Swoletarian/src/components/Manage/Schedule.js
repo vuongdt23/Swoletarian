@@ -1,12 +1,18 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 
 class Schedule extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    return <View></View>;
+    return (
+      <View>
+        <View style={styles.dateContainer}>
+          <Text style={styles.date}>{new Date().toDateString()}</Text>
+        </View>
+      </View>
+    );
   }
 }
 
