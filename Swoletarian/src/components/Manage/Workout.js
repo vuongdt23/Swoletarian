@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,7 +6,12 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Modal,
+  Pressable,
+  Alert,
 } from 'react-native';
+import {Input} from 'react-native-elements/dist/input/Input';
+import {CheckBox} from 'react-native-elements';
 import {BackgroundImage} from 'react-native-elements/dist/config';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,6 +25,7 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
+import {ActivityIndicator} from 'react-native';
 const getCurrentDate = () => {
   var date = new Date().getDate();
   var month = new Date().getMonth() + 1;
@@ -50,7 +56,7 @@ class Workout extends React.Component {
             'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
           imgLink: {
             uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2055.jpeg',
+              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
           },
           caloBurned: 12,
           exerciseType: 'abs',
@@ -154,9 +160,62 @@ class Workout extends React.Component {
 class ExerciseWrap extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      addNewModalVisible: false,
+      data: [],
+    };
+  }
+  onToggleAddNewModal = () => {
+    this.setState({addNewModalVisible: !this.state.addNewModalVisible});
+  };
+  getNewId() {
+    const num = this.state.data.length;
+    return this.state.data[num - 1].id + 1;
+  }
+  addNewExercise = exercise => {
+    if (
+      exercise.name == '' ||
+      exercise.description == '' ||
+      exercise.caloBurned == 0
+    ) {
+      Alert.alert('Chưa đủ thông tin', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
+    } else {
+      exercise.id = this.getNewId();
+      const newData = [].concat(this.state.data, exercise);
+      this.setState({data: newData});
+      this.onToggleAddNewModal();
+      console.log('Adddddddd');
+    }
+  };
+  deleteExercise = exercise => {
+    var newData = this.state.data;
+    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
+      {
+        text: 'Hủy',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Xóa',
+        onPress: () =>
+          newData.map((element, index) => {
+            if (element.id == exercise.id) newData.splice(index, 1);
+          }),
+      },
+    ]);
+  };
+  componentDidMount() {
+    this.setState({data: this.props.data});
   }
   render() {
-    const {data, exerciseType} = this.props;
+    const {exerciseType} = this.props;
     let dataIconType = AbsIcon;
     switch (exerciseType.name) {
       case 'abs':
@@ -184,6 +243,17 @@ class ExerciseWrap extends React.Component {
         dataIconType = LegIcon;
         break;
     }
+    let newExercise = {
+      id: 1,
+      name: '',
+      description: '',
+      imgLink: {
+        uri: '',
+      },
+      caloBurned: 0,
+      exerciseType: '',
+      isSystem: 'false',
+    };
     return (
       <View style={styles.exerciseWrap}>
         <Image
@@ -196,7 +266,8 @@ class ExerciseWrap extends React.Component {
                 flexDirection: 'column',
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}>
+              }}
+              onPress={this.onToggleAddNewModal}>
               <Icon name="add" size={40}></Icon>
               <Text style={styles.exerciseTitle}>Thêm mới</Text>
             </TouchableOpacity>
@@ -205,11 +276,123 @@ class ExerciseWrap extends React.Component {
             horizontal
             style={styles.flatListStyle}
             showsHorizontalScrollIndicator={false}
-            data={data}
-            renderItem={({item}) => <Exercise exercise={item}></Exercise>}
+            data={this.state.data}
+            renderItem={({item}) => (
+              <Exercise
+                exercise={item}
+                delete={exercise => this.deleteExercise(exercise)}></Exercise>
+            )}
             keyExtractor={(item, index) => {
               return item.id.toString();
             }}></FlatList>
+          <View style={styles.addNewModalContainer}>
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={this.state.addNewModalVisible}>
+              <View style={styles.addNewModalView}>
+                <Text style={styles.addExerciseTitle}>Thêm bài tập mới</Text>
+                <View>
+                  <View style={styles.rowStyleContainer}>
+                    <Text style={styles.textInside}>Tên bài tập</Text>
+                    <TextInput
+                      onChangeText={text => {
+                        newExercise.name = text;
+                      }}
+                      style={{
+                        fontSize: 23,
+                        fontFamily: 'Roboto-Regular',
+                        width: '80%',
+                        marginLeft: '3%',
+                        borderBottomWidth: 2,
+                        borderBottomColor: 'black',
+                      }}></TextInput>
+                  </View>
+                  <View style={styles.rowStyleContainer}>
+                    <Text style={styles.textInside}>Mô tả</Text>
+                    <TextInput
+                      onChangeText={text => {
+                        newExercise.description = text;
+                      }}
+                      style={{
+                        fontSize: 23,
+                        fontFamily: 'Roboto-Regular',
+                        width: '80%',
+                        marginLeft: '3%',
+                        borderBottomWidth: 2,
+                        borderBottomColor: 'black',
+                      }}
+                      multiline={true}
+                      numberOfLines={8}></TextInput>
+                  </View>
+                  <View style={styles.rowStyleContainer}>
+                    <Text style={styles.textInside}>Calo/phút</Text>
+                    <TextInput
+                      onChangeText={text => {
+                        newExercise.caloBurned = parseInt(text);
+                      }}
+                      style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontSize: 23,
+                        fontFamily: 'Roboto-Regular',
+                        width: '80%',
+                        marginLeft: '3%',
+                        borderBottomWidth: 2,
+                        borderBottomColor: 'black',
+                      }}></TextInput>
+                  </View>
+                  <View style={styles.rowStyleContainer}>
+                    <Text style={styles.textInside}>Kiểu bài tập</Text>
+                    <Image
+                      source={dataIconType}
+                      style={{marginLeft: '3%', width: 40, height: 40}}></Image>
+                    <Text style={styles.textInside}>({exerciseType.name})</Text>
+                  </View>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Pressable
+                    style={{
+                      width: '40%',
+                      height: '40%',
+                      borderRadius: 25,
+                      backgroundColor: '#FFA693',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: '5%',
+                    }}
+                    onPress={() => {
+                      this.onToggleAddNewModal();
+                    }}>
+                    <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                      Hủy
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    style={{
+                      width: '40%',
+                      height: '40%',
+                      borderRadius: 25,
+                      backgroundColor: '#C8FFFF',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                    onPress={() => {
+                      this.addNewExercise(newExercise);
+                    }}>
+                    <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                      OK
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+          </View>
         </View>
       </View>
     );
@@ -218,7 +401,38 @@ class ExerciseWrap extends React.Component {
 class Exercise extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      infoModalVisible: false,
+      addModalVisible: false,
+      daysOfWeek: [
+        {id: 2, name: 'Monday'},
+        {id: 3, name: 'Tuesday'},
+        {id: 4, name: 'Wednesday'},
+        {id: 5, name: 'Thursday'},
+        {id: 6, name: 'Friday'},
+        {id: 7, name: 'Saturday'},
+      ],
+    };
   }
+
+  onToggleInfoModal = () => {
+    this.setState({infoModalVisible: !this.state.infoModalVisible});
+  };
+  onToggleAddModal = () => {
+    this.setState({addModalVisible: !this.state.addModalVisible});
+  };
+  AddToDayContainer = params => {
+    const [isChecked, setIsChecked] = useState(false);
+    return (
+      <View style={styles.addToDayContainer}>
+        <Text style={styles.addExerciseTitle}>{params.day.name}</Text>
+        <CheckBox
+          checked={isChecked}
+          size={40}
+          onPress={() => setIsChecked(!isChecked)}></CheckBox>
+      </View>
+    );
+  };
   render() {
     const {exercise} = this.props;
     return (
@@ -232,7 +446,10 @@ class Exercise extends React.Component {
             width: '100%',
             height: '25%',
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.delete(exercise);
+            }}>
             <Image
               source={DeleteIcon}
               style={{
@@ -255,7 +472,7 @@ class Exercise extends React.Component {
             height: '25%',
             marginTop: 30,
           }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.onToggleInfoModal}>
             <Image
               source={InfoIcon}
               style={{
@@ -263,7 +480,7 @@ class Exercise extends React.Component {
                 height: 40,
               }}></Image>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={this.onToggleAddModal}>
             <Image
               source={AddIcon}
               style={{
@@ -271,6 +488,75 @@ class Exercise extends React.Component {
                 height: 40,
               }}></Image>
           </TouchableOpacity>
+        </View>
+        <View style={styles.infoModalContainer}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={this.state.infoModalVisible}>
+            <View style={styles.infoModalView}>
+              <Text style={styles.infoExerciseTitle}>{exercise.name}</Text>
+              <Text style={styles.infoExerciseDescription}>
+                {exercise.description}
+              </Text>
+              <Image
+                source={exercise.imgLink}
+                style={{
+                  height: '40%',
+                  width: '90%',
+                  resizeMode: 'stretch',
+                  margin: '2%',
+                }}></Image>
+              <Pressable
+                style={{
+                  width: '40%',
+                  height: '8%',
+                  borderRadius: 25,
+                  backgroundColor: '#C8FFFF',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={this.onToggleInfoModal}>
+                <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                  OK
+                </Text>
+              </Pressable>
+            </View>
+          </Modal>
+        </View>
+        <View style={styles.addModalContainer}>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={this.state.addModalVisible}>
+            <View style={styles.addModalView}>
+              <Text style={styles.addExerciseTitle}>Thêm vào lịch tập</Text>
+              <FlatList
+                data={this.state.daysOfWeek}
+                renderItem={({item}) => (
+                  <this.AddToDayContainer
+                    day={item}
+                    exercise={exercise}></this.AddToDayContainer>
+                )}
+                keyExtractor={item => {
+                  return item.id.toString();
+                }}></FlatList>
+              <Pressable
+                style={{
+                  width: '40%',
+                  height: '8%',
+                  borderRadius: 25,
+                  backgroundColor: '#C8FFFF',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={this.onToggleAddModal}>
+                <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                  OK
+                </Text>
+              </Pressable>
+            </View>
+          </Modal>
         </View>
       </View>
     );
@@ -342,7 +628,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderColor: 'black',
     borderWidth: 3,
-    marginRight: '2%',
+    marginRight: '0%',
     width: '30%',
     height: '100%',
   },
@@ -361,6 +647,69 @@ const styles = StyleSheet.create({
   flatListContainer: {
     marginTop: '3%',
     width: '90%',
+  },
+  infoModalContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoModalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '90%',
+  },
+  infoExerciseTitle: {fontSize: 30, fontFamily: 'Roboto-Bold'},
+  infoExerciseDescription: {fontSize: 20, fontFamily: 'Roboto-Regular'},
+  addModalContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addModalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '90%',
+  },
+  addExerciseTitle: {fontSize: 30, fontFamily: 'Roboto-Bold'},
+  addExerciseDescription: {fontSize: 20, fontFamily: 'Roboto-Regular'},
+  addToDayContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    marginVertical: '2%',
+  },
+  dayOfWeekTitle: {
+    fontSize: 35,
+    fontFamily: 'Roboto-Bold',
+  },
+  addNewModalContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addNewModalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '90%',
+  },
+  rowStyleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    width: '100%',
   },
 });
 

@@ -72,25 +72,36 @@ class Nutrions extends React.Component {
     this.setState({modalVisible: false});
   }
   addNewNutrion = newNutrion => {
-    newNutrion.id = this.getNewId();
-    const newData = [].concat(this.state.data, newNutrion);
-    this.setState({data: newData});
-    this.setState({modalVisible: false});
+    if (newNutrion.name == '' || newNutrion.calo == 0) {
+      Alert.alert('Chưa đủ thông tin', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
+    } else {
+      newNutrion.id = this.getNewId();
+      const newData = [].concat(this.state.data, newNutrion);
+      this.setState({data: newData});
+      this.setState({modalVisible: false});
+    }
   };
   deleteNutrion = Nutrion => {
     var newData = this.state.data;
     Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
+      {
+        text: 'Hủy',
+        onPress: () => {},
+        style: 'cancel',
+      },
       {
         text: 'Xóa',
         onPress: () =>
           newData.map((element, index) => {
             if (element.id == Nutrion.id) newData.splice(index, 1);
           }),
-      },
-      {
-        text: 'Hủy',
-        onPress: () => {},
-        style: 'cancel',
       },
     ]);
   };
@@ -162,7 +173,12 @@ class Nutrions extends React.Component {
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Tên thực phẩm
                 </Text>
-                <Input onChangeText={text => (newNutrion.name = text)}></Input>
+                <Input
+                  onChangeText={text => (newNutrion.name = text)}
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'black',
+                  }}></Input>
               </View>
               <View
                 style={{
@@ -175,7 +191,12 @@ class Nutrions extends React.Component {
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Calories/100gram
                 </Text>
-                <Input onChangeText={text => (newNutrion.calo = text)}></Input>
+                <Input
+                  onChangeText={text => (newNutrion.calo = text)}
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'black',
+                  }}></Input>
               </View>
               <View
                 style={{
