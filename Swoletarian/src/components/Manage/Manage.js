@@ -40,12 +40,12 @@ class Manage extends React.Component {
       },
       {
         id: 3,
-        name: 'Tạo lịch tập',
+        name: 'Lịch tập luyện',
         image: LichTap,
       },
       {
         id: 4,
-        name: 'Tạo thực đơn ngày',
+        name: 'Thực đơn',
         image: ThucDon,
       },
     ];

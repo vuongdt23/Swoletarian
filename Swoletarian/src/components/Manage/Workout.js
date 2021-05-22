@@ -10,10 +10,9 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import {Input} from 'react-native-elements/dist/input/Input';
+
 import {CheckBox} from 'react-native-elements';
-import {BackgroundImage} from 'react-native-elements/dist/config';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AbsIcon from '../../assets/Icon/workout/AbsIcon.png';
 import BackIcon from '../../assets/Icon/workout/BackIcon.png';
@@ -25,16 +24,6 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
-import {ActivityIndicator} from 'react-native';
-const getCurrentDate = () => {
-  var date = new Date().getDate();
-  var month = new Date().getMonth() + 1;
-  var year = new Date().getFullYear();
-
-  //Alert.alert(date + '-' + month + '-' + year);
-  // You can turn it in to your desired format
-  return date + '-' + month + '-' + year; //format: dd-mm-yyyy;
-};
 class Workout extends React.Component {
   constructor(props) {
     super(props);
@@ -204,10 +193,12 @@ class ExerciseWrap extends React.Component {
       },
       {
         text: 'Xóa',
-        onPress: () =>
+        onPress: () => {
           newData.map((element, index) => {
             if (element.id == exercise.id) newData.splice(index, 1);
-          }),
+          });
+          this.setState({data: newData});
+        },
       },
     ]);
   };
@@ -567,7 +558,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFDD93',
   },
