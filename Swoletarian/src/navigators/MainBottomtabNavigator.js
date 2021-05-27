@@ -1,11 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Signin from '../components/Screen/Signin';
 import Login from '../components/Screen/Login';
-import Manage from '../components/Manage/Manage';
-import {NavigationContainer} from '@react-navigation/native';
 import ManageNavigator from './ManageNavigator';
+import StatisticNavigator from './StatisticNavigator';
 const Tab = createBottomTabNavigator();
 
 function MainBottomtabNavigator() {
@@ -51,7 +49,7 @@ function MainBottomtabNavigator() {
           tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
         }}
       />
-      <Tab.Screen name="Statistic" component={Signin}></Tab.Screen>
+      <Tab.Screen name="Statistic" component={StatisticNavigator}></Tab.Screen>
       <Tab.Screen name="Today" component={Login} />
       <Tab.Screen name="Myself" component={Login} />
     </Tab.Navigator>

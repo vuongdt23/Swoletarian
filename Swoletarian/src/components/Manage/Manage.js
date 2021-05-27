@@ -1,26 +1,16 @@
 import React from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
-  View,
-  Image,
-  Button,
-  ImageBackground,
-  TextInput,
   TouchableOpacity,
-  TouchableHighlight,
   FlatList,
 } from 'react-native';
 import {BackgroundImage} from 'react-native-elements/dist/config';
-
-import DinhDuong from '../../assets/DinhDuong.png';
-import TapLuyen from '../../assets/TapLuyen.png';
-import LichTap from '../../assets/LichTap.png';
-import ThucDon from '../../assets/ThucDon.png';
+import DinhDuong from '../../assets/manage/DinhDuong.png';
+import TapLuyen from '../../assets/manage/TapLuyen.png';
+import LichTap from '../../assets/manage/LichTap.png';
+import ThucDon from '../../assets/manage/ThucDon.png';
 
 class Manage extends React.Component {
   constructor(props) {

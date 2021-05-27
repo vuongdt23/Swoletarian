@@ -166,8 +166,8 @@ class Menu extends React.Component {
             renderItem={({item}) => (
               <Nutrion
                 data={item}
-                deleteNutrion={nutrion => {
-                  this.deleteNutrion(nutrion);
+                deleteExercise={exercise => {
+                  this.deleteExercise(exercise);
                 }}></Nutrion>
             )}
             keyExtractor={(item, index) => {
@@ -210,19 +210,14 @@ class Nutrion extends React.Component {
 
   render() {
     const {data} = this.props;
+    let calos = (data.calo * data.grams) / 100;
     return (
       <View style={styles.nutrionContainer}>
         <Text style={styles.nutrionTitle}>{data.name}</Text>
         <Text style={styles.caloTitle}>{data.calo}calos/100gram</Text>
         <View style={styles.calosContainer}>
           <Text style={styles.gramsTitle}>{data.grams} grams</Text>
-          <Text style={styles.calosTitle}>
-            {() => {
-              let calos = data.calo * data.grams;
-              return calos.toString();
-            }}{' '}
-            calos
-          </Text>
+          <Text style={styles.calosTitle}>{calos.toString()} calos</Text>
         </View>
         <TouchableOpacity
           onPress={() => {
