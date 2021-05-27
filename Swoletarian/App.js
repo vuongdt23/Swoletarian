@@ -1,56 +1,54 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState, useEffect} from 'react';
+import {View, Text, Button} from 'react-native';
+import auth from '@react-native-firebase/auth';
+import {signUp, logIn, logOut, forgetPassword, updatePassword} from './src/Firebase/userAPI';
+function App () {
+  // Set an initializing state whilst Firebase connects
+  const [initializing, setInitializing] = useState (true);
+  const [user, setUser] = useState ();
 
-import React, {Component} from 'react';
+  // Handle user state changes
+  function onAuthStateChanged (user) {
+    setUser (user);
+    if (initializing) setInitializing (false);
+  }
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  useEffect (() => {
+    const subscriber = auth ().onAuthStateChanged (onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
+  if (initializing) return null;
 
-
-class App extends Component {
-
-  
-  render () {
+  if (!user) {
     return (
       <View>
-        <Text>
-         Test
-        </Text>
+        <Button
+          title="Login"
+          onPress={() => logIn ('vuong.vl00@gmail.com', '123456')}
+        />
+        <Button
+          title="forget"
+          onPress={() => forgetPassword ('vuong.vl0000@gmail.com')}
+        />
+        <Button
+          title="update"
+          onPress={() => updatePassword ('123456', 'asdvuong123')}
+        />
       </View>
     );
   }
-}
 
-const styles = StyleSheet.create ({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+  return (
+    <View>
+      <Text>Welcome {user.email}</Text>
+      <Button title="Log Out" onPress={() => logOut ()} />
+      <Button
+          title="update"
+          onPress={() => updatePassword ('123456', 'asdvuong123')}
+        />
+    </View>
+  );
+}
 
 export default App;
