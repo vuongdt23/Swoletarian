@@ -7,12 +7,11 @@ import {
   FlatList,
 } from 'react-native';
 import {BackgroundImage} from 'react-native-elements/dist/config';
-import DinhDuong from '../../assets/manage/DinhDuong.png';
-import TapLuyen from '../../assets/manage/TapLuyen.png';
-import LichTap from '../../assets/manage/LichTap.png';
-import ThucDon from '../../assets/manage/ThucDon.png';
+import BMI from '../../assets/statistic/BMI.png';
+import BFP from '../../assets/statistic/BFP.png';
+import CalosAnalysis from '../../assets/statistic/CalosAnalysis.png';
 
-class Manage extends React.Component {
+class Statistic extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -20,38 +19,34 @@ class Manage extends React.Component {
     const DATA = [
       {
         id: 1,
-        name: 'Dinh dưỡng',
-        image: DinhDuong,
+        name: 'BMI',
+        image: BMI,
       },
       {
         id: 2,
-        name: 'Luyện tập',
-        image: TapLuyen,
+        name: 'BFP',
+        image: BFP,
       },
       {
         id: 3,
-        name: 'Lịch tập luyện',
-        image: LichTap,
-      },
-      {
-        id: 4,
-        name: 'Thực đơn',
-        image: ThucDon,
+        name: 'CalosAnalysis',
+        image: CalosAnalysis,
       },
     ];
-
     const {navigation} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.headerTitle}> Quản lý </Text>
+        <Text style={styles.headerTitle}>Thống kê</Text>
         <FlatList
           style={styles.flatListStyle}
           showsVerticalScrollIndicator={false}
           data={DATA}
           renderItem={({item}) => (
-            <ManageComponent
+            <StatisticComponent
               detail={item}
-              navigateTo={name => navigation.navigate(name)}></ManageComponent>
+              navigateTo={name =>
+                navigation.navigate(name)
+              }></StatisticComponent>
           )}
           keyExtractor={(item, index) => {
             return item.id.toString();
@@ -61,17 +56,16 @@ class Manage extends React.Component {
   }
 }
 
-class ManageComponent extends React.Component {
+class StatisticComponent extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
     const {detail} = this.props;
     let name;
-    if (detail.id == 1) name = 'Nutrions';
-    else if (detail.id == 2) name = 'Workout';
-    else if (detail.id == 3) name = 'Schedule';
-    else name = 'Menu';
+    if (detail.id == 1) name = 'BMI';
+    else if (detail.id == 2) name = 'BFP';
+    else if (detail.id == 3) name = 'CalosAnalysis';
     const {navigateTo} = this.props;
     return (
       <TouchableOpacity
@@ -80,9 +74,7 @@ class ManageComponent extends React.Component {
         <BackgroundImage
           source={detail.image}
           style={styles.backgroundImage}
-          imageStyle={{borderRadius: 20}}>
-          <Text style={styles.title}> {detail.name}</Text>
-        </BackgroundImage>
+          imageStyle={{borderRadius: 20}}></BackgroundImage>
       </TouchableOpacity>
     );
   }
@@ -125,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Manage;
+export default Statistic;

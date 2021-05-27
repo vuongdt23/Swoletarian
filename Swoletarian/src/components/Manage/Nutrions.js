@@ -8,7 +8,6 @@ import {
   Pressable,
   Button,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {
   FlatList,
@@ -73,25 +72,36 @@ class Nutrions extends React.Component {
     this.setState({modalVisible: false});
   }
   addNewNutrion = newNutrion => {
-    newNutrion.id = this.getNewId();
-    const newData = [].concat(this.state.data, newNutrion);
-    this.setState({data: newData});
-    this.setState({modalVisible: false});
+    if (newNutrion.name == '' || newNutrion.calo == 0) {
+      Alert.alert('Chưa đủ thông tin', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
+    } else {
+      newNutrion.id = this.getNewId();
+      const newData = [].concat(this.state.data, newNutrion);
+      this.setState({data: newData});
+      this.setState({modalVisible: false});
+    }
   };
   deleteNutrion = Nutrion => {
     var newData = this.state.data;
     Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
+      {
+        text: 'Hủy',
+        onPress: () => {},
+        style: 'cancel',
+      },
       {
         text: 'Xóa',
         onPress: () =>
           newData.map((element, index) => {
             if (element.id == Nutrion.id) newData.splice(index, 1);
           }),
-      },
-      {
-        text: 'Hủy',
-        onPress: () => {},
-        style: 'cancel',
       },
     ]);
   };
@@ -112,15 +122,17 @@ class Nutrions extends React.Component {
       <View style={styles.container}>
         <Text style={styles.headerTitle}> Dinh Dưỡng</Text>
         <View style={styles.searchBarContainer}>
-          <Icon name="search" size={28}></Icon>
           <TextInput
             style={{
-              width: 400,
+              width: '90%',
+              height: 100,
               fontSize: 20,
               fontFamily: 'Roboto-Bold',
               paddingLeft: 20,
-              paddingVertical: 0,
             }}></TextInput>
+          <TouchableOpacity>
+            <Icon name="search" size={28}></Icon>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.addNewContainer}>
@@ -134,6 +146,7 @@ class Nutrions extends React.Component {
           </TouchableOpacity>
         </View>
         <FlatList
+          style={{width: '90%'}}
           showsVerticalScrollIndicator={false}
           data={this.state.data}
           renderItem={({item}) => (
@@ -154,26 +167,36 @@ class Nutrions extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: 300,
+                  width: '70%',
                   margin: 10,
                 }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Tên thực phẩm
                 </Text>
-                <Input onChangeText={text => (newNutrion.name = text)}></Input>
+                <Input
+                  onChangeText={text => (newNutrion.name = text)}
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'black',
+                  }}></Input>
               </View>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  width: 300,
+                  width: '70%',
                   margin: 10,
                 }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Calories/100gram
                 </Text>
-                <Input onChangeText={text => (newNutrion.calo = text)}></Input>
+                <Input
+                  onChangeText={text => (newNutrion.calo = text)}
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'black',
+                  }}></Input>
               </View>
               <View
                 style={{
@@ -183,12 +206,13 @@ class Nutrions extends React.Component {
                 }}>
                 <Pressable
                   style={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 20,
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
                     backgroundColor: '#FFA693',
                     justifyContent: 'center',
                     alignItems: 'center',
+                    marginRight: '5%',
                   }}
                   onPress={() => {
                     this.closeAddForm();
@@ -199,9 +223,9 @@ class Nutrions extends React.Component {
                 </Pressable>
                 <Pressable
                   style={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 20,
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
                     backgroundColor: '#C8FFFF',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -227,7 +251,7 @@ function Nutrion(props) {
       style={{
         backgroundColor: 'white',
         borderRadius: 10,
-        width: 500,
+        width: '100%',
         height: 150,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -267,7 +291,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFDD93',
   },
@@ -275,10 +299,11 @@ const styles = StyleSheet.create({
     fontSize: 45,
     color: '#000000',
     fontFamily: 'Roboto-Bold',
+    marginVertical: '2%',
   },
   searchBarContainer: {
-    width: 500,
-    height: 60,
+    width: '90%',
+    height: '8%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -293,15 +318,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 500,
-    height: 150,
+    width: '90%',
+    height: '15%',
     marginVertical: 15,
   },
   modalContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -309,16 +333,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    height: 400,
-    marginTop: 200,
+    height: '60%',
+    marginTop: '30%',
   },
 });
 

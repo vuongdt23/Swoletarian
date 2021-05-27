@@ -47,7 +47,9 @@ class Signin extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput style={styles.input}></TextInput>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={{width: '90%', height: '8%', marginTop: '20%'}}
+          onPress={() => {}}>
           <Text style={styles.buttonDK}>Đăng ký</Text>
         </TouchableOpacity>
       </View>
@@ -59,19 +61,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     backgroundColor: '#0C2750',
-    paddingLeft: 20,
+    paddingLeft: '10%',
+    paddingTop: '10%',
   },
   inputContainer: {
     backgroundColor: 'white',
     borderRadius: 45,
-    width: 500,
-    height: 60,
+    width: '90%',
+    height: '8%',
   },
   input: {
-    fontSize: 18,
+    fontSize: 20,
   },
   title: {
     fontSize: 25,
@@ -79,19 +82,20 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   titleContainer: {
-    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20,
   },
   buttonDK: {
-    width: 500,
-    height: 80,
+    width: '100%',
+    height: '100%',
     borderRadius: 40,
     backgroundColor: '#C8FFFF',
     textAlign: 'center',
     textAlignVertical: 'center',
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
-    marginTop: 120,
-    marginBottom: 20,
   },
 });
 
