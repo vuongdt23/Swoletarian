@@ -22,13 +22,21 @@ import {
 } from 'react-native/Libraries/NewStartScreen';
 import Logo from '../assets/Logo.png';
 import Background from '../assets/Background.png';
+import auth from '@react-native-firebase/auth';
 
 class Start extends React.Component {
   constructor(props) {
     super(props);
   }
+  componentDidMount(){
+    if(auth().currentUser){
+      const {navigation} = this.props;
+      navigation.navigate('Main');
+    }   
+  }
   render() {
     const {navigation} = this.props;
+    
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -69,7 +77,7 @@ class Start extends React.Component {
             style={{width: '90%', height: '8%'}}>
             <Text style={styles.buttonDK}>Đăng ký</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> {navigation.navigate('ForgotPassword')}}>
             <Text style={styles.textContainer}>Quên mật khẩu?</Text>
           </TouchableOpacity>
         </ImageBackground>

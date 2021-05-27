@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Login from '../components/Screen/Login';
 import ManageNavigator from './ManageNavigator';
 import StatisticNavigator from './StatisticNavigator';
+import MySelf from '../components/Myself/Myself';
 const Tab = createBottomTabNavigator();
 
 function MainBottomtabNavigator() {
@@ -51,7 +52,7 @@ function MainBottomtabNavigator() {
       />
       <Tab.Screen name="Statistic" component={StatisticNavigator}></Tab.Screen>
       <Tab.Screen name="Today" component={Login} />
-      <Tab.Screen name="Myself" component={Login} />
+      <Tab.Screen name="Myself" component={MySelf} />
     </Tab.Navigator>
   );
 }

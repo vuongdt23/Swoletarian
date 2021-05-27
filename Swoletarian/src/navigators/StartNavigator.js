@@ -6,23 +6,31 @@ import Start from '../components/Start';
 import Login from '../components/Screen/Login';
 import Signin from '../components/Screen/Signin';
 import Main from '../components/Main';
-const Stack = createStackNavigator();
+import MySelf from '../components/Myself/Myself';
+import auth from '@react-native-firebase/auth';
+import {View, Text} from 'react-native';
+import ForgotPassword from '../components/Screen/ForgotPassword';
+
+const Stack = createStackNavigator ();
 class StartNavigator extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
   }
-  render() {
+  render () {
     return (
       <NavigationContainer>
         <Stack.Navigator
           style={{flex: 1}}
           screenOptions={{
             headerShown: false,
-          }}>
-          <Stack.Screen name="Start" component={Start}></Stack.Screen>
-          <Stack.Screen name="Login" component={Login}></Stack.Screen>
-          <Stack.Screen name="Signin" component={Signin}></Stack.Screen>
-          <Stack.Screen name="Main" component={Main}></Stack.Screen>
+          }}
+        >
+          <Stack.Screen name="Start" component={Start} />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Signin" component={Signin} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen name='MySelf' component={MySelf}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
