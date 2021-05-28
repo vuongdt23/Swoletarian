@@ -25,18 +25,18 @@ import Background from '../assets/Background.png';
 import auth from '@react-native-firebase/auth';
 
 class Start extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
   }
-  componentDidMount(){
-    if(auth().currentUser){
+  componentDidMount () {
+    if (auth ().currentUser) {
       const {navigation} = this.props;
-      navigation.navigate('Main');
-    }   
+      navigation.navigate ('Main');
+    }
   }
-  render() {
+  render () {
     const {navigation} = this.props;
-    
+
     return (
       <View style={styles.container}>
         <ImageBackground
@@ -47,8 +47,9 @@ class Start extends React.Component {
             alignItems: 'center',
             width: '100%',
             height: '100%',
-          }}>
-          <Image style={styles.Logo} source={Logo}></Image>
+          }}
+        >
+          <Image style={styles.Logo} source={Logo} />
           <View
             style={{
               display: 'flex',
@@ -56,28 +57,36 @@ class Start extends React.Component {
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: 120,
-            }}>
+            }}
+          >
             <Text
               style={{
                 fontSize: 30,
                 fontFamily: 'Roboto-Thin',
                 color: '#ffffff',
-              }}>
+              }}
+            >
               Become stronger with our App
             </Text>
-            <Image></Image>
+            <Image />
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Login')}
-            style={{width: '90%', height: '8%', marginBottom: '5%'}}>
+            onPress={() => navigation.navigate ('Login')}
+            style={{width: '90%', height: '8%', marginBottom: '5%'}}
+          >
             <Text style={styles.buttonDN}>Đăng nhập</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Signin')}
-            style={{width: '90%', height: '8%'}}>
+            onPress={() => navigation.navigate ('Signin')}
+            style={{width: '90%', height: '8%'}}
+          >
             <Text style={styles.buttonDK}>Đăng ký</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=> {navigation.navigate('ForgotPassword')}}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate ('ForgotPassword');
+            }}
+          >
             <Text style={styles.textContainer}>Quên mật khẩu?</Text>
           </TouchableOpacity>
         </ImageBackground>
@@ -86,7 +95,7 @@ class Start extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
   Logo: {
     width: '70%',
     height: '8%',

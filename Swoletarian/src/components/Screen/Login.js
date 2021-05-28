@@ -32,9 +32,12 @@ class Login extends React.Component {
     // console.log(event);
   };
   handleLogin = (username, password) => {
-    logIn (username, password);
-    const {navigation} = this.props;
-    navigation.navigate('Main');
+    logIn (username, password)
+      .then (() => {
+        const {navigation} = this.props;
+        navigation.navigate ('Main');
+      })
+      .catch (err => console.log (err));
   };
   render () {
     const {navigation} = this.props;
@@ -58,7 +61,7 @@ class Login extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput
             onChangeText={value => {
-             // console.log (value);
+              // console.log (value);
               this.setState ({password: value});
             }}
             style={styles.input}

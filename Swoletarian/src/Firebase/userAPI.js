@@ -1,44 +1,29 @@
 import auth from '@react-native-firebase/auth';
 export const signUp = (email, password) => {
-  auth ()
-    .createUserWithEmailAndPassword (email, password)
-    .then (() => {
-      console.log ('User account created & signed in!', auth ().currentUser);
-    })
-    .catch (error => {
-      if (error.code === 'auth/email-already-in-use') {
-        console.log ('That email address is already in use!');
-      }
-
-      if (error.code === 'auth/invalid-email') {
-        console.log ('That email address is invalid!');
-      }
-
-      console.error (error);
-    });
+  return auth ().createUserWithEmailAndPassword (email, password);
 };
 
 export const logOut = () => {
-  auth ().signOut ().then (() => console.log ('User signed out!'));
+  return auth ().signOut ().then (() => console.log ('User signed out!'));
 };
 
 export const logIn = (email, password) => {
-  auth ()
-    .signInWithEmailAndPassword (email, password)
-    .then (console.log ('Logged in successfully'))
-    .catch (err => {
-      console.log (err);
-    });
+  return auth ().signInWithEmailAndPassword (email, password);
 };
 
 export const forgetPassword = email => {
-  auth ().sendPasswordResetEmail (email);
+  return auth ().sendPasswordResetEmail (email);
 };
 
 export const updatePassword = (currentPassword, newPassword) => {
+  return reauthenticate (currentPassword).then (() => {
+    const user = auth ().currentUser;
+    user.updatePassword (newPassword);
+  });
+};
+
+export const reauthenticate = currentPassword => {
   const user = auth ().currentUser;
-  user
-    .updatePassword (newPassword)
-    .then (console.log ('updated password successfully'))
-    .catch (err => console.log (err));
+  const cred = auth.EmailAuthProvider.credential (user.email, currentPassword);
+  return user.reauthenticateWithCredential (cred);
 };

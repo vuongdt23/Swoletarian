@@ -32,10 +32,10 @@ class ForgotPassword extends React.Component {
             style={{width: '90%', height: '8%', marginTop: '20%'}}
             onPress={() => {
               const {navigation} = this.props;
-              navigation.navigate('Start');
+              navigation.navigate ('Start');
             }}
           >
-            <Text  style={styles.buttonDK}>Quay lại Đăng nhập</Text>
+            <Text style={styles.buttonDK}>Quay lại Đăng nhập</Text>
           </TouchableOpacity>
         </View>
       );

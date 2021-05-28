@@ -4,7 +4,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Start from '../components/Start';
 import Login from '../components/Screen/Login';
-import Signin from '../components/Screen/Signin';
+import SignUp from '../components/Screen/SignUp';
 import Main from '../components/Main';
 import MySelf from '../components/Myself/Myself';
 import auth from '@react-native-firebase/auth';
@@ -27,7 +27,7 @@ class StartNavigator extends React.Component {
         >
           <Stack.Screen name="Start" component={Start} />
           <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Signin" component={Signin} />
+          <Stack.Screen name="Signin" component={SignUp} />
           <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name='MySelf' component={MySelf}/>
