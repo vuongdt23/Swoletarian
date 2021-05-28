@@ -16,30 +16,30 @@ import {
 } from 'react-native';
 import {logIn} from '../../Firebase/userAPI';
 class Login extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
   }
   state = {
     username: '',
     password: '',
   };
   onUsernameChange = event => {
-    this.setState ({username: event.target.value});
+    this.setState({username: event.target.value});
     // console.log(event);
   };
   onPasswordChange = event => {
-    this.setState ({password: event.target.value});
+    this.setState({password: event.target.value});
     // console.log(event);
   };
   handleLogin = (username, password) => {
-    logIn (username, password)
-      .then (() => {
+    logIn(username, password)
+      .then(() => {
         const {navigation} = this.props;
-        navigation.navigate ('Main');
+        navigation.navigate('Main');
       })
-      .catch (err => console.log (err));
+      .catch(err => console.log(err));
   };
-  render () {
+  render() {
     const {navigation} = this.props;
     return (
       <View style={styles.container}>
@@ -50,7 +50,7 @@ class Login extends React.Component {
           <TextInput
             onChangeText={value => {
               //console.log(value);
-              this.setState ({username: value});
+              this.setState({username: value});
             }}
             style={styles.input}
           />
@@ -62,16 +62,16 @@ class Login extends React.Component {
           <TextInput
             onChangeText={value => {
               // console.log (value);
-              this.setState ({password: value});
+              this.setState({password: value});
             }}
             style={styles.input}
           />
         </View>
         <TouchableOpacity
           onPress={() =>
-            this.handleLogin (this.state.username, this.state.password)}
-          style={{width: '90%', height: '8%', marginTop: '80%'}}
-        >
+            this.handleLogin(this.state.username, this.state.password)
+          }
+          style={{width: '90%', height: '8%', marginTop: '80%'}}>
           <Text style={styles.buttonDN}>Đăng nhập</Text>
         </TouchableOpacity>
       </View>
@@ -79,7 +79,7 @@ class Login extends React.Component {
   }
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',

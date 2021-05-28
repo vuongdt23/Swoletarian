@@ -6,36 +6,66 @@ import {
   Modal,
   StyleSheet,
   Pressable,
+  Alert,
 } from 'react-native';
 import {Input} from 'react-native-elements/dist/input/Input';
-import {logOut, updatePassword} from '../../Firebase/userAPI';
+import {logOut, getUserSetup} from '../../Firebase/userAPI';
 import auth from '@react-native-firebase/auth';
+import {Button} from 'react-native';
 class MySelf extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
   }
   state = {
     modalVisible: false,
     lastPassword: '',
     newPassword: '',
+    user: null,
   };
   ontoggleModal = () => {
-    this.setState ({modalVisible: !this.state.modalVisible});
+    this.setState({modalVisible: !this.state.modalVisible});
   };
-  render () {
+  componentDidMount() {
+    getUserSetup()
+      .then(data => {
+        console.log('docs found', data.size);
+        console.log('data', data);
+        if (data.size === 1) {
+          data.forEach(doc => this.setState({user: doc.data()}));
+        }
+
+        data.forEach(doc => console.log('1', doc.data()));
+      })
+      .catch(err => console.log(err));
+  }
+  render() {
     return (
       <View style={styles.container}>
-        <Text>This is {auth ().currentUser.email}</Text>
+        <Text>
+          This is{' '}
+          {this.state.user == null
+            ? auth().currentUser.email
+            : JSON.stringify(this.state.user)}
+        </Text>
+        <Button
+          title={'Click here to open SetUp'}
+          onPress={() => {
+            const {navigation} = this.props;
+            navigation.navigate('SetUp');
+          }}></Button>
+        <Button
+          title={'Click here to get Profile'}
+          onPress={() => {
+            this.getU;
+          }}></Button>
         <TouchableOpacity
-          onPress={() => this.handleLogout ()}
-          style={{backgroundColor: 'red'}}
-        >
+          onPress={() => this.handleLogout()}
+          style={{backgroundColor: 'red'}}>
           <Text>Log Out</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => this.ontoggleModal ()}
-          style={{backgroundColor: 'purple'}}
-        >
+          onPress={() => this.ontoggleModal()}
+          style={{backgroundColor: 'purple'}}>
           <Text>Change Password</Text>
         </TouchableOpacity>
 
@@ -43,8 +73,7 @@ class MySelf extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.modalVisible}
-          >
+            visible={this.state.modalVisible}>
             <View style={styles.modalView}>
               <Text style={styles.headerTitle}>Thêm mới</Text>
               <View
@@ -54,15 +83,13 @@ class MySelf extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Mật khẩu cũ
                 </Text>
                 <Input
                   onChangeText={text => {
-                    console.log (text);
-                    this.setState ({lastPassword: text.toString ().trim ()});
+                    this.setState({lastPassword: text.toString().trim()});
                   }}
                   style={{
                     borderBottomWidth: 1,
@@ -77,14 +104,14 @@ class MySelf extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Mật khẩu mới
                 </Text>
                 <Input
                   onChangeText={text =>
-                    this.setState ({newPassword: text.toString ().trim ()})}
+                    this.setState({newPassword: text.toString().trim()})
+                  }
                   style={{
                     borderBottomWidth: 1,
                     borderBottomColor: 'black',
@@ -96,8 +123,7 @@ class MySelf extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
+                }}>
                 <Pressable
                   style={{
                     width: '40%',
@@ -109,9 +135,8 @@ class MySelf extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.ontoggleModal ();
-                  }}
-                >
+                    this.ontoggleModal();
+                  }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
                   </Text>
@@ -126,12 +151,11 @@ class MySelf extends React.Component {
                     alignItems: 'center',
                   }}
                   onPress={() => {
-                    this.handleChangePassword (
+                    this.handleChangePassword(
                       this.state.lastPassword,
-                      this.state.newPassword
+                      this.state.newPassword,
                     );
-                  }}
-                >
+                  }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     OK
                   </Text>
@@ -144,17 +168,49 @@ class MySelf extends React.Component {
     );
   }
   handleLogout = () => {
-    logOut ();
+    logOut();
     const {navigation} = this.props;
-    navigation.navigate ('Start');
+    navigation.navigate('Start');
   };
   handleChangePassword = (currentPassword, newPassword) => {
-    updatePassword (currentPassword, newPassword)
-      .then (res => console.log (res))
-      .catch (err => console.log (err));
+    this.reauthenticate(currentPassword)
+      .then(
+        auth()
+          .currentUser.updatePassword(newPassword)
+          .then(() => {
+            const {navigation} = this.props;
+            Alert.alert('Đổi mật khẩu thành công', '', [
+              {
+                text: 'OK',
+                onPress: () => {},
+                style: 'cancel',
+              },
+            ]);
+            navigation.navigate('Main');
+          })
+          .catch(err => {
+            if (err.code === 'auth/wrong-password')
+              Alert.alert('Mật khẩu cũ không chính xác!', '', [
+                {
+                  text: 'OK',
+                  onPress: () => {},
+                  style: 'cancel',
+                },
+              ]);
+            else console.log(err);
+          }),
+      )
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  reauthenticate = currentPassword => {
+    const user = auth().currentUser;
+    const cred = auth.EmailAuthProvider.credential(user.email, currentPassword);
+    return user.reauthenticateWithCredential(cred);
   };
 }
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
