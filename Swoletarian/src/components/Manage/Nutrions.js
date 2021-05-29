@@ -14,14 +14,21 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native-gesture-handler';
+import auth from '@react-native-firebase/auth';
+import {
+  getFoodsbyCurrentUser,
+  addFood,
+  deleteFood,
+} from '../../Firebase/foodAPI';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 class Nutrions extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       search: '',
       modalVisible: false,
+      foods: [],
       data: [
         {
           id: 1,
@@ -62,18 +69,31 @@ class Nutrions extends React.Component {
       ],
     };
   }
+  componentDidMount () {
+    let tempArray = [];
+    getFoodsbyCurrentUser ().then (data => {
+      data.forEach (doc => {
+        let food = doc.data ();
+        food.id = doc.id;
+        tempArray.push (food);
+      });
+      console.log (tempArray);
+      this.setState ({foods: tempArray});
+    });
+  }
+  6;
   setModalVisible = visible => {
-    this.setState({modalVisible: visible});
+    this.setState ({modalVisible: visible});
   };
   updateSearch = search => {
-    this.setState({search});
+    this.setState ({search});
   };
-  closeAddForm() {
-    this.setState({modalVisible: false});
+  closeAddForm () {
+    this.setState ({modalVisible: false});
   }
   addNewNutrion = newNutrion => {
     if (newNutrion.name == '' || newNutrion.calo == 0) {
-      Alert.alert('Chưa đủ thông tin', '', [
+      Alert.alert ('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -82,15 +102,19 @@ class Nutrions extends React.Component {
         },
       ]);
     } else {
-      newNutrion.id = this.getNewId();
-      const newData = [].concat(this.state.data, newNutrion);
-      this.setState({data: newData});
-      this.setState({modalVisible: false});
+      addFood (newNutrion)
+        .then (res => {
+          console.log (res);
+        })
+        .catch (err => console.log (err));
+      console.log ('new food added');
+      this.componentDidMount ();
+      this.setState ({modalVisible: false});
     }
   };
   deleteNutrion = Nutrion => {
     var newData = this.state.data;
-    Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
+    Alert.alert ('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -98,25 +122,28 @@ class Nutrions extends React.Component {
       },
       {
         text: 'Xóa',
-        onPress: () =>
-          newData.map((element, index) => {
-            if (element.id == Nutrion.id) newData.splice(index, 1);
-          }),
+        onPress: () => {
+          console.log(Nutrion.id);
+          deleteFood (Nutrion.id.toString())
+            .then (res => console.log ('a',res))
+            .catch (err => console.log ('b', err));
+          this.componentDidMount ();
+        },
       },
     ]);
   };
-  getNewId() {
+  getNewId () {
     const num = this.state.data.length;
     return this.state.data[num - 1].id + 1;
   }
-  render() {
+  render () {
     const {search} = this.state;
     const {modalVisible} = this.state;
     let newNutrion = {
-      id: 0,
-      name: '',
-      calo: 0,
-      isSystem: 'false',
+      foodName: '',
+      foodCalories: 0,
+      foodOwner: auth ().currentUser.uid,
+      isSystem: false,
     };
     return (
       <View style={styles.container}>
@@ -129,17 +156,19 @@ class Nutrions extends React.Component {
               fontSize: 20,
               fontFamily: 'Roboto-Bold',
               paddingLeft: 20,
-            }}></TextInput>
+            }}
+          />
           <TouchableOpacity>
-            <Icon name="search" size={28}></Icon>
+            <Icon name="search" size={28} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.addNewContainer}>
           <TouchableOpacity
             style={{justifyContent: 'center', alignItems: 'center'}}
-            onPress={() => this.setModalVisible(!modalVisible)}>
-            <Icon name="add" size={40}></Icon>
+            onPress={() => this.setModalVisible (!modalVisible)}
+          >
+            <Icon name="add" size={40} />
             <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
               Thêm thực phẩm
             </Text>
@@ -148,16 +177,18 @@ class Nutrions extends React.Component {
         <FlatList
           style={{width: '90%'}}
           showsVerticalScrollIndicator={false}
-          data={this.state.data}
+          data={this.state.foods}
           renderItem={({item}) => (
             <Nutrion
               detail={item}
-              deleteNutrion={Nutrion => this.deleteNutrion(Nutrion)}></Nutrion>
+              deleteNutrion={Nutrion => this.deleteNutrion (Nutrion)}
+            />
           )}
           extraData={this.state.data}
           keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}></FlatList>
+            return item.id.toString ();
+          }}
+        />
         <View style={styles.modalContainer}>
           <Modal animationType="fade" transparent={true} visible={modalVisible}>
             <View style={styles.modalView}>
@@ -169,16 +200,18 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}>
+                }}
+              >
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Tên thực phẩm
                 </Text>
                 <Input
-                  onChangeText={text => (newNutrion.name = text)}
+                  onChangeText={text => (newNutrion.foodName = text)}
                   style={{
                     borderBottomWidth: 1,
                     borderBottomColor: 'black',
-                  }}></Input>
+                  }}
+                />
               </View>
               <View
                 style={{
@@ -187,23 +220,26 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}>
+                }}
+              >
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Calories/100gram
                 </Text>
                 <Input
-                  onChangeText={text => (newNutrion.calo = text)}
+                  onChangeText={text => (newNutrion.foodCalories = text)}
                   style={{
                     borderBottomWidth: 1,
                     borderBottomColor: 'black',
-                  }}></Input>
+                  }}
+                />
               </View>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}>
+                }}
+              >
                 <Pressable
                   style={{
                     width: '40%',
@@ -215,8 +251,9 @@ class Nutrions extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.closeAddForm();
-                  }}>
+                    this.closeAddForm ();
+                  }}
+                >
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
                   </Text>
@@ -230,7 +267,8 @@ class Nutrions extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={() => this.addNewNutrion(newNutrion)}>
+                  onPress={() => this.addNewNutrion (newNutrion)}
+                >
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     OK
                   </Text>
@@ -244,7 +282,7 @@ class Nutrions extends React.Component {
   }
 }
 
-function Nutrion(props) {
+function Nutrion (props) {
   let detail = props.detail;
   return (
     <View
@@ -258,36 +296,39 @@ function Nutrion(props) {
         alignItems: 'center',
         marginVertical: 10,
         paddingHorizontal: 30,
-      }}>
+      }}
+    >
       <View
         style={{
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'flex-start',
-        }}>
+        }}
+      >
         <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
-          {detail.name}
+          {detail.foodName}
         </Text>
         <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
-          {detail.calo} calo/100 gram{' '}
+          {detail.foodCalories} calo/100 gram{' '}
         </Text>
       </View>
       <View style={{flexDirection: 'column', justifyContent: 'space-between'}}>
         <TouchableOpacity>
-          <Icon name="add-circle-outline" size={35}></Icon>
+          <Icon name="add-circle-outline" size={35} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => props.deleteNutrion(detail)}>
+        <TouchableOpacity onPress={() => props.deleteNutrion (detail)}>
           <Icon
             name="close-circle-outline"
-            size={detail.isSystem == 'true' ? 0 : 35}
-            color="red"></Icon>
+            size={detail.isSystem ? 0 : 35}
+            color="red"
+          />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
   container: {
     flex: 1,
     flexDirection: 'column',

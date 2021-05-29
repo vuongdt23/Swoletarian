@@ -28,6 +28,7 @@ class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      exercises: [],
       type: [
         {id: 1, name: 'abs'},
         {id: 2, name: 'shoulder'},

@@ -28,8 +28,8 @@ class MySelf extends React.Component {
   componentDidMount() {
     getUserSetup()
       .then(data => {
-        console.log('docs found', data.size);
-        console.log('data', data);
+       // console.log('docs found', data.size);
+       // console.log('data', data);
         if (data.size === 1) {
           data.forEach(doc => this.setState({user: doc.data()}));
         }
