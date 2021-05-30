@@ -24,11 +24,18 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
+
+import {
+  getExerciseTypes,
+  getExercisesbyCurrentUser,
+} from '../../Firebase/ExerciseAPI';
 class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      exerciseTypes: [],
       exercises: [],
+      workouts: [],
       type: [
         {id: 1, name: 'abs'},
         {id: 2, name: 'shoulder'},
@@ -108,7 +115,39 @@ class Workout extends React.Component {
     };
   }
 
+  componentDidMount() {
+    let tempArr = [];
+    let tempExerciseArr = [];
+    getExerciseTypes()
+      .then(data => {
+        data.forEach(doc => {
+          let tempObj = doc.data();
+          tempObj.id = doc.id;
+          tempArr.push(tempObj);
+        });
+
+        console.log(tempArr);
+        this.setState({
+          exerciseTypes: tempArr,
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    getExercisesbyCurrentUser()
+      .then(data => {
+        data.forEach(doc => {
+          let exercise = doc.data();
+          exercise.id = doc.id;
+          tempExerciseArr.push(exercise);
+        });
+        this.setState({workouts: tempExerciseArr});
+        console.log(tempExerciseArr);
+      })
+      .catch(err => console.log(err));
+  }
   render() {
+    console.log(this.state.exerciseTypes[2]);
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Luyện tập</Text>
@@ -133,7 +172,8 @@ class Workout extends React.Component {
           }}
           style={styles.flatListContainer}
           showsVerticalScrollIndicator={false}
-          data={this.state.type}
+          data={this.state.exerciseTypes}
+          extraData={this.state.exerciseTypes}
           renderItem={({item}) => (
             <ExerciseWrap
               exerciseType={item}
@@ -209,26 +249,26 @@ class ExerciseWrap extends React.Component {
   render() {
     const {exerciseType} = this.props;
     let dataIconType = AbsIcon;
-    switch (exerciseType.name) {
-      case 'abs':
+    switch (exerciseType.exerciseTypeName) {
+      case 'Abs':
         dataIconType = AbsIcon;
         break;
-      case 'chest':
+      case 'Chest':
         dataIconType = ChestIcon;
         break;
-      case 'tricep':
+      case 'Tricep':
         dataIconType = TricepIcon;
         break;
-      case 'shoulder':
+      case 'Shoulder':
         dataIconType = ShoulderIcon;
         break;
-      case 'back':
+      case 'Back':
         dataIconType = BackIcon;
         break;
-      case 'bicep':
+      case 'Bicep':
         dataIconType = BicepIcon;
         break;
-      case 'leg':
+      case 'Leg':
         dataIconType = LegIcon;
         break;
       default:
