@@ -49,12 +49,171 @@ class Menu extends React.Component {
           isSystem: 'true',
           grams: 200,
         },
+        {
+          id: 5,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 6,
+          name: 'Thịt bò',
+          calo: 278,
+          isSystem: 'true',
+          grams: 100,
+        },
+        {
+          id: 7,
+          name: 'Khoai tây',
+          calo: 90,
+          isSystem: 'true',
+          grams: 200,
+        },
       ],
-      Lunch: [],
-      Dinner: [],
-      SupMeal1: [],
-      SupMeal2: [],
-      SupMeal3: [],
+      Lunch: [
+        {
+          id: 1,
+          name: 'Gạo nếp',
+          calo: 130,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 2,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 3,
+          name: 'Thịt bò',
+          calo: 278,
+          isSystem: 'true',
+          grams: 100,
+        },
+        {
+          id: 4,
+          name: 'Khoai tây',
+          calo: 90,
+          isSystem: 'true',
+          grams: 200,
+        },
+        {
+          id: 5,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 6,
+          name: 'Thịt bò',
+          calo: 278,
+          isSystem: 'true',
+          grams: 100,
+        },
+        {
+          id: 7,
+          name: 'Khoai tây',
+          calo: 90,
+          isSystem: 'true',
+          grams: 200,
+        },
+      ],
+      Dinner: [
+        {
+          id: 1,
+          name: 'Gạo nếp',
+          calo: 130,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 2,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 3,
+          name: 'Thịt bò',
+          calo: 278,
+          isSystem: 'true',
+          grams: 100,
+        },
+        {
+          id: 4,
+          name: 'Khoai tây',
+          calo: 90,
+          isSystem: 'true',
+          grams: 200,
+        },
+        {
+          id: 5,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 6,
+          name: 'Thịt bò',
+          calo: 278,
+          isSystem: 'true',
+          grams: 100,
+        },
+        {
+          id: 7,
+          name: 'Khoai tây',
+          calo: 90,
+          isSystem: 'true',
+          grams: 200,
+        },
+      ],
+      SupMeal1: [
+        {
+          id: 1,
+          name: 'Gạo nếp',
+          calo: 130,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 2,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+      ],
+      SupMeal2: [
+        {
+          id: 1,
+          name: 'Gạo nếp',
+          calo: 130,
+          isSystem: 'true',
+          grams: 300,
+        },
+        {
+          id: 2,
+          name: 'Bơ đậu',
+          calo: 580,
+          isSystem: 'true',
+          grams: 300,
+        },
+      ],
+      SupMeal3: [
+        {
+          id: 1,
+          name: 'Gạo nếp',
+          calo: 130,
+          isSystem: 'true',
+          grams: 300,
+        },
+      ],
     };
   }
   deleteNutrion = nutrion => {
@@ -223,7 +382,7 @@ class Nutrion extends React.Component {
           onPress={() => {
             this.props.deleteNutrion(data);
           }}
-          style={{width: '10%', height: '30%'}}>
+          style={{width: '8%', height: '40%'}}>
           <Image
             source={DeleteIcon}
             style={{
@@ -300,7 +459,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     width: '100%',
-    height: 150,
+    height: 100,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -308,7 +467,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: '5%',
-    height: '60%',
+    height: '75%',
     width: '90%',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -330,15 +489,18 @@ const styles = StyleSheet.create({
   nutrionTitle: {
     fontSize: 25,
     fontFamily: 'Roboto-Bold',
+    width: '20%',
   },
   caloTitle: {
     fontSize: 20,
     fontFamily: 'Roboto-Regular',
+    width: '35%',
   },
   calosContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    width: '25%',
   },
   gramsTitle: {
     fontSize: 20,
