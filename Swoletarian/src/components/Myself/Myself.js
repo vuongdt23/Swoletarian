@@ -7,11 +7,16 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  Image,
 } from 'react-native';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {logOut, getUserSetup} from '../../Firebase/userAPI';
 import auth from '@react-native-firebase/auth';
 import {Button} from 'react-native';
+import Female from '../../assets/Icon/Female.png';
+import Male from '../../assets/Icon/Male.png';
+import EditIcon from '../../assets/Icon/EditIcon.png';
+import SettingIcon from '../../assets/Icon/SettingIcon.png';
 class MySelf extends React.Component {
   constructor(props) {
     super(props);
@@ -21,6 +26,13 @@ class MySelf extends React.Component {
     lastPassword: '',
     newPassword: '',
     user: null,
+    userInfo: {
+      userName: 'Phan Duy Đức',
+      userHeight: 170,
+      userWeight: 65,
+      userSex: 'Male',
+      userAge: 21,
+    },
   };
   ontoggleModal = () => {
     this.setState({modalVisible: !this.state.modalVisible});
@@ -28,8 +40,6 @@ class MySelf extends React.Component {
   componentDidMount() {
     getUserSetup()
       .then(data => {
-       // console.log('docs found', data.size);
-       // console.log('data', data);
         if (data.size === 1) {
           data.forEach(doc => this.setState({user: doc.data()}));
         }
@@ -37,38 +47,78 @@ class MySelf extends React.Component {
         data.forEach(doc => console.log('1', doc.data()));
       })
       .catch(err => console.log(err));
+    console.log('1' + this.state.user);
+    console.log('2' + this.state.userInfo);
   }
   render() {
+    const userInfo = this.state.userInfo;
     return (
       <View style={styles.container}>
-        <Text>
-          This is{' '}
-          {this.state.user == null
-            ? auth().currentUser.email
-            : JSON.stringify(this.state.user)}
-        </Text>
-        <Button
-          title={'Click here to open SetUp'}
-          onPress={() => {
-            const {navigation} = this.props;
-            navigation.navigate('SetUp');
-          }}></Button>
-        <Button
-          title={'Click here to get Profile'}
-          onPress={() => {
-            this.getU;
-          }}></Button>
-        <TouchableOpacity
-          onPress={() => this.handleLogout()}
-          style={{backgroundColor: 'red'}}>
-          <Text>Log Out</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => this.ontoggleModal()}
-          style={{backgroundColor: 'purple'}}>
-          <Text>Change Password</Text>
-        </TouchableOpacity>
-
+        <Text style={styles.headerTitle}>Cá nhân</Text>
+        <View style={styles.userInfoContainer}>
+          <View style={styles.userNameContainer}>
+            <Image source={userInfo.userSex === 'Male' ? Male : Female}></Image>
+            <Text style={styles.userNameTitle}>{userInfo.userName}</Text>
+            <TouchableOpacity style={styles.EditButton}>
+              <Image
+                source={EditIcon}
+                style={{width: '100%', height: '100%'}}></Image>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.userAge}>Tuổi: {userInfo.userAge}</Text>
+          <Text style={styles.userAge}>
+            Giới tính: {userInfo.userSex === 'Male' ? 'Nam' : 'Nữ'}
+          </Text>
+          <View style={styles.BMIContainer}>
+            <View style={styles.BMIDetail}>
+              <Text style={styles.BMITitle}>BMI</Text>
+              <Text style={styles.BMI}>
+                {parseFloat(
+                  (userInfo.userWeight /
+                    userInfo.userHeight /
+                    userInfo.userHeight) *
+                    10000,
+                ).toPrecision(4)}
+              </Text>
+              <Text>
+                {() => {
+                  const BMI = parseFloat(
+                    (userInfo.userWeight /
+                      userInfo.userHeight /
+                      userInfo.userHeight) *
+                      10000,
+                  ).toPrecision(4);
+                  if (BMI < 18.5) return 'Bạn đang thiếu cân';
+                  else if (BMI >= 18.5 && BMI <= 24.9) return 'BMI chuẩn';
+                  else if (BMI > 24.9 && BMI <= 29.9)
+                    return 'Bạn đang thừa cân';
+                  else return 'Bạn đang béo phì';
+                }}
+              </Text>
+            </View>
+            <View style={styles.BMIStats}>
+              <View>
+                <Text style={styles.useHeight}>{userInfo.userHeight} cm</Text>
+                <Text style={styles.heightTitle}>Chiều cao</Text>
+              </View>
+              <View>
+                <Text style={styles.userWeight}>{userInfo.userWeight} kg</Text>
+                <Text style={styles.heightTitle}>Cân nặng</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+        <View style={styles.settingContainer}>
+          <View style={styles.settingIconContainer}>
+            <Image source={SettingIcon}></Image>
+          </View>
+          <TouchableOpacity style={styles.LogOutButton}>
+            <Text style={styles.BMITitle}>Đổi mật khẩu</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.LogOutButton}>
+            <Text style={styles.BMITitle}>Đăng xuất</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.modalContainer}>
           <Modal
             animationType="fade"
@@ -216,7 +266,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   modalContainer: {
     flexDirection: 'column',
@@ -237,6 +287,127 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontFamily: 'Roboto-Bold',
     marginVertical: '2%',
+  },
+  userInfoContainer: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+    borderRadius: 15,
+    width: '90%',
+    height: '50%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: '5%',
+  },
+  userNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '25%',
+    width: '90%',
+  },
+  userNameTitle: {
+    fontSize: 35,
+    fontFamily: 'Roboto-Bold',
+    marginLeft: '5%',
+  },
+  EditButton: {
+    width: '12%',
+    height: '55%',
+  },
+  userAge: {
+    fontFamily: 'Roboto-Bold',
+    fontSize: 25,
+    width: '90%',
+    alignItems: 'flex-start',
+    marginVertical: '1%',
+  },
+  BMIContainer: {
+    width: '90%',
+    height: '50%',
+    borderRadius: 15,
+    backgroundColor: '#63E5E5',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  BMIDetail: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    height: '100%',
+  },
+  BMIStats: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '50%',
+    height: '100%',
+    paddingVertical: '8%',
+  },
+  useHeight: {
+    fontSize: 30,
+    fontFamily: 'Roboto-Bold',
+  },
+  userWeight: {
+    fontSize: 30,
+    fontFamily: 'Roboto-Bold',
+  },
+  heightTitle: {
+    fontSize: 20,
+    fontFamily: 'Roboto-Light',
+  },
+  BMITitle: {
+    fontSize: 30,
+    fontFamily: 'Roboto-Bold',
+  },
+  BMI: {
+    fontSize: 35,
+    fontFamily: 'Roboto-Bold',
+    color: '#AD1515',
+  },
+  settingContainer: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+    borderRadius: 15,
+    width: '90%',
+    height: '30%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: '5%',
+  },
+  settingIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    height: '25%',
+    width: '90%',
+  },
+  LogOutButton: {
+    width: '90%',
+    height: '30%',
+    backgroundColor: '#63E5E5',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

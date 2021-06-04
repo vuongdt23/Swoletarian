@@ -325,8 +325,8 @@ class Menu extends React.Component {
             renderItem={({item}) => (
               <Nutrion
                 data={item}
-                deleteExercise={exercise => {
-                  this.deleteExercise(exercise);
+                deleteNutrion={nutrion => {
+                  this.deleteNutrion(nutrion);
                 }}></Nutrion>
             )}
             keyExtractor={(item, index) => {
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   headerTitle: {
     fontSize: 45,
@@ -472,6 +472,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'column',
+    paddingBottom: '5%',
   },
   button: {
     width: '100%',

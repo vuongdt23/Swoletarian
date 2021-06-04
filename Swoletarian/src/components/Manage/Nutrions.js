@@ -23,8 +23,8 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 class Nutrions extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       search: '',
       modalVisible: false,
@@ -69,31 +69,31 @@ class Nutrions extends React.Component {
       ],
     };
   }
-  componentDidMount () {
+  componentDidMount() {
     let tempArray = [];
-    getFoodsbyCurrentUser ().then (data => {
-      data.forEach (doc => {
-        let food = doc.data ();
+    getFoodsbyCurrentUser().then(data => {
+      data.forEach(doc => {
+        let food = doc.data();
         food.id = doc.id;
-        tempArray.push (food);
+        tempArray.push(food);
       });
-      console.log (tempArray);
-      this.setState ({foods: tempArray});
+      console.log(tempArray);
+      this.setState({foods: tempArray});
     });
   }
   6;
   setModalVisible = visible => {
-    this.setState ({modalVisible: visible});
+    this.setState({modalVisible: visible});
   };
   updateSearch = search => {
-    this.setState ({search});
+    this.setState({search});
   };
-  closeAddForm () {
-    this.setState ({modalVisible: false});
+  closeAddForm() {
+    this.setState({modalVisible: false});
   }
   addNewNutrion = newNutrion => {
     if (newNutrion.name == '' || newNutrion.calo == 0) {
-      Alert.alert ('Chưa đủ thông tin', '', [
+      Alert.alert('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -102,19 +102,19 @@ class Nutrions extends React.Component {
         },
       ]);
     } else {
-      addFood (newNutrion)
-        .then (res => {
-          console.log (res);
+      addFood(newNutrion)
+        .then(res => {
+          console.log(res);
         })
-        .catch (err => console.log (err));
-      console.log ('new food added');
-      this.componentDidMount ();
-      this.setState ({modalVisible: false});
+        .catch(err => console.log(err));
+      console.log('new food added');
+      this.componentDidMount();
+      this.setState({modalVisible: false});
     }
   };
   deleteNutrion = Nutrion => {
     var newData = this.state.data;
-    Alert.alert ('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
+    Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -124,25 +124,25 @@ class Nutrions extends React.Component {
         text: 'Xóa',
         onPress: () => {
           console.log(Nutrion.id);
-          deleteFood (Nutrion.id.toString())
-            .then (res => console.log ('a',res))
-            .catch (err => console.log ('b', err));
-          this.componentDidMount ();
+          deleteFood(Nutrion.id.toString())
+            .then(res => console.log('a', res))
+            .catch(err => console.log('b', err));
+          this.componentDidMount();
         },
       },
     ]);
   };
-  getNewId () {
+  getNewId() {
     const num = this.state.data.length;
     return this.state.data[num - 1].id + 1;
   }
-  render () {
+  render() {
     const {search} = this.state;
     const {modalVisible} = this.state;
     let newNutrion = {
       foodName: '',
       foodCalories: 0,
-      foodOwner: auth ().currentUser.uid,
+      foodOwner: auth().currentUser.uid,
       isSystem: false,
     };
     return (
@@ -166,8 +166,7 @@ class Nutrions extends React.Component {
         <View style={styles.addNewContainer}>
           <TouchableOpacity
             style={{justifyContent: 'center', alignItems: 'center'}}
-            onPress={() => this.setModalVisible (!modalVisible)}
-          >
+            onPress={() => this.setModalVisible(!modalVisible)}>
             <Icon name="add" size={40} />
             <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
               Thêm thực phẩm
@@ -181,12 +180,12 @@ class Nutrions extends React.Component {
           renderItem={({item}) => (
             <Nutrion
               detail={item}
-              deleteNutrion={Nutrion => this.deleteNutrion (Nutrion)}
+              deleteNutrion={Nutrion => this.deleteNutrion(Nutrion)}
             />
           )}
           extraData={this.state.data}
           keyExtractor={(item, index) => {
-            return item.id.toString ();
+            return item.id.toString();
           }}
         />
         <View style={styles.modalContainer}>
@@ -200,8 +199,7 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Tên thực phẩm
                 </Text>
@@ -220,8 +218,7 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Calories/100gram
                 </Text>
@@ -238,8 +235,7 @@ class Nutrions extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
+                }}>
                 <Pressable
                   style={{
                     width: '40%',
@@ -251,9 +247,8 @@ class Nutrions extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.closeAddForm ();
-                  }}
-                >
+                    this.closeAddForm();
+                  }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
                   </Text>
@@ -267,8 +262,7 @@ class Nutrions extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={() => this.addNewNutrion (newNutrion)}
-                >
+                  onPress={() => this.addNewNutrion(newNutrion)}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     OK
                   </Text>
@@ -282,7 +276,7 @@ class Nutrions extends React.Component {
   }
 }
 
-function Nutrion (props) {
+function Nutrion(props) {
   let detail = props.detail;
   return (
     <View
@@ -296,15 +290,13 @@ function Nutrion (props) {
         alignItems: 'center',
         marginVertical: 10,
         paddingHorizontal: 30,
-      }}
-    >
+      }}>
       <View
         style={{
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'flex-start',
-        }}
-      >
+        }}>
         <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
           {detail.foodName}
         </Text>
@@ -316,7 +308,7 @@ function Nutrion (props) {
         <TouchableOpacity>
           <Icon name="add-circle-outline" size={35} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => props.deleteNutrion (detail)}>
+        <TouchableOpacity onPress={() => props.deleteNutrion(detail)}>
           <Icon
             name="close-circle-outline"
             size={detail.isSystem ? 0 : 35}
@@ -328,13 +320,13 @@ function Nutrion (props) {
   );
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   headerTitle: {
     fontSize: 45,

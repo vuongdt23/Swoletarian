@@ -25,7 +25,7 @@ function MainBottomtabNavigator() {
             iconName = focused ? 'person-outline' : 'person-outline';
           }
           return (
-            <Icon name={iconName} size={focused ? 50 : 40} color={color} />
+            <Icon name={iconName} size={focused ? 45 : 40} color={color} />
           );
         },
       })}
@@ -42,7 +42,7 @@ function MainBottomtabNavigator() {
           height: 60,
           borderTopWidth: 0,
           elevation: 0,
-          backgroundColor: '#FFDD93',
+          backgroundColor: '#0C2750',
         },
       }}>
       <Tab.Screen

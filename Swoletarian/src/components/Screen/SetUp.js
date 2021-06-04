@@ -5,6 +5,7 @@ import {View, StyleSheet, Text} from 'react-native';
 import {uploadUserSetup} from '../../Firebase/userAPI';
 import DropDownPicker from 'react-native-dropdown-picker';
 import auth from '@react-native-firebase/auth';
+import {KeyboardAvoidingView} from 'react-native';
 class SetUp extends React.Component {
   state = {
     userName: '',

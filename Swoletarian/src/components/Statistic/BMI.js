@@ -29,9 +29,9 @@ class BMI extends React.Component {
       ).toPrecision(4),
     });
     if (this.state.currentBMI < 18.5) this.setState({BMIColor: '#00FFFF'});
-    else if (this.state.currentBMI >= 18.5 && currentBMI <= 24.9)
+    else if (this.state.currentBMI >= 18.5 && this.state.currentBMI <= 24.9)
       this.setState({BMIColor: '#00FF29'});
-    else if (this.state.currentBMI > 24.9 && currentBMI <= 29.9)
+    else if (this.state.currentBMI > 24.9 && this.state.currentBMI <= 29.9)
       this.setState({BMIColor: '#FFDF3A'});
     else this.setState({BMIColor: '#FF3A3A'});
   };
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   headerTitle: {
     fontSize: 45,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: '90%',
     height: '20%',
-    backgroundColor: '#CEAC63',
+    backgroundColor: 'white',
     width: '100%',
     borderRadius: 20,
     height: '30%',
