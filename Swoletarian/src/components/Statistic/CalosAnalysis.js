@@ -6,86 +6,106 @@ import {
   Text,
   StyleSheet,
   View,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
+
 import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from 'react-native-chart-kit';
-import {getCaloriesRecapByCurrentUser} from '../../Firebase/reportAPI';
+  Chart,
+  Line,
+  Area,
+  HorizontalAxis,
+  VerticalAxis,
+  Tooltip,
+} from 'react-native-responsive-linechart';
+
+import {getCaloriesRecapByCurrentUser, getWorkoutRecapByCurrentUser} from '../../Firebase/reportAPI';
+
+const windowWidth = Dimensions.get ('window').width * 2;
+const windowHeight = Dimensions.get ('window').height;
 class CalosAnalysis extends React.Component {
   constructor (props) {
     super (props);
   }
-  state={
-    caloriesRecaps:[],
-    labels:[],
-    data:[],
-  }
+  state = {
+    caloriesRecaps: [],
+    workoutRecaps:[],
+    labels: [],
+    data: [],
+  };
   componentDidMount () {
-    let tempArray=[];
+    let tempArray = [];
+    let wrcArr =[];
     getCaloriesRecapByCurrentUser ()
       .then (res => {
+        let a = 5;
         res.forEach (doc => {
-         
-         tempArray.push(doc.data());
+          let tempObj = {y: doc.data ().recapCalories};
+          a+=1;
+          tempObj.x = a ;
+          tempArray.push (tempObj);
         });
-        this.setState({caloriesRecaps: tempArray});
-        console.log(tempArray);
+        console.log (tempArray);
+
+        this.setState ({caloriesRecaps: tempArray});
       })
-      .then (err => console.log (err));
+      .catch (err => console.log (err));
+      getWorkoutRecapByCurrentUser ()
+      .then (res => {
+        let a = 5;
+        res.forEach (doc => {
+          let tempObj = {y: doc.data ().workoutCalories};
+          a+=1;
+          tempObj.x = a ;
+          wrcArr.push (tempObj);
+        });
+        console.log (wrcArr);
+
+        this.setState ({workoutRecaps: wrcArr});
+      })
+      .catch (err => console.log (err));
   }
 
   render () {
     return (
-      <View>
-        <Text>Bezier Line Chart</Text>
-        <LineChart
-          data={{
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-            datasets: [
-              {
-                data: [
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                ],
+      <View style={styles.container}>
+        <Chart
+          style={{height: windowHeight / 2, width: windowWidth / 3}}
+          data={
+            this.state.caloriesRecaps.length > 0
+              ? this.state.caloriesRecaps
+              : [{x: 1, y: 2}, {x: 1, y: 3}, {x: 4, y: 5}]
+          }
+          padding={{left: 40, bottom: 20, right: 20, top: 20}}
+          xDomain={{min: 0, max: 30}}
+          yDomain={{min: 0, max: 2000}}
+        >
+          <VerticalAxis
+            tickCount={10}
+            theme={{labels: {formatter: v => v.toFixed (0)}}}
+          />
+          <HorizontalAxis tickCount={5} />
+
+          <Area
+            theme={{
+              gradient: {
+                from: {color: '#44bd32'},
+                to: {color: '#44bd32', opacity: 0.2},
               },
-            ],
-          }}
-          width={400} // from react-native
-          height={400}
-          yAxisLabel="$"
-          yAxisSuffix="k"
-          yAxisInterval={1} // optional, defaults to 1
-          chartConfig={{
-            backgroundColor: '#58DADA',
-            backgroundGradientFrom: '#58DADA',
-            backgroundGradientTo: '#58DADA',
-            decimalPlaces: 2, // optional, defaults to 2dp
-            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            style: {
-              borderRadius: 30,
-            },
-            propsForDots: {
-              r: '6',
-              strokeWidth: '2',
-              stroke: '#58DADA',
-            },
-          }}
-          bezier
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-          }}
-        />
+            }}
+
+          
+          />
+
+          <Line  theme={{
+              gradient: {
+                from: {color: '#44bd32'},
+                to: {color: '#44bd32', opacity: 0.2},
+              },
+            }}>
+
+          </Line>
+        </Chart>
       </View>
     );
   }
@@ -95,7 +115,7 @@ const styles = StyleSheet.create ({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFDD93',
   },

@@ -9,6 +9,11 @@ export const getCaloriesRecapByCurrentUser = async () => {
     .get ();
 };
 
-export const getFoodfromRecaps = async(recap)=>{
-    return recap.get();
-}
+export const getWorkoutRecapByCurrentUser = async () => {
+  const userID = auth ().currentUser.uid;
+  return await firestore ()
+    .collection ('workoutRecaps')
+    .where ('recapOwner', '==', userID)
+    .get ();
+};
+
