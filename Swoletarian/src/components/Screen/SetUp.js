@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
-import {TextInput} from 'react-native';
+import {TextInput, Alert} from 'react-native';
 import {View, StyleSheet, Text} from 'react-native';
 import {uploadUserSetup} from '../../Firebase/userAPI';
 import DropDownPicker from 'react-native-dropdown-picker';
 import auth from '@react-native-firebase/auth';
-import {KeyboardAvoidingView} from 'react-native';
 class SetUp extends React.Component {
   state = {
     userName: '',
@@ -18,25 +17,59 @@ class SetUp extends React.Component {
   setDropdownValue = value => {
     this.setState({userSex: value});
   };
+  checkUserInfo = () => {
+    if (
+      this.state.userName === '' ||
+      this.state.userAge === '' ||
+      this.state.userSex === '' ||
+      this.state.userHeight === 0 ||
+      this.state.userWeight === 0
+    )
+      return false;
+    return true;
+  };
   handleSubmitButtonPress = () => {
-    let submitValue = {...this.state};
-    submitValue.ownerID = auth().currentUser.uid;
-    console.log(submitValue);
-    uploadUserSetup(submitValue)
-      .then(res => {
-        console.log(res);
-      })
-      .catch(err => console.log(err));
+    if (this.checkUserInfo()) {
+      let submitValue = {...this.state};
+      submitValue.ownerID = auth().currentUser.uid;
+      console.log(submitValue);
+      uploadUserSetup(submitValue)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => console.log(err));
+      Alert.alert('Cập nhật thông tin thành công', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            const {navigation} = this.props;
+            navigation.navigate('Myself');
+          },
+          style: 'cancel',
+        },
+      ]);
+    } else {
+      Alert.alert('Chưa đủ thông tin', '', [
+        {
+          text: 'OK',
+          onPress: () => {},
+          style: 'cancel',
+        },
+      ]);
+    }
   };
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Tên</Text>
         <TextInput
+          maxLength={30}
           onChangeText={value => this.setState({userName: value})}
           style={styles.inputContainer}></TextInput>
         <Text style={styles.title}>Tuổi</Text>
         <TextInput
+          maxLength={3}
+          keyboardType="numeric"
           onChangeText={value => this.setState({userAge: value})}
           style={styles.inputContainer}></TextInput>
         <Text style={styles.title}>Giới Tính</Text>
@@ -46,6 +79,7 @@ class SetUp extends React.Component {
           }}></DropDown>
         <Text style={styles.title}>Chiều cao(cm)</Text>
         <TextInput
+          maxLength={3}
           keyboardType="numeric"
           style={styles.inputContainer}
           onChangeText={value =>
@@ -53,24 +87,35 @@ class SetUp extends React.Component {
           }></TextInput>
         <Text style={styles.title}>Cân nặng(kg)</Text>
         <TextInput
+          maxLength={3}
           keyboardType="numeric"
           style={styles.inputContainer}
           onChangeText={value =>
             this.setState({userWeight: value})
           }></TextInput>
-        <TouchableOpacity
-          onPress={() => this.handleSubmitButtonPress()}
+        <View
           style={{
-            backgroundColor: 'white',
-            width: '30%',
-            height: '10%',
+            width: '100%',
+            height: '8%',
             justifyContent: 'center',
             alignItems: 'center',
-            borderRadius: 25,
+            borderRadius: 10,
             marginVertical: '5%',
           }}>
-          <Text>OK</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.handleSubmitButtonPress()}
+            style={{
+              backgroundColor: '#63E5E5',
+              width: '30%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 10,
+              marginVertical: '5%',
+            }}>
+            <Text style={{fontSize: 30, fontFamily: 'Roboto-Light'}}>OK</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -78,7 +123,7 @@ class SetUp extends React.Component {
 function DropDown(props) {
   const itemsList = [
     {label: 'Nam', value: 'Male'},
-    {label: 'nữ', value: 'Female'},
+    {label: 'Nữ', value: 'Female'},
   ];
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
@@ -94,11 +139,12 @@ function DropDown(props) {
       setItems={setItems}
       maxHeight={300}
       containerStyle={{
-        width: '90%',
+        width: '100%',
+        height: '8%',
       }}
       textStyle={{
-        fontSize: 28,
-        fontFamily: 'Roboto-Bold',
+        fontSize: 25,
+        fontFamily: 'Roboto-Regular',
       }}
       onChangeValue={value => {
         props.onChangeValue(value);
@@ -110,23 +156,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     backgroundColor: '#0C2750',
-    paddingLeft: '10%',
-    paddingTop: '10%',
+    paddingHorizontal: '5%',
+    paddingVertical: '7%',
   },
   inputContainer: {
     backgroundColor: 'white',
-    borderRadius: 45,
-    width: '90%',
-    height: '8%',
-  },
-  input: {
-    fontSize: 20,
+    borderRadius: 10,
+    width: '100%',
+    height: '6%',
+    fontSize: 25,
+    color: 'black',
   },
   title: {
-    fontSize: 25,
+    fontSize: 30,
     fontFamily: 'Roboto-Thin',
     color: 'white',
   },

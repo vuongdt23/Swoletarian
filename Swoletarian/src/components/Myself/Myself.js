@@ -22,7 +22,7 @@ class MySelf extends React.Component {
     super(props);
   }
   state = {
-    modalVisible: false,
+    passwordModalVisible: false,
     lastPassword: '',
     newPassword: '',
     user: null,
@@ -34,7 +34,7 @@ class MySelf extends React.Component {
       userAge: 21,
     },
   };
-  ontoggleModal = () => {
+  ontogglePassWordModal = () => {
     this.setState({modalVisible: !this.state.modalVisible});
   };
   componentDidMount() {
@@ -52,6 +52,14 @@ class MySelf extends React.Component {
   }
   render() {
     const userInfo = this.state.userInfo;
+    const BMI = parseFloat(
+      (userInfo.userWeight / userInfo.userHeight / userInfo.userHeight) * 10000,
+    ).toPrecision(4);
+    let temp = '';
+    if (BMI < 18.5) return 'Bạn đang thiếu cân';
+    else if (BMI >= 18.5 && BMI <= 24.9) temp = 'BMI chuẩn';
+    else if (BMI > 24.9 && BMI <= 29.9) temp = 'Bạn đang thừa cân';
+    else temp = 'Bạn đang béo phì';
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Cá nhân</Text>
@@ -59,7 +67,12 @@ class MySelf extends React.Component {
           <View style={styles.userNameContainer}>
             <Image source={userInfo.userSex === 'Male' ? Male : Female}></Image>
             <Text style={styles.userNameTitle}>{userInfo.userName}</Text>
-            <TouchableOpacity style={styles.EditButton}>
+            <TouchableOpacity
+              style={styles.EditButton}
+              onPress={() => {
+                const {navigation} = this.props;
+                navigation.navigate('SetUp');
+              }}>
               <Image
                 source={EditIcon}
                 style={{width: '100%', height: '100%'}}></Image>
@@ -72,29 +85,8 @@ class MySelf extends React.Component {
           <View style={styles.BMIContainer}>
             <View style={styles.BMIDetail}>
               <Text style={styles.BMITitle}>BMI</Text>
-              <Text style={styles.BMI}>
-                {parseFloat(
-                  (userInfo.userWeight /
-                    userInfo.userHeight /
-                    userInfo.userHeight) *
-                    10000,
-                ).toPrecision(4)}
-              </Text>
-              <Text>
-                {() => {
-                  const BMI = parseFloat(
-                    (userInfo.userWeight /
-                      userInfo.userHeight /
-                      userInfo.userHeight) *
-                      10000,
-                  ).toPrecision(4);
-                  if (BMI < 18.5) return 'Bạn đang thiếu cân';
-                  else if (BMI >= 18.5 && BMI <= 24.9) return 'BMI chuẩn';
-                  else if (BMI > 24.9 && BMI <= 29.9)
-                    return 'Bạn đang thừa cân';
-                  else return 'Bạn đang béo phì';
-                }}
-              </Text>
+              <Text style={styles.BMI}>{BMI}</Text>
+              <Text style={styles.comment}>{temp}</Text>
             </View>
             <View style={styles.BMIStats}>
               <View>
@@ -112,7 +104,9 @@ class MySelf extends React.Component {
           <View style={styles.settingIconContainer}>
             <Image source={SettingIcon}></Image>
           </View>
-          <TouchableOpacity style={styles.LogOutButton}>
+          <TouchableOpacity
+            style={styles.LogOutButton}
+            onPress={() => this.ontogglePassWordModal()}>
             <Text style={styles.BMITitle}>Đổi mật khẩu</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.LogOutButton}>
@@ -138,6 +132,7 @@ class MySelf extends React.Component {
                   Mật khẩu cũ
                 </Text>
                 <Input
+                  secureTextEntry={true}
                   onChangeText={text => {
                     this.setState({lastPassword: text.toString().trim()});
                   }}
@@ -159,6 +154,7 @@ class MySelf extends React.Component {
                   Mật khẩu mới
                 </Text>
                 <Input
+                  secureTextEntry={true}
                   onChangeText={text =>
                     this.setState({newPassword: text.toString().trim()})
                   }
@@ -185,7 +181,7 @@ class MySelf extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.ontoggleModal();
+                    this.ontogglePassWordModal();
                   }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
@@ -260,6 +256,38 @@ class MySelf extends React.Component {
     return user.reauthenticateWithCredential(cred);
   };
 }
+
+function DropDown(props) {
+  const itemsList = [
+    {label: 'Nam', value: 'Male'},
+    {label: 'Nữ', value: 'Female'},
+  ];
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
+  const [items, setItems] = useState(itemsList);
+  return (
+    <DropDownPicker
+      placeholder={'...'}
+      open={open}
+      value={value}
+      items={items}
+      setOpen={setOpen}
+      setValue={setValue}
+      setItems={setItems}
+      maxHeight={300}
+      containerStyle={{
+        width: '90%',
+      }}
+      textStyle={{
+        fontSize: 28,
+        fontFamily: 'Roboto-Bold',
+      }}
+      onChangeValue={value => {
+        props.onChangeValue(value);
+      }}
+    />
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -270,7 +298,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   modalView: {
@@ -408,6 +436,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  comment: {
+    fontSize: 25,
+    fontFamily: 'Roboto-Light',
   },
 });
 
