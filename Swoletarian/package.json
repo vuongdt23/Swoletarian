@@ -25,6 +25,7 @@
     "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keyboard-aware-scroll-view": "^0.9.4",
+    "react-native-modal-dropdown": "^1.0.0",
     "react-native-reanimated": "^2.1.0",
     "react-native-responsive-linechart": "^5.7.1",
     "react-native-safe-area-context": "^3.2.0",
