@@ -75,7 +75,6 @@ class BMI extends React.Component {
           10000
       ).toPrecision (4),
     });
-<<<<<<< HEAD
     if (this.state.currentBMI < 18.5) this.setState ({BMIColor: '#00FFFF'});
     else if (this.state.currentBMI >= 18.5 && currentBMI <= 24.9)
       this.setState ({BMIColor: '#00FF29'});
@@ -87,14 +86,6 @@ class BMI extends React.Component {
   dropDownSelectHandler = (index, option) => {
     this.setState ({dropdownValue: option});
     console.log (option);
-=======
-    if (this.state.currentBMI < 18.5) this.setState({BMIColor: '#00FFFF'});
-    else if (this.state.currentBMI >= 18.5 && this.state.currentBMI <= 24.9)
-      this.setState({BMIColor: '#00FF29'});
-    else if (this.state.currentBMI > 24.9 && this.state.currentBMI <= 29.9)
-      this.setState({BMIColor: '#FFDF3A'});
-    else this.setState({BMIColor: '#FF3A3A'});
->>>>>>> f0f69c8cb8a1eab003ed13e7481b24777252ecea
   };
   render () {
     //console.log (this.state.currentBMI.toString ());
