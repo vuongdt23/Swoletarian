@@ -17,4 +17,12 @@ export const getWorkoutRecapByCurrentUser = async () => {
     .get ();
 };
 
+export const getStatsbyCurentUser =  async ()=>{
+  const userID = auth ().currentUser.uid;
+  return await firestore ()
+  .collection ('userStats')
+  .where ('userStatsOwner', '==', userID)
+  .get ();
+}
+
 
