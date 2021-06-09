@@ -379,7 +379,9 @@ class ExerciseWrap extends React.Component {
                     <Image
                       source={dataIconType}
                       style={{marginLeft: '3%', width: 40, height: 40}}></Image>
-                    <Text style={styles.textInside}>({exerciseType.name})</Text>
+                    <Text style={styles.textInside}>
+                      ({exerciseType.exerciseTypeName})
+                    </Text>
                   </View>
                 </View>
                 <View
@@ -601,7 +603,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   headerTitle: {
     fontSize: 45,
