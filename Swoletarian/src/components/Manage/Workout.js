@@ -9,6 +9,7 @@ import {
   Modal,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 
 import {CheckBox} from 'react-native-elements';
@@ -24,133 +25,105 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
-
+import auth from '@react-native-firebase/auth';
 import {
   getExerciseTypes,
   getExercisesbyCurrentUser,
+  addExercise,
+  deleteExercise,
 } from '../../Firebase/ExerciseAPI';
 class Workout extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
+      loading: true,
       exerciseTypes: [],
       exercises: [],
       workouts: [],
-      type: [
-        {id: 1, name: 'abs'},
-        {id: 2, name: 'shoulder'},
-        {id: 3, name: 'tricep'},
-        {id: 4, name: 'back'},
-        {id: 5, name: 'bicep'},
-        {id: 6, name: 'leg'},
-        {id: 7, name: 'chest'},
-      ],
-      absExcs: [
-        {
-          id: 1,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-        },
-        {
-          id: 2,
-          name: 'Jump lunges',
-          description:
-            'Bắt đầu với hai bàn chân của bạn với nhau, khuỷu tay uốn cong 90 độ và sau đó lao về phía trước như hình minh họa. Tiếp theo, nhảy thẳng lên khi bạn giơ hai tay lên trần nhà (nhưng vẫn giữ cho khuỷu tay cong!) Sau đó tiếp đất bằng tư thế lunge với chân đối diện về phía trước lần này.',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2068.jpeg',
-          },
-          caloBurned: 14,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 3,
-          name: 'Renegade row',
-          description:
-            'Bạn sẽ cần hai tạ tay cho cái này. Vào tư thế plank với tạ trên tay đỡ bạn. Nâng một cánh tay so với cơ thể của bạn, sao cho cẳng tay của bạn thẳng hàng với lưng và khuỷu tay của bạn ở góc 90 độ. Giữ trong 2 lần đếm, sau đó hạ lưng xuống để bắt đầu. Lặp lại trên cánh tay đối diện',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2085.jpeg',
-          },
-          caloBurned: 15,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 4,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2055.jpeg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 5,
-          name: 'Squat to press',
-          description:
-            'Lấy hai tạ tay nhẹ và đứng, hai chân rộng bằng vai, khuỷu tay cong 90 độ và lòng bàn tay hướng về phía trước. Vào tư thế ngồi xổm và giữ trong hai giây. Tiếp theo, đẩy qua gót chân để đứng thẳng trong khi nâng tạ về phía trần nhà.',
-          imgLink: {
-            uri:
-              'https://www.muscleandfitness.com/wp-content/uploads/2018/02/FrontSquatPress-MU.jpg?quality=86&strip=all',
-          },
-          caloBurned: 15,
-          exerciseType: 'abs',
-          isSystem: 'false',
-        },
-      ],
     };
   }
 
-  componentDidMount() {
+  componentDidMount () {
     let tempArr = [];
     let tempExerciseArr = [];
-    getExerciseTypes()
-      .then(data => {
-        data.forEach(doc => {
-          let tempObj = doc.data();
+    getExerciseTypes ()
+      .then (data => {
+        data.forEach (doc => {
+          let tempObj = doc.data ();
           tempObj.id = doc.id;
-          tempArr.push(tempObj);
+          tempArr.push (tempObj);
         });
 
-        console.log(tempArr);
-        this.setState({
+        //console.log(tempArr);
+        this.setState ({
           exerciseTypes: tempArr,
         });
       })
-      .catch(err => {
-        console.log(err);
+      .catch (err => {
+        console.log (err);
       });
-    getExercisesbyCurrentUser()
-      .then(data => {
-        data.forEach(doc => {
-          let exercise = doc.data();
+    getExercisesbyCurrentUser ()
+      .then (data => {
+        data.forEach (doc => {
+          let exercise = doc.data ();
           exercise.id = doc.id;
-          tempExerciseArr.push(exercise);
+          tempExerciseArr.push (exercise);
         });
-        this.setState({workouts: tempExerciseArr});
-        console.log(tempExerciseArr);
+        this.setState ({workouts: tempExerciseArr});
+        console.log (tempExerciseArr);
+
+        this.setState ({loading: false});
       })
-      .catch(err => console.log(err));
+      .catch (err => console.log (err));
   }
-  render() {
-    console.log(this.state.exerciseTypes[2]);
+  reload = () => {
+    this.setState ({loading: true});
+    let tempArr = [];
+    let tempExerciseArr = [];
+    getExerciseTypes ()
+      .then (data => {
+        data.forEach (doc => {
+          let tempObj = doc.data ();
+          tempObj.id = doc.id;
+          tempArr.push (tempObj);
+        });
+
+        //console.log(tempArr);
+        this.setState ({
+          exerciseTypes: tempArr,
+        });
+      })
+      .catch (err => {
+        console.log (err);
+      });
+    getExercisesbyCurrentUser ()
+      .then (data => {
+        data.forEach (doc => {
+          let exercise = doc.data ();
+          exercise.id = doc.id;
+          tempExerciseArr.push (exercise);
+        });
+        this.setState ({workouts: tempExerciseArr});
+        console.log (tempExerciseArr);
+
+        this.setState ({loading: false});
+      })
+      .catch (err => console.log (err));
+
+    console.log ('reload');
+  };
+  render () {
+    if (this.state.loading)
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#1CA2BB" />
+        </View>
+      );
+    // console.log(this.state.exerciseTypes[2]);
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Luyện tập</Text>
+
         <View style={styles.searchBarContainer}>
           <TextInput
             style={{
@@ -159,9 +132,10 @@ class Workout extends React.Component {
               fontSize: 20,
               fontFamily: 'Roboto-Bold',
               paddingLeft: 20,
-            }}></TextInput>
+            }}
+          />
           <TouchableOpacity>
-            <Icon name="search" size={28}></Icon>
+            <Icon name="search" size={28} />
           </TouchableOpacity>
         </View>
         <FlatList
@@ -173,42 +147,47 @@ class Workout extends React.Component {
           style={styles.flatListContainer}
           showsVerticalScrollIndicator={false}
           data={this.state.exerciseTypes}
-          extraData={this.state.exerciseTypes}
           renderItem={({item}) => (
             <ExerciseWrap
               exerciseType={item}
-              data={this.state.absExcs}></ExerciseWrap>
+              data={this.state.workouts.length > 0 ? this.state.workouts : []}
+              reloadAll={() => {
+                this.reload ();
+                console.log ('child calls reload');
+              }}
+            />
           )}
           keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}></FlatList>
+            return index.toString ();
+          }}
+        />
       </View>
     );
   }
 }
 
 class ExerciseWrap extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       addNewModalVisible: false,
       data: [],
     };
   }
   onToggleAddNewModal = () => {
-    this.setState({addNewModalVisible: !this.state.addNewModalVisible});
+    this.setState ({addNewModalVisible: !this.state.addNewModalVisible});
   };
-  getNewId() {
+  getNewId () {
     const num = this.state.data.length;
     return this.state.data[num - 1].id + 1;
   }
   addNewExercise = exercise => {
     if (
-      exercise.name == '' ||
-      exercise.description == '' ||
-      exercise.caloBurned == 0
+      exercise.exerciseName === '' ||
+      exercise.exerciseDescription === '' ||
+      exercise.exerciseCalories === 0
     ) {
-      Alert.alert('Chưa đủ thông tin', '', [
+      Alert.alert ('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -217,16 +196,20 @@ class ExerciseWrap extends React.Component {
         },
       ]);
     } else {
-      exercise.id = this.getNewId();
-      const newData = [].concat(this.state.data, exercise);
-      this.setState({data: newData});
-      this.onToggleAddNewModal();
-      console.log('Adddddddd');
+      addExercise (exercise)
+        .then (res => {
+          console.log (res);
+        })
+        .catch (err => {
+          console.log (err);
+        });
+      this.props.reloadAll ();
+      this.onToggleAddNewModal ();
     }
   };
   deleteExercise = exercise => {
     var newData = this.state.data;
-    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
+    Alert.alert ('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -235,18 +218,28 @@ class ExerciseWrap extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          newData.map((element, index) => {
-            if (element.id == exercise.id) newData.splice(index, 1);
-          });
-          this.setState({data: newData});
+          deleteExercise (exercise.id)
+            .then (res => {
+              console.log (res);
+              this.props.reloadAll ();
+            })
+            .catch (err => {
+              console.log (err);
+            });
         },
       },
     ]);
   };
-  componentDidMount() {
-    this.setState({data: this.props.data});
+  componentDidMount () {
+    const {data, exerciseType} = this.props;
+    let workouts = [];
+    data.forEach (item => {
+      if (item.exerciseType === exerciseType.exerciseTypeName)
+        workouts.push (item);
+    });
+    this.setState ({data: workouts});
   }
-  render() {
+  render () {
     const {exerciseType} = this.props;
     let dataIconType = AbsIcon;
     switch (exerciseType.exerciseTypeName) {
@@ -276,21 +269,22 @@ class ExerciseWrap extends React.Component {
         break;
     }
     let newExercise = {
-      id: 1,
-      name: '',
-      description: '',
-      imgLink: {
+      exerciseName: '',
+      exerciseDescription: '',
+      exerciseImage: {
         uri: '',
       },
-      caloBurned: 0,
-      exerciseType: '',
+      exerciseCalories: 0,
+      exerciseType: exerciseType.exerciseTypeName,
       isSystem: 'false',
+      exerciseOwner: auth ().currentUser.uid,
     };
     return (
       <View style={styles.exerciseWrap}>
         <Image
           source={dataIconType}
-          style={{marginLeft: '3%', width: 60, height: 60}}></Image>
+          style={{marginLeft: '3%', width: 60, height: 60}}
+        />
         <View style={styles.exerciseWrapInside}>
           <View style={styles.addNewExerciseButton}>
             <TouchableOpacity
@@ -299,8 +293,9 @@ class ExerciseWrap extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={this.onToggleAddNewModal}>
-              <Icon name="add" size={40}></Icon>
+              onPress={this.onToggleAddNewModal}
+            >
+              <Icon name="add" size={40} />
               <Text style={styles.exerciseTitle}>Thêm mới</Text>
             </TouchableOpacity>
           </View>
@@ -308,20 +303,23 @@ class ExerciseWrap extends React.Component {
             horizontal
             style={styles.flatListStyle}
             showsHorizontalScrollIndicator={false}
-            data={this.state.data}
+            data={this.state.data.length > 0 ? this.state.data : []}
             renderItem={({item}) => (
               <Exercise
                 exercise={item}
-                delete={exercise => this.deleteExercise(exercise)}></Exercise>
+                delete={exercise => this.deleteExercise (exercise)}
+              />
             )}
             keyExtractor={(item, index) => {
-              return item.id.toString();
-            }}></FlatList>
+              return index.toString ();
+            }}
+          />
           <View style={styles.addNewModalContainer}>
             <Modal
               animationType="fade"
               transparent={true}
-              visible={this.state.addNewModalVisible}>
+              visible={this.state.addNewModalVisible}
+            >
               <View style={styles.addNewModalView}>
                 <Text style={styles.addExerciseTitle}>Thêm bài tập mới</Text>
                 <View>
@@ -329,7 +327,7 @@ class ExerciseWrap extends React.Component {
                     <Text style={styles.textInside}>Tên bài tập</Text>
                     <TextInput
                       onChangeText={text => {
-                        newExercise.name = text;
+                        newExercise.exerciseName = text;
                       }}
                       style={{
                         fontSize: 23,
@@ -338,13 +336,14 @@ class ExerciseWrap extends React.Component {
                         marginLeft: '3%',
                         borderBottomWidth: 2,
                         borderBottomColor: 'black',
-                      }}></TextInput>
+                      }}
+                    />
                   </View>
                   <View style={styles.rowStyleContainer}>
                     <Text style={styles.textInside}>Mô tả</Text>
                     <TextInput
                       onChangeText={text => {
-                        newExercise.description = text;
+                        newExercise.exerciseDescription = text;
                       }}
                       style={{
                         fontSize: 23,
@@ -355,13 +354,14 @@ class ExerciseWrap extends React.Component {
                         borderBottomColor: 'black',
                       }}
                       multiline={true}
-                      numberOfLines={8}></TextInput>
+                      numberOfLines={7}
+                    />
                   </View>
                   <View style={styles.rowStyleContainer}>
                     <Text style={styles.textInside}>Calo/phút</Text>
                     <TextInput
                       onChangeText={text => {
-                        newExercise.caloBurned = parseInt(text);
+                        newExercise.exerciseCalories = parseInt (text);
                       }}
                       style={{
                         justifyContent: 'center',
@@ -372,13 +372,15 @@ class ExerciseWrap extends React.Component {
                         marginLeft: '3%',
                         borderBottomWidth: 2,
                         borderBottomColor: 'black',
-                      }}></TextInput>
+                      }}
+                    />
                   </View>
                   <View style={styles.rowStyleContainer}>
                     <Text style={styles.textInside}>Kiểu bài tập</Text>
                     <Image
                       source={dataIconType}
-                      style={{marginLeft: '3%', width: 40, height: 40}}></Image>
+                      style={{marginLeft: '3%', width: 40, height: 40}}
+                    />
                     <Text style={styles.textInside}>
                       ({exerciseType.exerciseTypeName})
                     </Text>
@@ -389,7 +391,8 @@ class ExerciseWrap extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
-                  }}>
+                  }}
+                >
                   <Pressable
                     style={{
                       width: '40%',
@@ -401,8 +404,9 @@ class ExerciseWrap extends React.Component {
                       marginRight: '5%',
                     }}
                     onPress={() => {
-                      this.onToggleAddNewModal();
-                    }}>
+                      this.onToggleAddNewModal ();
+                    }}
+                  >
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       Hủy
                     </Text>
@@ -417,8 +421,9 @@ class ExerciseWrap extends React.Component {
                       alignItems: 'center',
                     }}
                     onPress={() => {
-                      this.addNewExercise(newExercise);
-                    }}>
+                      this.addNewExercise (newExercise);
+                    }}
+                  >
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       OK
                     </Text>
@@ -433,8 +438,8 @@ class ExerciseWrap extends React.Component {
   }
 }
 class Exercise extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       infoModalVisible: false,
       addModalVisible: false,
@@ -450,24 +455,25 @@ class Exercise extends React.Component {
   }
 
   onToggleInfoModal = () => {
-    this.setState({infoModalVisible: !this.state.infoModalVisible});
+    this.setState ({infoModalVisible: !this.state.infoModalVisible});
   };
   onToggleAddModal = () => {
-    this.setState({addModalVisible: !this.state.addModalVisible});
+    this.setState ({addModalVisible: !this.state.addModalVisible});
   };
   AddToDayContainer = params => {
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = useState (false);
     return (
       <View style={styles.addToDayContainer}>
         <Text style={styles.addExerciseTitle}>{params.day.name}</Text>
         <CheckBox
           checked={isChecked}
           size={40}
-          onPress={() => setIsChecked(!isChecked)}></CheckBox>
+          onPress={() => setIsChecked (!isChecked)}
+        />
       </View>
     );
   };
-  render() {
+  render () {
     const {exercise} = this.props;
     return (
       <View style={styles.exerciseContainer}>
@@ -479,22 +485,25 @@ class Exercise extends React.Component {
             marginBottom: 30,
             width: '100%',
             height: '25%',
-          }}>
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
-              this.props.delete(exercise);
-            }}>
+              this.props.delete (exercise);
+            }}
+          >
             <Image
               source={DeleteIcon}
               style={{
                 width: exercise.isSystem == 'true' ? 0 : 40,
                 height: exercise.isSystem == 'true' ? 0 : 40,
-              }}></Image>
+              }}
+            />
           </TouchableOpacity>
         </View>
         <Text style={styles.exerciseTitle}>{exercise.name}</Text>
         <Text style={styles.exerciseCalo}>
-          {exercise.caloBurned} calo mỗi phút
+          {exercise.exerciseCalories} calo mỗi phút
         </Text>
         <View
           style={{
@@ -505,14 +514,16 @@ class Exercise extends React.Component {
             width: '100%',
             height: '25%',
             marginTop: 30,
-          }}>
+          }}
+        >
           <TouchableOpacity onPress={this.onToggleInfoModal}>
             <Image
               source={InfoIcon}
               style={{
                 width: 40,
                 height: 40,
-              }}></Image>
+              }}
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.onToggleAddModal}>
             <Image
@@ -520,27 +531,30 @@ class Exercise extends React.Component {
               style={{
                 width: 40,
                 height: 40,
-              }}></Image>
+              }}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.infoModalContainer}>
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.infoModalVisible}>
+            visible={this.state.infoModalVisible}
+          >
             <View style={styles.infoModalView}>
               <Text style={styles.infoExerciseTitle}>{exercise.name}</Text>
               <Text style={styles.infoExerciseDescription}>
-                {exercise.description}
+                {exercise.exerciseDescription}
               </Text>
               <Image
-                source={exercise.imgLink}
+                source={exercise.exerciseImage}
                 style={{
                   height: '40%',
                   width: '90%',
                   resizeMode: 'stretch',
                   margin: '2%',
-                }}></Image>
+                }}
+              />
               <Pressable
                 style={{
                   width: '40%',
@@ -550,7 +564,8 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleInfoModal}>
+                onPress={this.onToggleInfoModal}
+              >
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -562,19 +577,51 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.addModalVisible}>
+            visible={this.state.addModalVisible}
+          >
             <View style={styles.addModalView}>
               <Text style={styles.addExerciseTitle}>Thêm vào lịch tập</Text>
               <FlatList
                 data={this.state.daysOfWeek}
                 renderItem={({item}) => (
-                  <this.AddToDayContainer
-                    day={item}
-                    exercise={exercise}></this.AddToDayContainer>
+                  <this.AddToDayContainer day={item} exercise={exercise} />
                 )}
                 keyExtractor={item => {
-                  return item.id.toString();
-                }}></FlatList>
+                  return item.id.toString ();
+                }}
+              />
+
+              <TextInput
+                placeholder={'Số set'}
+                onChangeText={text => {
+                  newExercise.exerciseName = text;
+                }}
+                maxLength={2}
+                style={{
+                  fontSize: 23,
+                  fontFamily: 'Roboto-Regular',
+                  width: '50%',
+                  marginLeft: '3%',
+                  borderBottomWidth: 2,
+                  borderBottomColor: 'black',
+                }}
+              />
+              <TextInput
+                placeholder={'Số rep'}
+                onChangeText={text => {
+                  newExercise.exerciseName = text;
+                }}
+                maxLength={2}
+                style={{
+                  fontSize: 23,
+                  fontFamily: 'Roboto-Regular',
+                  width: '50%',
+                  marginLeft: '3%',
+                  borderBottomWidth: 2,
+                  borderBottomColor: 'black',
+                }}
+              />
+
               <Pressable
                 style={{
                   width: '40%',
@@ -584,7 +631,8 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleAddModal}>
+                onPress={this.onToggleAddModal}
+              >
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -597,11 +645,11 @@ class Exercise extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
   },
