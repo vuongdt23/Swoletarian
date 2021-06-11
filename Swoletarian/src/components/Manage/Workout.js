@@ -32,6 +32,11 @@ import {
   addExercise,
   deleteExercise,
 } from '../../Firebase/ExerciseAPI';
+import {
+  getSchedulesbyUser,
+  getScheduleTypeNamebyID,
+  getScheduleTypes,
+} from '../../Firebase/ScheduleAPI';
 class Workout extends React.Component {
   constructor (props) {
     super (props);
@@ -40,10 +45,30 @@ class Workout extends React.Component {
       exerciseTypes: [],
       exercises: [],
       workouts: [],
+      schedules: [],
     };
   }
 
+  getScheduleIDs = () => {
+    let tempScheduleArr = [];
+    getSchedulesbyUser ()
+      .then (res => {
+        res.forEach (doc => {
+          let schObj = {scheduleType: doc.data ().scheduleType};
+          schObj.schID = doc.id;
+
+          tempScheduleArr.push (schObj);
+        });
+
+        console.log ('schedule id array list', tempScheduleArr);
+        this.setState ({schedules: tempScheduleArr});
+      })
+      .catch (err => {
+        console.log (err);
+      });
+  };
   componentDidMount () {
+    this.getScheduleIDs ();
     let tempArr = [];
     let tempExerciseArr = [];
     getExerciseTypes ()
@@ -444,13 +469,14 @@ class Exercise extends React.Component {
       infoModalVisible: false,
       addModalVisible: false,
       daysOfWeek: [
-        {id: 2, name: 'Monday'},
-        {id: 3, name: 'Tuesday'},
-        {id: 4, name: 'Wednesday'},
-        {id: 5, name: 'Thursday'},
-        {id: 6, name: 'Friday'},
-        {id: 7, name: 'Saturday'},
+        {id: 2, name: 'monday'},
+        {id: 3, name: 'tuesday'},
+        {id: 4, name: 'wednesday'},
+        {id: 5, name: 'thursday'},
+        {id: 6, name: 'friday'},
+        {id: 7, name: 'saturday'},
       ],
+      addtoSchedule:[],
     };
   }
 
@@ -460,6 +486,7 @@ class Exercise extends React.Component {
   onToggleAddModal = () => {
     this.setState ({addModalVisible: !this.state.addModalVisible});
   };
+  addToWorkoutSchedule = exercise => {};
   AddToDayContainer = params => {
     const [isChecked, setIsChecked] = useState (false);
     return (
@@ -469,12 +496,14 @@ class Exercise extends React.Component {
           checked={isChecked}
           size={40}
           onPress={() => setIsChecked (!isChecked)}
+          
         />
       </View>
     );
   };
   render () {
     const {exercise} = this.props;
+    let newExercise = {};
     return (
       <View style={styles.exerciseContainer}>
         <View

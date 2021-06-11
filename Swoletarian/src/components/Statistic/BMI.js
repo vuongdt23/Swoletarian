@@ -18,6 +18,7 @@ import {
   VerticalAxis,
   Tooltip,
 } from 'react-native-responsive-linechart';
+
 import {getStatsbyCurentUser} from '../../Firebase/reportAPI';
 const windowWidth = Dimensions.get ('window').width * 2;
 const windowHeight = Dimensions.get ('window').height;
@@ -53,7 +54,7 @@ class BMI extends React.Component {
           );
           BMIArr.push (statObj);
         });
-        console.log ('All BMIs', BMIArr);
+       // console.log ('All BMIs', BMIArr);
 
         this.setState ({BMIs: BMIArr});
 
@@ -62,7 +63,7 @@ class BMI extends React.Component {
         });
 
         this.setState ({BMIs30days: BMI30Arr});
-        console.log ('30 days recaps', BMI30Arr);
+       // console.log ('30 days recaps', BMI30Arr);
       })
       .catch (err => console.log (err));
     this.setState ({loading: false});
@@ -85,7 +86,7 @@ class BMI extends React.Component {
 
   dropDownSelectHandler = (index, option) => {
     this.setState ({dropdownValue: option});
-    console.log (option);
+   // console.log (option);
   };
   render () {
     //console.log (this.state.currentBMI.toString ());
