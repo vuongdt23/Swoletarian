@@ -13,10 +13,16 @@ export const getExercisesbyCurrentUser = async () => {
     .get();
 };
 
+export const getDefaultExercises = async () => {
+  return await firestore()
+    .collection('exercises')
+    .where('exerciseOwner', '==', 'admin')
+    .get();
+};
+
 export const getExercisebyID = async exerciseID => {
   return await firestore().collection('exercises').doc(exerciseID).get();
 };
-
 
 export const deleteExercise = async exerciseID => {
   return await firestore().collection('exercises').doc(exerciseID).delete();

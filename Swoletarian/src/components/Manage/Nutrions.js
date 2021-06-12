@@ -7,6 +7,7 @@ import {
   Alert,
   Pressable,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {
@@ -19,6 +20,7 @@ import {
   getFoodsbyCurrentUser,
   addFood,
   deleteFood,
+  getDefaultFoods,
 } from '../../Firebase/foodAPI';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -29,59 +31,33 @@ class Nutrions extends React.Component {
       search: '',
       modalVisible: false,
       foods: [],
-      data: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-        },
-        {
-          id: 3,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-        },
-        {
-          id: 4,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-        },
-        {
-          id: 5,
-          name: 'Bơ',
-          calo: 160,
-          isSystem: 'true',
-        },
-        {
-          id: 6,
-          name: 'Thịt gà',
-          calo: 165,
-          isSystem: 'false',
-        },
-      ],
+      isLoading: true,
     };
   }
   componentDidMount() {
     let tempArray = [];
+
     getFoodsbyCurrentUser().then(data => {
       data.forEach(doc => {
         let food = doc.data();
         food.id = doc.id;
         tempArray.push(food);
       });
-      console.log(tempArray);
-      this.setState({foods: tempArray});
     });
+    getDefaultFoods()
+      .then(data => {
+        data.forEach(doc => {
+          let food = doc.data();
+          food.id = doc.id;
+          tempArray.push(food);
+        });
+        console.log(tempArray);
+        this.setState({foods: tempArray, isLoading: false});
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
-  6;
   setModalVisible = visible => {
     this.setState({modalVisible: visible});
   };
@@ -173,21 +149,28 @@ class Nutrions extends React.Component {
             </Text>
           </TouchableOpacity>
         </View>
-        <FlatList
-          style={{width: '90%'}}
-          showsVerticalScrollIndicator={false}
-          data={this.state.foods}
-          renderItem={({item}) => (
-            <Nutrion
-              detail={item}
-              deleteNutrion={Nutrion => this.deleteNutrion(Nutrion)}
-            />
-          )}
-          extraData={this.state.data}
-          keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}
-        />
+        {this.state.isLoading ? (
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color="#1CA2BB" />
+          </View>
+        ) : (
+          <FlatList
+            style={{width: '90%'}}
+            showsVerticalScrollIndicator={false}
+            data={this.state.foods}
+            renderItem={({item}) => (
+              <Nutrion
+                detail={item}
+                deleteNutrion={Nutrion => this.deleteNutrion(Nutrion)}
+              />
+            )}
+            extraData={this.state.data}
+            keyExtractor={(item, index) => {
+              return index.toString();
+            }}
+          />
+        )}
+
         <View style={styles.modalContainer}>
           <Modal animationType="fade" transparent={true} visible={modalVisible}>
             <View style={styles.modalView}>

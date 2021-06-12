@@ -5,14 +5,18 @@ import {
   FlatList,
   Text,
   StyleSheet,
+  Button,
 } from 'react-native';
-
 class BFP extends React.Component {
   constructor(props) {
     super(props);
   }
   render() {
-    return <SafeAreaView style={styles.container}></SafeAreaView>;
+    return (
+      <SafeAreaView style={styles.container}>
+        <Button title={'uploadExercies'}></Button>
+      </SafeAreaView>
+    );
   }
 }
 

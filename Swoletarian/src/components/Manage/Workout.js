@@ -10,8 +10,8 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
-
 import {CheckBox} from 'react-native-elements';
 import {FlatList} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,6 +32,7 @@ import {
   getExercisesbyCurrentUser,
   addExercise,
   deleteExercise,
+  getDefaultExercises,
 } from '../../Firebase/ExerciseAPI';
 import {
   getSchedulesbyUser,
@@ -42,7 +43,7 @@ class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
+      isLoading: true,
       exerciseTypes: [],
       exercises: [],
       workouts: [],
@@ -50,44 +51,49 @@ class Workout extends React.Component {
     };
   }
 
-  getScheduleIDs = () => {
+  loadSchedules = () => {
     let tempScheduleArr = [];
     getSchedulesbyUser()
       .then(res => {
         res.forEach(doc => {
           let schObj = {scheduleType: doc.data().scheduleType};
           schObj.schID = doc.id;
-
           tempScheduleArr.push(schObj);
         });
 
-        console.log('schedule id array list', tempScheduleArr);
+        //console.log('schedule id array list', tempScheduleArr);
         this.setState({schedules: tempScheduleArr});
       })
       .catch(err => {
         console.log(err);
       });
   };
-  componentDidMount() {
-    this.getScheduleIDs();
-    let tempArr = [];
-    let tempExerciseArr = [];
+
+  loadExerciseTypes = () => {
+    let tempTypeArr = [];
+
     getExerciseTypes()
       .then(data => {
         data.forEach(doc => {
           let tempObj = doc.data();
           tempObj.id = doc.id;
-          tempArr.push(tempObj);
+          tempTypeArr.push(tempObj);
         });
 
-        //console.log(tempArr);
+        // console.log(tempTypeArr);
         this.setState({
-          exerciseTypes: tempArr,
+          exerciseTypes: tempTypeArr,
         });
+        return;
       })
       .catch(err => {
         console.log(err);
+        return err;
       });
+  };
+
+  loadExercises = () => {
+    let tempExerciseArr = [];
     getExercisesbyCurrentUser()
       .then(data => {
         data.forEach(doc => {
@@ -95,14 +101,32 @@ class Workout extends React.Component {
           exercise.id = doc.id;
           tempExerciseArr.push(exercise);
         });
-        this.setState({workouts: tempExerciseArr});
-        console.log(tempExerciseArr);
-
-        this.setState({loading: false});
       })
       .catch(err => console.log(err));
+    getDefaultExercises()
+      .then(data => {
+        data.forEach(doc => {
+          let exercise = doc.data();
+          exercise.id = doc.id;
+          tempExerciseArr.push(exercise);
+        });
+        this.setState({workouts: tempExerciseArr});
+
+        // console.log(tempExerciseArr);og
+      })
+      .catch(err => console.log(err));
+  };
+
+  componentDidMount() {
+    //this.setState({isLoading: true});
+    this.loadExercises();
+    this.loadExerciseTypes();
+    this.loadSchedules();
+    this.setState({isLoading: false});
   }
   reload = () => {
+    this.setState({exerciseTypes: []});
+    this.setState({workouts: []});
     this.setState({loading: true});
     let tempArr = [];
     let tempExerciseArr = [];
@@ -130,16 +154,14 @@ class Workout extends React.Component {
           tempExerciseArr.push(exercise);
         });
         this.setState({workouts: tempExerciseArr});
-        console.log(tempExerciseArr);
-
-        this.setState({loading: false});
+        //console.log(tempExerciseArr);
       })
       .catch(err => console.log(err));
 
     console.log('reload');
   };
   render() {
-    if (this.state.loading) {
+    if (this.state.isLoading === true) {
       return (
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#1CA2BB" />
@@ -150,21 +172,6 @@ class Workout extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Luyện tập</Text>
-
-        <View style={styles.searchBarContainer}>
-          <TextInput
-            style={{
-              width: '90%',
-              height: 100,
-              fontSize: 20,
-              fontFamily: 'Roboto-Bold',
-              paddingLeft: 20,
-            }}
-          />
-          <TouchableOpacity>
-            <Icon name="search" size={28} />
-          </TouchableOpacity>
-        </View>
         <FlatList
           contentContainerStyle={{
             flexDirection: 'column',
@@ -483,25 +490,24 @@ class Exercise extends React.Component {
         {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
         {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
         {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
       ],
     };
   }
 
   componentDidMount() {
     const schedules = this.props.schedules;
-    console.log('exercise daysOfWeek:', schedules);
     this.setState({daysOfWeek: schedules});
-
-    // const {exercise} = this.props;
-    // let tempAddToSchedule = this.state.addtoSchedule;
-    // for (var i = 0; i < 6; i++) {
-    //   tempAddToSchedule[i].schID = this.state.daysOfWeek[i].schID;
-    //   tempAddToSchedule[i].exercise = exercise;
-    // }
-    // this.setState({
-    //   addtoSchedule: tempAddToSchedule,
-    // });
-    // console.log(this.state.addtoSchedule);
+    const {exercise} = this.props;
+    let tempAddToSchedule = this.state.addtoSchedule;
+    for (var i = 0; i < 7; i++) {
+      //tempAddToSchedule[i].schID = this.state.daysOfWeek[i].schID;
+      tempAddToSchedule[i].exercise = exercise;
+    }
+    this.setState({
+      addtoSchedule: tempAddToSchedule,
+    });
+    console.log(this.state.addtoSchedule);
   }
   onToggleInfoModal = () => {
     this.setState({infoModalVisible: !this.state.infoModalVisible});
@@ -521,7 +527,6 @@ class Exercise extends React.Component {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'flex-end',
-            marginBottom: 30,
             width: '100%',
             height: '25%',
           }}>
@@ -532,8 +537,8 @@ class Exercise extends React.Component {
             <Image
               source={DeleteIcon}
               style={{
-                width: exercise.isSystem == 'true' ? 0 : 40,
-                height: exercise.isSystem == 'true' ? 0 : 40,
+                width: exercise.isSystem == true ? 0 : 40,
+                height: exercise.isSystem == true ? 0 : 40,
               }}
             />
           </TouchableOpacity>
@@ -547,10 +552,8 @@ class Exercise extends React.Component {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-around',
-            marginBottom: 30,
             width: '100%',
             height: '25%',
-            marginTop: 30,
           }}>
           <TouchableOpacity onPress={this.onToggleInfoModal}>
             <Image
@@ -580,9 +583,11 @@ class Exercise extends React.Component {
               <Text style={styles.infoExerciseTitle}>
                 {exercise.exerciseName}
               </Text>
-              <Text style={styles.infoExerciseDescription}>
-                {exercise.exerciseDescription}
-              </Text>
+              <ScrollView style={{height: '30%'}}>
+                <Text style={styles.infoExerciseDescription}>
+                  {exercise.exerciseDescription}
+                </Text>
+              </ScrollView>
               <Image
                 source={
                   exercise.exerciseImage.uri ? exercise.exerciseImage : TapLuyen
@@ -748,12 +753,12 @@ const styles = StyleSheet.create({
   exerciseContainer: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: 20,
     backgroundColor: 'white',
     marginHorizontal: 10,
-    width: '50%',
+    width: 150,
     height: '100%',
   },
 
@@ -771,6 +776,9 @@ const styles = StyleSheet.create({
   exerciseTitle: {
     fontSize: 23,
     fontFamily: 'Roboto-Bold',
+    width: '100%',
+    height: '35%',
+    textAlign: 'center',
   },
   exerciseCalo: {
     fontSize: 18,
@@ -799,7 +807,10 @@ const styles = StyleSheet.create({
     height: '90%',
   },
   infoExerciseTitle: {fontSize: 30, fontFamily: 'Roboto-Bold'},
-  infoExerciseDescription: {fontSize: 20, fontFamily: 'Roboto-Regular'},
+  infoExerciseDescription: {
+    fontSize: 20,
+    fontFamily: 'Roboto-Regular',
+  },
   addModalContainer: {
     flexDirection: 'column',
     justifyContent: 'center',

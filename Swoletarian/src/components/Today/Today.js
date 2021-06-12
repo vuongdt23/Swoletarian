@@ -9,6 +9,7 @@ import {
   Modal,
   Pressable,
   Alert,
+  ScrollView,
 } from 'react-native';
 import {CheckBox} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -631,9 +632,11 @@ class Exercise extends React.Component {
             visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
               <Text style={styles.infoExerciseTitle}>{data.name}</Text>
-              <Text style={styles.infoExerciseDescription}>
-                {data.description}
-              </Text>
+              <ScrollView style={{height: '30%'}}>
+                <Text style={styles.infoExerciseDescription}>
+                  {data.description}
+                </Text>
+              </ScrollView>
               <Image
                 source={data.imgLink}
                 style={{

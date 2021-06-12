@@ -25,7 +25,7 @@ class Manage extends React.Component {
       },
       {
         id: 2,
-        name: 'Luyện tập',
+        name: 'Workouts',
         image: TapLuyen,
       },
       {
@@ -43,7 +43,7 @@ class Manage extends React.Component {
     const {navigation} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.headerTitle}> Quản lý </Text>
+        <Text style={styles.headerTitle}> Home </Text>
         <FlatList
           style={styles.flatListStyle}
           showsVerticalScrollIndicator={false}
