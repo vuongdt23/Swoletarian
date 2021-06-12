@@ -25,6 +25,7 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
+import TapLuyen from '../../assets/manage/TapLuyen.png';
 import auth from '@react-native-firebase/auth';
 import {
   getExerciseTypes,
@@ -38,8 +39,8 @@ import {
   getScheduleTypes,
 } from '../../Firebase/ScheduleAPI';
 class Workout extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       loading: true,
       exerciseTypes: [],
@@ -51,99 +52,100 @@ class Workout extends React.Component {
 
   getScheduleIDs = () => {
     let tempScheduleArr = [];
-    getSchedulesbyUser ()
-      .then (res => {
-        res.forEach (doc => {
-          let schObj = {scheduleType: doc.data ().scheduleType};
+    getSchedulesbyUser()
+      .then(res => {
+        res.forEach(doc => {
+          let schObj = {scheduleType: doc.data().scheduleType};
           schObj.schID = doc.id;
 
-          tempScheduleArr.push (schObj);
+          tempScheduleArr.push(schObj);
         });
 
-        console.log ('schedule id array list', tempScheduleArr);
-        this.setState ({schedules: tempScheduleArr});
+        console.log('schedule id array list', tempScheduleArr);
+        this.setState({schedules: tempScheduleArr});
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
   };
-  componentDidMount () {
-    this.getScheduleIDs ();
+  componentDidMount() {
+    this.getScheduleIDs();
     let tempArr = [];
     let tempExerciseArr = [];
-    getExerciseTypes ()
-      .then (data => {
-        data.forEach (doc => {
-          let tempObj = doc.data ();
+    getExerciseTypes()
+      .then(data => {
+        data.forEach(doc => {
+          let tempObj = doc.data();
           tempObj.id = doc.id;
-          tempArr.push (tempObj);
+          tempArr.push(tempObj);
         });
 
         //console.log(tempArr);
-        this.setState ({
+        this.setState({
           exerciseTypes: tempArr,
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
-    getExercisesbyCurrentUser ()
-      .then (data => {
-        data.forEach (doc => {
-          let exercise = doc.data ();
+    getExercisesbyCurrentUser()
+      .then(data => {
+        data.forEach(doc => {
+          let exercise = doc.data();
           exercise.id = doc.id;
-          tempExerciseArr.push (exercise);
+          tempExerciseArr.push(exercise);
         });
-        this.setState ({workouts: tempExerciseArr});
-        console.log (tempExerciseArr);
+        this.setState({workouts: tempExerciseArr});
+        console.log(tempExerciseArr);
 
-        this.setState ({loading: false});
+        this.setState({loading: false});
       })
-      .catch (err => console.log (err));
+      .catch(err => console.log(err));
   }
   reload = () => {
-    this.setState ({loading: true});
+    this.setState({loading: true});
     let tempArr = [];
     let tempExerciseArr = [];
-    getExerciseTypes ()
-      .then (data => {
-        data.forEach (doc => {
-          let tempObj = doc.data ();
+    getExerciseTypes()
+      .then(data => {
+        data.forEach(doc => {
+          let tempObj = doc.data();
           tempObj.id = doc.id;
-          tempArr.push (tempObj);
+          tempArr.push(tempObj);
         });
 
         //console.log(tempArr);
-        this.setState ({
+        this.setState({
           exerciseTypes: tempArr,
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
-    getExercisesbyCurrentUser ()
-      .then (data => {
-        data.forEach (doc => {
-          let exercise = doc.data ();
+    getExercisesbyCurrentUser()
+      .then(data => {
+        data.forEach(doc => {
+          let exercise = doc.data();
           exercise.id = doc.id;
-          tempExerciseArr.push (exercise);
+          tempExerciseArr.push(exercise);
         });
-        this.setState ({workouts: tempExerciseArr});
-        console.log (tempExerciseArr);
+        this.setState({workouts: tempExerciseArr});
+        console.log(tempExerciseArr);
 
-        this.setState ({loading: false});
+        this.setState({loading: false});
       })
-      .catch (err => console.log (err));
+      .catch(err => console.log(err));
 
-    console.log ('reload');
+    console.log('reload');
   };
-  render () {
-    if (this.state.loading)
+  render() {
+    if (this.state.loading) {
       return (
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#1CA2BB" />
         </View>
       );
+    }
     // console.log(this.state.exerciseTypes[2]);
     return (
       <View style={styles.container}>
@@ -177,13 +179,14 @@ class Workout extends React.Component {
               exerciseType={item}
               data={this.state.workouts.length > 0 ? this.state.workouts : []}
               reloadAll={() => {
-                this.reload ();
-                console.log ('child calls reload');
+                this.reload();
+                console.log('child calls reload');
               }}
+              schedules={this.state.schedules}
             />
           )}
           keyExtractor={(item, index) => {
-            return index.toString ();
+            return index.toString();
           }}
         />
       </View>
@@ -192,17 +195,17 @@ class Workout extends React.Component {
 }
 
 class ExerciseWrap extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       addNewModalVisible: false,
       data: [],
     };
   }
   onToggleAddNewModal = () => {
-    this.setState ({addNewModalVisible: !this.state.addNewModalVisible});
+    this.setState({addNewModalVisible: !this.state.addNewModalVisible});
   };
-  getNewId () {
+  getNewId() {
     const num = this.state.data.length;
     return this.state.data[num - 1].id + 1;
   }
@@ -212,7 +215,7 @@ class ExerciseWrap extends React.Component {
       exercise.exerciseDescription === '' ||
       exercise.exerciseCalories === 0
     ) {
-      Alert.alert ('Chưa đủ thông tin', '', [
+      Alert.alert('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -221,20 +224,20 @@ class ExerciseWrap extends React.Component {
         },
       ]);
     } else {
-      addExercise (exercise)
-        .then (res => {
-          console.log (res);
+      addExercise(exercise)
+        .then(res => {
+          console.log(res);
         })
-        .catch (err => {
-          console.log (err);
+        .catch(err => {
+          console.log(err);
         });
-      this.props.reloadAll ();
-      this.onToggleAddNewModal ();
+      this.props.reloadAll();
+      this.onToggleAddNewModal();
     }
   };
   deleteExercise = exercise => {
     var newData = this.state.data;
-    Alert.alert ('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
+    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -243,28 +246,29 @@ class ExerciseWrap extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          deleteExercise (exercise.id)
-            .then (res => {
-              console.log (res);
-              this.props.reloadAll ();
+          deleteExercise(exercise.id)
+            .then(res => {
+              console.log(res);
+              this.props.reloadAll();
             })
-            .catch (err => {
-              console.log (err);
+            .catch(err => {
+              console.log(err);
             });
         },
       },
     ]);
   };
-  componentDidMount () {
+  componentDidMount() {
     const {data, exerciseType} = this.props;
     let workouts = [];
-    data.forEach (item => {
-      if (item.exerciseType === exerciseType.exerciseTypeName)
-        workouts.push (item);
+    data.forEach(item => {
+      if (item.exerciseType === exerciseType.exerciseTypeName) {
+        workouts.push(item);
+      }
     });
-    this.setState ({data: workouts});
+    this.setState({data: workouts});
   }
-  render () {
+  render() {
     const {exerciseType} = this.props;
     let dataIconType = AbsIcon;
     switch (exerciseType.exerciseTypeName) {
@@ -302,7 +306,7 @@ class ExerciseWrap extends React.Component {
       exerciseCalories: 0,
       exerciseType: exerciseType.exerciseTypeName,
       isSystem: 'false',
-      exerciseOwner: auth ().currentUser.uid,
+      exerciseOwner: auth().currentUser.uid,
     };
     return (
       <View style={styles.exerciseWrap}>
@@ -318,8 +322,7 @@ class ExerciseWrap extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={this.onToggleAddNewModal}
-            >
+              onPress={this.onToggleAddNewModal}>
               <Icon name="add" size={40} />
               <Text style={styles.exerciseTitle}>Thêm mới</Text>
             </TouchableOpacity>
@@ -331,20 +334,20 @@ class ExerciseWrap extends React.Component {
             data={this.state.data.length > 0 ? this.state.data : []}
             renderItem={({item}) => (
               <Exercise
+                schedules={this.props.schedules}
                 exercise={item}
-                delete={exercise => this.deleteExercise (exercise)}
+                delete={exercise => this.deleteExercise(exercise)}
               />
             )}
             keyExtractor={(item, index) => {
-              return index.toString ();
+              return index.toString();
             }}
           />
           <View style={styles.addNewModalContainer}>
             <Modal
               animationType="fade"
               transparent={true}
-              visible={this.state.addNewModalVisible}
-            >
+              visible={this.state.addNewModalVisible}>
               <View style={styles.addNewModalView}>
                 <Text style={styles.addExerciseTitle}>Thêm bài tập mới</Text>
                 <View>
@@ -386,7 +389,7 @@ class ExerciseWrap extends React.Component {
                     <Text style={styles.textInside}>Calo/phút</Text>
                     <TextInput
                       onChangeText={text => {
-                        newExercise.exerciseCalories = parseInt (text);
+                        newExercise.exerciseCalories = parseInt(text);
                       }}
                       style={{
                         justifyContent: 'center',
@@ -416,8 +419,7 @@ class ExerciseWrap extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
-                  }}
-                >
+                  }}>
                   <Pressable
                     style={{
                       width: '40%',
@@ -429,9 +431,8 @@ class ExerciseWrap extends React.Component {
                       marginRight: '5%',
                     }}
                     onPress={() => {
-                      this.onToggleAddNewModal ();
-                    }}
-                  >
+                      this.onToggleAddNewModal();
+                    }}>
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       Hủy
                     </Text>
@@ -446,9 +447,8 @@ class ExerciseWrap extends React.Component {
                       alignItems: 'center',
                     }}
                     onPress={() => {
-                      this.addNewExercise (newExercise);
-                    }}
-                  >
+                      this.addNewExercise(newExercise);
+                    }}>
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       OK
                     </Text>
@@ -463,45 +463,55 @@ class ExerciseWrap extends React.Component {
   }
 }
 class Exercise extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       infoModalVisible: false,
       addModalVisible: false,
-      daysOfWeek: [
-        {id: 2, name: 'monday'},
-        {id: 3, name: 'tuesday'},
-        {id: 4, name: 'wednesday'},
-        {id: 5, name: 'thursday'},
-        {id: 6, name: 'friday'},
-        {id: 7, name: 'saturday'},
+      daysOfWeek: [],
+      addtoSchedule: [
+        {
+          schID: '',
+          exercise: {},
+          rep: 0,
+          set: 0,
+          isChecked: false,
+        },
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
+        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
       ],
-      addtoSchedule:[],
     };
   }
 
+  componentDidMount() {
+    const schedules = this.props.schedules;
+    console.log('exercise daysOfWeek:', schedules);
+    this.setState({daysOfWeek: schedules});
+
+    // const {exercise} = this.props;
+    // let tempAddToSchedule = this.state.addtoSchedule;
+    // for (var i = 0; i < 6; i++) {
+    //   tempAddToSchedule[i].schID = this.state.daysOfWeek[i].schID;
+    //   tempAddToSchedule[i].exercise = exercise;
+    // }
+    // this.setState({
+    //   addtoSchedule: tempAddToSchedule,
+    // });
+    // console.log(this.state.addtoSchedule);
+  }
   onToggleInfoModal = () => {
-    this.setState ({infoModalVisible: !this.state.infoModalVisible});
+    this.setState({infoModalVisible: !this.state.infoModalVisible});
   };
   onToggleAddModal = () => {
-    this.setState ({addModalVisible: !this.state.addModalVisible});
+    this.setState({addModalVisible: !this.state.addModalVisible});
   };
   addToWorkoutSchedule = exercise => {};
-  AddToDayContainer = params => {
-    const [isChecked, setIsChecked] = useState (false);
-    return (
-      <View style={styles.addToDayContainer}>
-        <Text style={styles.addExerciseTitle}>{params.day.name}</Text>
-        <CheckBox
-          checked={isChecked}
-          size={40}
-          onPress={() => setIsChecked (!isChecked)}
-          
-        />
-      </View>
-    );
-  };
-  render () {
+
+  render() {
     const {exercise} = this.props;
     let newExercise = {};
     return (
@@ -514,13 +524,11 @@ class Exercise extends React.Component {
             marginBottom: 30,
             width: '100%',
             height: '25%',
-          }}
-        >
+          }}>
           <TouchableOpacity
             onPress={() => {
-              this.props.delete (exercise);
-            }}
-          >
+              this.props.delete(exercise);
+            }}>
             <Image
               source={DeleteIcon}
               style={{
@@ -530,7 +538,7 @@ class Exercise extends React.Component {
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.exerciseTitle}>{exercise.name}</Text>
+        <Text style={styles.exerciseTitle}>{exercise.exerciseName}</Text>
         <Text style={styles.exerciseCalo}>
           {exercise.exerciseCalories} calo mỗi phút
         </Text>
@@ -543,8 +551,7 @@ class Exercise extends React.Component {
             width: '100%',
             height: '25%',
             marginTop: 30,
-          }}
-        >
+          }}>
           <TouchableOpacity onPress={this.onToggleInfoModal}>
             <Image
               source={InfoIcon}
@@ -568,15 +575,18 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.infoModalVisible}
-          >
+            visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
-              <Text style={styles.infoExerciseTitle}>{exercise.name}</Text>
+              <Text style={styles.infoExerciseTitle}>
+                {exercise.exerciseName}
+              </Text>
               <Text style={styles.infoExerciseDescription}>
                 {exercise.exerciseDescription}
               </Text>
               <Image
-                source={exercise.exerciseImage}
+                source={
+                  exercise.exerciseImage.uri ? exercise.exerciseImage : TapLuyen
+                }
                 style={{
                   height: '40%',
                   width: '90%',
@@ -593,8 +603,7 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleInfoModal}
-              >
+                onPress={this.onToggleInfoModal}>
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -606,17 +615,16 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.addModalVisible}
-          >
+            visible={this.state.addModalVisible}>
             <View style={styles.addModalView}>
               <Text style={styles.addExerciseTitle}>Thêm vào lịch tập</Text>
               <FlatList
                 data={this.state.daysOfWeek}
                 renderItem={({item}) => (
-                  <this.AddToDayContainer day={item} exercise={exercise} />
+                  <AddToDayContainer day={item} exercise={exercise} />
                 )}
                 keyExtractor={item => {
-                  return item.id.toString ();
+                  return item.schID.toString();
                 }}
               />
 
@@ -660,8 +668,7 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleAddModal}
-              >
+                onPress={this.onToggleAddModal}>
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -673,8 +680,26 @@ class Exercise extends React.Component {
     );
   }
 }
+function AddToDayContainer(params) {
+  const [isChecked, setIsChecked] = useState(false);
+  return (
+    <View style={styles.addToDayContainer}>
+      <Text style={styles.addExerciseTitle}>
+        {capitalizeFirstLetter(params.day.scheduleType)}
+      </Text>
+      <CheckBox
+        checked={isChecked}
+        size={40}
+        onPress={() => setIsChecked(!isChecked)}
+      />
+    </View>
+  );
+}
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
