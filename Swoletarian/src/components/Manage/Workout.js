@@ -40,8 +40,8 @@ import {
   getScheduleTypes,
 } from '../../Firebase/ScheduleAPI';
 class Workout extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       isLoading: true,
       exerciseTypes: [],
@@ -53,166 +53,149 @@ class Workout extends React.Component {
 
   loadSchedules = () => {
     let tempScheduleArr = [];
-    getSchedulesbyUser()
-      .then(res => {
-        res.forEach(doc => {
-          let schObj = {scheduleType: doc.data().scheduleType};
+    getSchedulesbyUser ()
+      .then (res => {
+        res.forEach (doc => {
+          let schObj = {scheduleType: doc.data ().scheduleType};
           schObj.schID = doc.id;
-          tempScheduleArr.push(schObj);
+          tempScheduleArr.push (schObj);
         });
 
         //console.log('schedule id array list', tempScheduleArr);
-        this.setState({schedules: tempScheduleArr});
+        this.setState ({schedules: tempScheduleArr});
       })
-      .catch(err => {
-        console.log(err);
+      .catch (err => {
+        console.log (err);
       });
   };
 
   loadExerciseTypes = () => {
     let tempTypeArr = [];
 
-    getExerciseTypes()
-      .then(data => {
-        data.forEach(doc => {
-          let tempObj = doc.data();
+    getExerciseTypes ()
+      .then (data => {
+        data.forEach (doc => {
+          let tempObj = doc.data ();
           tempObj.id = doc.id;
-          tempTypeArr.push(tempObj);
+          tempTypeArr.push (tempObj);
         });
 
         // console.log(tempTypeArr);
-        this.setState({
+        this.setState ({
           exerciseTypes: tempTypeArr,
         });
         return;
       })
-      .catch(err => {
-        console.log(err);
+      .catch (err => {
+        console.log (err);
         return err;
       });
   };
 
   loadExercises = () => {
     let tempExerciseArr = [];
-    getExercisesbyCurrentUser()
-      .then(data => {
-        data.forEach(doc => {
-          let exercise = doc.data();
+    getExercisesbyCurrentUser ()
+      .then (data => {
+        data.forEach (doc => {
+          let exercise = doc.data ();
           exercise.id = doc.id;
-          tempExerciseArr.push(exercise);
+          tempExerciseArr.push (exercise);
         });
       })
-      .catch(err => console.log(err));
-    getDefaultExercises()
-      .then(data => {
-        data.forEach(doc => {
-          let exercise = doc.data();
+      .catch (err => console.log (err));
+    getDefaultExercises ()
+      .then (data => {
+        data.forEach (doc => {
+          let exercise = doc.data ();
           exercise.id = doc.id;
-          tempExerciseArr.push(exercise);
+          tempExerciseArr.push (exercise);
         });
-        this.setState({workouts: tempExerciseArr});
+        this.setState ({workouts: tempExerciseArr});
 
         // console.log(tempExerciseArr);og
       })
-      .catch(err => console.log(err));
+      .catch (err => console.log (err));
   };
 
-  componentDidMount() {
+  componentDidMount () {
     //this.setState({isLoading: true});
-    this.loadExercises();
-    this.loadExerciseTypes();
-    this.loadSchedules();
-    this.setState({isLoading: false});
+    this.loadExercises ();
+    this.loadExerciseTypes ();
+    this.loadSchedules ();
   }
   reload = () => {
-    this.setState({exerciseTypes: []});
-    this.setState({workouts: []});
-    this.setState({loading: true});
-    let tempArr = [];
-    let tempExerciseArr = [];
-    getExerciseTypes()
-      .then(data => {
-        data.forEach(doc => {
-          let tempObj = doc.data();
-          tempObj.id = doc.id;
-          tempArr.push(tempObj);
-        });
+    this.setState ({
+      exerciseTypes: [],
+      workouts: [],
+      schedules: [],
+    });
 
-        //console.log(tempArr);
-        this.setState({
-          exerciseTypes: tempArr,
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    getExercisesbyCurrentUser()
-      .then(data => {
-        data.forEach(doc => {
-          let exercise = doc.data();
-          exercise.id = doc.id;
-          tempExerciseArr.push(exercise);
-        });
-        this.setState({workouts: tempExerciseArr});
-        //console.log(tempExerciseArr);
-      })
-      .catch(err => console.log(err));
-
-    console.log('reload');
+    this.loadExercises ();
+    this.loadExerciseTypes ();
+    this.loadSchedules ();
   };
-  render() {
-    if (this.state.isLoading === true) {
+  render () {
+    console.log (
+      this.state.workouts.length,
+      this.state.schedules.length,
+      this.state.exerciseTypes.length
+    );
+    if (
+      this.state.workouts.length === 0 ||
+      this.state.schedules.length === 0 ||
+      this.state.exerciseTypes.length === 0
+    ) {
       return (
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#1CA2BB" />
         </View>
       );
-    }
-    // console.log(this.state.exerciseTypes[2]);
-    return (
-      <View style={styles.container}>
-        <Text style={styles.headerTitle}>Luyện tập</Text>
-        <FlatList
-          contentContainerStyle={{
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          style={styles.flatListContainer}
-          showsVerticalScrollIndicator={false}
-          data={this.state.exerciseTypes}
-          renderItem={({item}) => (
-            <ExerciseWrap
-              exerciseType={item}
-              data={this.state.workouts.length > 0 ? this.state.workouts : []}
-              reloadAll={() => {
-                this.reload();
-                console.log('child calls reload');
-              }}
-              schedules={this.state.schedules}
-            />
-          )}
-          keyExtractor={(item, index) => {
-            return index.toString();
-          }}
-        />
-      </View>
-    );
+    } else
+      // console.log(this.state.exerciseTypes[2]);
+      return (
+        <View style={styles.container}>
+          <Text style={styles.headerTitle}>Luyện tập</Text>
+          <FlatList
+            contentContainerStyle={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            style={styles.flatListContainer}
+            showsVerticalScrollIndicator={false}
+            data={this.state.exerciseTypes}
+            renderItem={({item}) => (
+              <ExerciseWrap
+                exerciseType={item}
+                data={this.state.workouts.length > 0 ? this.state.workouts : []}
+                reloadAll={() => {
+                  this.reload ();
+                  console.log ('child calls reload');
+                }}
+                schedules={this.state.schedules}
+              />
+            )}
+            keyExtractor={(item, index) => {
+              return index.toString ();
+            }}
+          />
+        </View>
+      );
   }
 }
 
 class ExerciseWrap extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       addNewModalVisible: false,
       data: [],
     };
   }
   onToggleAddNewModal = () => {
-    this.setState({addNewModalVisible: !this.state.addNewModalVisible});
+    this.setState ({addNewModalVisible: !this.state.addNewModalVisible});
   };
-  getNewId() {
+  getNewId () {
     const num = this.state.data.length;
     return this.state.data[num - 1].id + 1;
   }
@@ -222,7 +205,7 @@ class ExerciseWrap extends React.Component {
       exercise.exerciseDescription === '' ||
       exercise.exerciseCalories === 0
     ) {
-      Alert.alert('Chưa đủ thông tin', '', [
+      Alert.alert ('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -231,20 +214,20 @@ class ExerciseWrap extends React.Component {
         },
       ]);
     } else {
-      addExercise(exercise)
-        .then(res => {
-          console.log(res);
+      addExercise (exercise)
+        .then (res => {
+          console.log (res);
         })
-        .catch(err => {
-          console.log(err);
+        .catch (err => {
+          console.log (err);
         });
-      this.props.reloadAll();
-      this.onToggleAddNewModal();
+      this.props.reloadAll ();
+      this.onToggleAddNewModal ();
     }
   };
   deleteExercise = exercise => {
     var newData = this.state.data;
-    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
+    Alert.alert ('Xóa bài tập', 'Bạn muốn xóa bài tập này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -253,29 +236,29 @@ class ExerciseWrap extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          deleteExercise(exercise.id)
-            .then(res => {
-              console.log(res);
-              this.props.reloadAll();
+          deleteExercise (exercise.id)
+            .then (res => {
+              console.log (res);
+              this.props.reloadAll ();
             })
-            .catch(err => {
-              console.log(err);
+            .catch (err => {
+              console.log (err);
             });
         },
       },
     ]);
   };
-  componentDidMount() {
+  componentDidMount () {
     const {data, exerciseType} = this.props;
     let workouts = [];
-    data.forEach(item => {
+    data.forEach (item => {
       if (item.exerciseType === exerciseType.exerciseTypeName) {
-        workouts.push(item);
+        workouts.push (item);
       }
     });
-    this.setState({data: workouts});
+    this.setState ({data: workouts});
   }
-  render() {
+  render () {
     const {exerciseType} = this.props;
     let dataIconType = AbsIcon;
     switch (exerciseType.exerciseTypeName) {
@@ -313,7 +296,7 @@ class ExerciseWrap extends React.Component {
       exerciseCalories: 0,
       exerciseType: exerciseType.exerciseTypeName,
       isSystem: 'false',
-      exerciseOwner: auth().currentUser.uid,
+      exerciseOwner: auth ().currentUser.uid,
     };
     return (
       <View style={styles.exerciseWrap}>
@@ -329,7 +312,8 @@ class ExerciseWrap extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={this.onToggleAddNewModal}>
+              onPress={this.onToggleAddNewModal}
+            >
               <Icon name="add" size={40} />
               <Text style={styles.exerciseTitle}>Thêm mới</Text>
             </TouchableOpacity>
@@ -343,18 +327,19 @@ class ExerciseWrap extends React.Component {
               <Exercise
                 schedules={this.props.schedules}
                 exercise={item}
-                delete={exercise => this.deleteExercise(exercise)}
+                delete={exercise => this.deleteExercise (exercise)}
               />
             )}
             keyExtractor={(item, index) => {
-              return index.toString();
+              return index.toString ();
             }}
           />
           <View style={styles.addNewModalContainer}>
             <Modal
               animationType="fade"
               transparent={true}
-              visible={this.state.addNewModalVisible}>
+              visible={this.state.addNewModalVisible}
+            >
               <View style={styles.addNewModalView}>
                 <Text style={styles.addExerciseTitle}>Thêm bài tập mới</Text>
                 <View>
@@ -396,7 +381,7 @@ class ExerciseWrap extends React.Component {
                     <Text style={styles.textInside}>Calo/phút</Text>
                     <TextInput
                       onChangeText={text => {
-                        newExercise.exerciseCalories = parseInt(text);
+                        newExercise.exerciseCalories = parseInt (text);
                       }}
                       style={{
                         justifyContent: 'center',
@@ -426,7 +411,8 @@ class ExerciseWrap extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center',
-                  }}>
+                  }}
+                >
                   <Pressable
                     style={{
                       width: '40%',
@@ -438,8 +424,9 @@ class ExerciseWrap extends React.Component {
                       marginRight: '5%',
                     }}
                     onPress={() => {
-                      this.onToggleAddNewModal();
-                    }}>
+                      this.onToggleAddNewModal ();
+                    }}
+                  >
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       Hủy
                     </Text>
@@ -454,8 +441,9 @@ class ExerciseWrap extends React.Component {
                       alignItems: 'center',
                     }}
                     onPress={() => {
-                      this.addNewExercise(newExercise);
-                    }}>
+                      this.addNewExercise (newExercise);
+                    }}
+                  >
                     <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                       OK
                     </Text>
@@ -470,8 +458,8 @@ class ExerciseWrap extends React.Component {
   }
 }
 class Exercise extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
       infoModalVisible: false,
       addModalVisible: false,
@@ -495,29 +483,29 @@ class Exercise extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const schedules = this.props.schedules;
-    this.setState({daysOfWeek: schedules});
+    this.setState ({daysOfWeek: schedules});
     const {exercise} = this.props;
     let tempAddToSchedule = this.state.addtoSchedule;
     for (var i = 0; i < 7; i++) {
       //tempAddToSchedule[i].schID = this.state.daysOfWeek[i].schID;
       tempAddToSchedule[i].exercise = exercise;
     }
-    this.setState({
+    this.setState ({
       addtoSchedule: tempAddToSchedule,
     });
-    console.log(this.state.addtoSchedule);
+    // console.log(this.state.addtoSchedule);
   }
   onToggleInfoModal = () => {
-    this.setState({infoModalVisible: !this.state.infoModalVisible});
+    this.setState ({infoModalVisible: !this.state.infoModalVisible});
   };
   onToggleAddModal = () => {
-    this.setState({addModalVisible: !this.state.addModalVisible});
+    this.setState ({addModalVisible: !this.state.addModalVisible});
   };
   addToWorkoutSchedule = exercise => {};
 
-  render() {
+  render () {
     const {exercise} = this.props;
     let newExercise = {};
     return (
@@ -529,11 +517,13 @@ class Exercise extends React.Component {
             justifyContent: 'flex-end',
             width: '100%',
             height: '25%',
-          }}>
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
-              this.props.delete(exercise);
-            }}>
+              this.props.delete (exercise);
+            }}
+          >
             <Image
               source={DeleteIcon}
               style={{
@@ -554,7 +544,8 @@ class Exercise extends React.Component {
             justifyContent: 'space-around',
             width: '100%',
             height: '25%',
-          }}>
+          }}
+        >
           <TouchableOpacity onPress={this.onToggleInfoModal}>
             <Image
               source={InfoIcon}
@@ -578,7 +569,8 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.infoModalVisible}>
+            visible={this.state.infoModalVisible}
+          >
             <View style={styles.infoModalView}>
               <Text style={styles.infoExerciseTitle}>
                 {exercise.exerciseName}
@@ -608,7 +600,8 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleInfoModal}>
+                onPress={this.onToggleInfoModal}
+              >
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -620,7 +613,8 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.addModalVisible}>
+            visible={this.state.addModalVisible}
+          >
             <View style={styles.addModalView}>
               <Text style={styles.addExerciseTitle}>Thêm vào lịch tập</Text>
               <FlatList
@@ -629,7 +623,7 @@ class Exercise extends React.Component {
                   <AddToDayContainer day={item} exercise={exercise} />
                 )}
                 keyExtractor={item => {
-                  return item.schID.toString();
+                  return item.schID.toString ();
                 }}
               />
 
@@ -673,7 +667,8 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleAddModal}>
+                onPress={this.onToggleAddModal}
+              >
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -685,26 +680,26 @@ class Exercise extends React.Component {
     );
   }
 }
-function AddToDayContainer(params) {
-  const [isChecked, setIsChecked] = useState(false);
+function AddToDayContainer (params) {
+  const [isChecked, setIsChecked] = useState (false);
   return (
     <View style={styles.addToDayContainer}>
       <Text style={styles.addExerciseTitle}>
-        {capitalizeFirstLetter(params.day.scheduleType)}
+        {capitalizeFirstLetter (params.day.scheduleType)}
       </Text>
       <CheckBox
         checked={isChecked}
         size={40}
-        onPress={() => setIsChecked(!isChecked)}
+        onPress={() => setIsChecked (!isChecked)}
       />
     </View>
   );
 }
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+function capitalizeFirstLetter (string) {
+  return string.charAt (0).toUpperCase () + string.slice (1);
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
   container: {
     flex: 1,
     flexDirection: 'column',

@@ -13,212 +13,34 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import {FlatList} from 'react-native-gesture-handler';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
+import {getFoodbyID} from '../../Firebase/foodAPI';
+import {
+  getMenubyCurrentUser,
+  getFoodsfromMenu,
+  getMenuDetailsfromMenu,
+} from '../../Firebase/MenuAPI';
 
 class Menu extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {
+      menuDetails: [],
       currentMealName: '',
       currentMeal: [],
-      Breakfirst: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 3,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 4,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-        {
-          id: 5,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 6,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 7,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-      ],
-      Lunch: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 3,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 4,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-        {
-          id: 5,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 6,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 7,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-      ],
-      Dinner: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 3,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 4,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-        {
-          id: 5,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 6,
-          name: 'Thịt bò',
-          calo: 278,
-          isSystem: 'true',
-          grams: 100,
-        },
-        {
-          id: 7,
-          name: 'Khoai tây',
-          calo: 90,
-          isSystem: 'true',
-          grams: 200,
-        },
-      ],
-      SupMeal1: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-      ],
-      SupMeal2: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-        {
-          id: 2,
-          name: 'Bơ đậu',
-          calo: 580,
-          isSystem: 'true',
-          grams: 300,
-        },
-      ],
-      SupMeal3: [
-        {
-          id: 1,
-          name: 'Gạo nếp',
-          calo: 130,
-          isSystem: 'true',
-          grams: 300,
-        },
-      ],
+      Breakfast: [],
+      Lunch: [],
+      Dinner: [],
+      Snack: [],
     };
   }
+  componentDidMount () {
+    this.loadMenus ();
+  }
+
+  loadFoods = () => {};
   deleteNutrion = nutrion => {
     var newData = this.state.currentMeal;
-    Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa ' + nutrion.name + '?', [
+    Alert.alert ('Xóa thực phẩm', 'Bạn muốn xóa ' + nutrion.name + '?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -227,28 +49,22 @@ class Menu extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          newData.map((element, index) => {
-            if (element.id == nutrion.id) newData.splice(index, 1);
+          newData.map ((element, index) => {
+            if (element.id == nutrion.id) newData.splice (index, 1);
           });
-          this.setState({currentMeal: newData});
+          this.setState ({currentMeal: newData});
           switch (this.state.currentMealName) {
-            case 'Breakfirst':
-              this.setState({Breakfirst: newData});
+            case 'Breakfast':
+              this.setState ({Breakfast: newData});
               break;
             case 'Lunch':
-              this.setState({Tuesday: newData});
+              this.setState ({Tuesday: newData});
               break;
             case 'Dinner':
-              this.setState({Dinner: newData});
+              this.setState ({Dinner: newData});
               break;
-            case 'SupMeal1':
-              this.setState({SupMeal1: newData});
-              break;
-            case 'SupMeal2':
-              this.setState({SupMeal2: newData});
-              break;
-            case 'SupMeal3':
-              this.setState({SupMeal3: newData});
+            case 'Snack':
+              this.setState ({Snack: newData});
               break;
           }
         },
@@ -256,30 +72,101 @@ class Menu extends React.Component {
     ]);
   };
   setCurrentMeal = meal => {
-    this.setState({currentMealName: meal});
+    console.log ('menu state of', this.state.menuDetails[4]);
+    this.setState ({currentMealName: meal});
+    let menuIndex = 0;
+    let details = [];
+    let tempFoods = [];
     switch (meal) {
-      case 'Breakfirst':
-        this.setState({currentMeal: this.state.Breakfirst});
+      case 'Breakfast':
+        menuIndex = this.state.menuDetails.findIndex (
+          menu => menu.menuType === 'breakfast'
+        );
+        //   console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+        //   console.log (details);
+        tempFoods = [];
+        if (details.length === 0) {
+          this.setState ({Breakfast: []});
+        } else {
+          details.forEach (detail => {
+            getFoodbyID (detail.foodID)
+              .then (res => {
+                let foodObj = res.data ();
+                console.log ('food', res.data ());
+                foodObj.amount = detail.amount;
+                console.log ('Food OBject', foodObj);
+                tempFoods.push (foodObj);
+                this.setState ({Breakfast: tempFoods}, () => {
+                  console.log ('breakfast', this.state.Breakfast);
+                  this.setState ({currentMeal: [...this.state.Breakfast]});
+                });
+              })
+              .catch (err => {
+                console.log (err);
+              });
+          });
+        }
         break;
       case 'Lunch':
-        this.setState({currentMeal: this.state.Lunch});
+        menuIndex = this.state.menuDetails.findIndex (
+          menu => menu.menuType === 'lunch'
+        );
+        console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+        console.log (details);
+        tempFoods = [];
+        details.forEach (detail => {
+          getFoodbyID (detail.foodID)
+            .then (res => {
+              let foodObj = res.data ();
+              console.log ('food', res.data ());
+              foodObj.amount = detail.amount;
+              console.log ('Food OBject', foodObj);
+              tempFoods.push (foodObj);
+              this.setState ({Lunch: tempFoods}, () => {
+                console.log ('lunch', this.state.lunch);
+                this.setState ({currentMeal: [...this.state.Lunch]});
+              });
+            })
+            .catch (err => {
+              console.log (err);
+            });
+        });
         break;
       case 'Dinner':
-        this.setState({currentMeal: this.state.Dinner});
+        menuIndex = this.state.menuDetails.findIndex (
+          menu => menu.menuType === 'dinner'
+        );
+        console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+        console.log (details);
+        tempFoods = [];
+        details.forEach (detail => {
+          getFoodbyID (detail.foodID)
+            .then (res => {
+              let foodObj = res.data ();
+              console.log ('food', res.data ());
+              foodObj.amount = detail.amount;
+              console.log ('Food OBject', foodObj);
+              tempFoods.push (foodObj);
+              this.setState ({Dinner: tempFoods}, () => {
+                console.log ('breakfast', this.state.Dinner);
+                this.setState ({currentMeal: [...this.state.Dinner]});
+              });
+            })
+            .catch (err => {
+              console.log (err);
+            });
+        });
         break;
-      case 'SupMeal1':
-        this.setState({currentMeal: this.state.SupMeal1});
-        break;
-      case 'SupMeal2':
-        this.setState({currentMeal: this.state.SupMeal2});
-        break;
-      case 'SupMeal3':
-        this.setState({currentMeal: this.state.SupMeal3});
+      case 'Snack':
+        this.setState ({currentMeal: this.state.Snack});
         break;
     }
   };
   deleteCurrentMenu = () => {
-    Alert.alert('Xóa thực đơn', 'Bạn muốn xóa thực đơn hiện tại?', [
+    Alert.alert ('Xóa thực đơn', 'Bạn muốn xóa thực đơn hiện tại?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -288,28 +175,69 @@ class Menu extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          this.setState({currentMeal: []});
-          this.setState({Breakfirst: []});
-          this.setState({Lunch: []});
-          this.setState({Dinner: []});
-          this.setState({SupMeal1: []});
-          this.setState({SupMeal2: []});
-          this.setState({SupMeal3: []});
-          this.setState({currentDayName: ''});
+          this.setState ({currentMeal: []});
+          this.setState ({Breakfast: []});
+          this.setState ({Lunch: []});
+          this.setState ({Dinner: []});
+          this.setState ({Snack: []});
+          this.setState ({currentDayName: ''});
         },
       },
     ]);
   };
-  render() {
+
+  loadMenus = () => {
+    let tempMenuArr = [];
+    let finalMenuArr = [];
+    getMenubyCurrentUser ()
+      .then (res => {
+        res.forEach (doc => {
+          let tempMenuObj = doc.data ();
+          tempMenuObj.menuID = doc.id;
+
+          tempMenuArr.push (tempMenuObj);
+        });
+        tempMenuArr.forEach (menu => {
+          let menuDetailList = {
+            menuID: menu.menuID,
+            menuType: menu.menuType,
+            menuDetails: [],
+          };
+
+          console.log ('initial menu list', menuDetailList);
+          getMenuDetailsfromMenu (menu.menuID)
+            .then (res => {
+              if (res.empty) finalMenuArr.push (menuDetailList);
+              else {
+                res.forEach (doc => {
+                  menuDetailList.menuDetails.push (doc.data ());
+                  //  console.log (menuDetailList);
+                });
+                finalMenuArr.push (menuDetailList);
+              }
+              this.setState ({menuDetails: finalMenuArr}, () => {
+                console.log ('aaaaaaaaaaaaaaaaaaaaa', this.state.menuDetails);
+              });
+            })
+            .catch (err => console.log (err));
+        });
+
+        // console.log ('Menus by this user', tempMenuArr);
+      })
+      .catch (err => {
+        console.log (err);
+      });
+  };
+  render () {
     return (
       <View style={styles.container}>
+
         <Text style={styles.headerTitle}>Thực đơn</Text>
         <View style={styles.dateContainer}>
-          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
+          <Text style={styles.dateContent}>{new Date ().toDateString ()}</Text>
         </View>
         <View>
-          <DropDown
-            callDropDownValue={meal => this.setCurrentMeal(meal)}></DropDown>
+          <DropDown callDropDownValue={meal => this.setCurrentMeal (meal)} />
         </View>
         <View style={styles.contentContainer}>
           <FlatList
@@ -326,12 +254,14 @@ class Menu extends React.Component {
               <Nutrion
                 data={item}
                 deleteNutrion={nutrion => {
-                  this.deleteNutrion(nutrion);
-                }}></Nutrion>
+                  this.deleteNutrion (nutrion);
+                }}
+              />
             )}
             keyExtractor={(item, index) => {
-              return item.id.toString();
-            }}></FlatList>
+              return index.toString ();
+            }}
+          />
           <View
             style={{
               flexDirection: 'column',
@@ -339,19 +269,22 @@ class Menu extends React.Component {
               height: '15%',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                this.deleteCurrentMenu();
-              }}>
+                this.deleteCurrentMenu ();
+              }}
+            >
               <Text style={styles.deleteButton}>Xóa thực đơn hiện tại</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                this.props.navigation.navigate('Nutrions');
-              }}>
+                this.props.navigation.navigate ('Nutrions');
+              }}
+            >
               <Text style={styles.deleteButton}>Thêm món mới</Text>
             </TouchableOpacity>
           </View>
@@ -362,51 +295,51 @@ class Menu extends React.Component {
 }
 
 class Nutrion extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super (props);
     this.state = {};
   }
 
-  render() {
+  render () {
     const {data} = this.props;
-    let calos = (data.calo * data.grams) / 100;
+    let calos = data.foodCalories * data.amount / 100;
     return (
       <View style={styles.nutrionContainer}>
-        <Text style={styles.nutrionTitle}>{data.name}</Text>
-        <Text style={styles.caloTitle}>{data.calo}calos/100gram</Text>
+        <Text style={styles.nutrionTitle}>{data.foodName}</Text>
+        <Text style={styles.caloTitle}>{data.foodCalories}calos/100gram</Text>
         <View style={styles.calosContainer}>
-          <Text style={styles.gramsTitle}>{data.grams} grams</Text>
-          <Text style={styles.calosTitle}>{calos.toString()} calos</Text>
+          <Text style={styles.gramsTitle}>{data.amount} grams</Text>
+          <Text style={styles.calosTitle}>{calos.toString ()} calos</Text>
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.deleteNutrion(data);
+            this.props.deleteNutrion (data);
           }}
-          style={{width: '8%', height: '40%'}}>
+          style={{width: '8%', height: '40%'}}
+        >
           <Image
             source={DeleteIcon}
             style={{
               width: '100%',
               height: '100%',
-            }}></Image>
+            }}
+          />
         </TouchableOpacity>
       </View>
     );
   }
 }
 
-function DropDown(props) {
+function DropDown (props) {
   const itemsList = [
-    {label: 'Sáng', value: 'Breakfirst'},
+    {label: 'Sáng', value: 'Breakfast'},
     {label: 'Trưa', value: 'Lunch'},
     {label: 'Tối', value: 'Dinner'},
-    {label: 'Bữa phụ 1', value: 'SupMeal1'},
-    {label: 'Bữa phụ 2', value: 'SupMeal2'},
-    {label: 'Bữa phụ 3', value: 'SupMeal3'},
+    {label: 'Bữa phụ ', value: 'Snack'},
   ];
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState();
-  const [items, setItems] = useState(itemsList);
+  const [open, setOpen] = useState (false);
+  const [value, setValue] = useState ();
+  const [items, setItems] = useState (itemsList);
   return (
     <DropDownPicker
       placeholder={'...'}
@@ -425,13 +358,13 @@ function DropDown(props) {
         fontFamily: 'Roboto-Bold',
       }}
       onChangeValue={value => {
-        props.callDropDownValue(value.toString());
+        props.callDropDownValue (value.toString ());
       }}
     />
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
   container: {
     flex: 1,
     flexDirection: 'column',
