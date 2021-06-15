@@ -8,3 +8,21 @@ export const getCaloriesRecapByCurrentUser = async () => {
     .where ('caloriesRecapOwner', '==', userID)
     .get ();
 };
+
+export const getWorkoutRecapByCurrentUser = async () => {
+  const userID = auth ().currentUser.uid;
+  return await firestore ()
+    .collection ('workoutRecaps')
+    .where ('recapOwner', '==', userID)
+    .get ();
+};
+
+export const getStatsbyCurentUser =  async ()=>{
+  const userID = auth ().currentUser.uid;
+  return await firestore ()
+  .collection ('userStats')
+  .where ('userStatsOwner', '==', userID)
+  .get ();
+}
+
+

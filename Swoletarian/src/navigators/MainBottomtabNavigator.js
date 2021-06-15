@@ -5,6 +5,7 @@ import Login from '../components/Screen/SignUp';
 import ManageNavigator from './ManageNavigator';
 import StatisticNavigator from './StatisticNavigator';
 import MySelf from '../components/Myself/Myself';
+import Today from '../components/Today/Today';
 const Tab = createBottomTabNavigator();
 
 function MainBottomtabNavigator() {
@@ -23,7 +24,9 @@ function MainBottomtabNavigator() {
           } else if (route.name === 'Myself') {
             iconName = focused ? 'person-outline' : 'person-outline';
           }
-          return <Icon name={iconName} size={40} color={color} />;
+          return (
+            <Icon name={iconName} size={focused ? 45 : 40} color={color} />
+          );
         },
       })}
       tabBarOptions={{
@@ -39,7 +42,7 @@ function MainBottomtabNavigator() {
           height: 60,
           borderTopWidth: 0,
           elevation: 0,
-          backgroundColor: '#FFDD93',
+          backgroundColor: '#0C2750',
         },
       }}>
       <Tab.Screen
@@ -51,7 +54,7 @@ function MainBottomtabNavigator() {
         }}
       />
       <Tab.Screen name="Statistic" component={StatisticNavigator}></Tab.Screen>
-      <Tab.Screen name="Today" component={Login} />
+      <Tab.Screen name="Today" component={Today} />
       <Tab.Screen name="Myself" component={MySelf} />
     </Tab.Navigator>
   );

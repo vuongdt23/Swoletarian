@@ -33,7 +33,7 @@ class Schedule extends React.Component {
         'Friday',
         'Saturday',
       ],
-      currentDay: [],
+      currentDayWorkouts: [],
       currentDayName: '',
       Monday: [
         {
@@ -49,6 +49,7 @@ class Schedule extends React.Component {
           exerciseType: 'abs',
           isSystem: 'false',
           reps: 30,
+          sets: 3,
         },
         {
           id: 2,
@@ -63,6 +64,7 @@ class Schedule extends React.Component {
           exerciseType: 'abs',
           isSystem: 'false',
           reps: 20,
+          sets: 3,
         },
         {
           id: 3,
@@ -77,6 +79,7 @@ class Schedule extends React.Component {
           exerciseType: 'abs',
           isSystem: 'false',
           reps: 20,
+          sets: 2,
         },
         {
           id: 4,
@@ -91,6 +94,7 @@ class Schedule extends React.Component {
           exerciseType: 'shoulder',
           isSystem: 'false',
           reps: 20,
+          sets: 3,
         },
         {
           id: 5,
@@ -105,6 +109,7 @@ class Schedule extends React.Component {
           exerciseType: 'shoulder',
           isSystem: 'false',
           reps: 20,
+          sets: 2,
         },
         {
           id: 6,
@@ -119,6 +124,7 @@ class Schedule extends React.Component {
           exerciseType: 'tricep',
           isSystem: 'false',
           reps: 20,
+          sets: 5,
         },
         {
           id: 7,
@@ -133,6 +139,52 @@ class Schedule extends React.Component {
           exerciseType: 'tricep',
           isSystem: 'false',
           reps: 20,
+          sets: 3,
+        },
+        {
+          id: 8,
+          name: 'Plank',
+          description:
+            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
+          imgLink: {
+            uri:
+              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
+          },
+          caloBurned: 12,
+          exerciseType: 'shoulder',
+          isSystem: 'false',
+          reps: 20,
+          sets: 2,
+        },
+        {
+          id: 9,
+          name: 'Plank',
+          description:
+            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
+          imgLink: {
+            uri:
+              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
+          },
+          caloBurned: 12,
+          exerciseType: 'tricep',
+          isSystem: 'false',
+          reps: 20,
+          sets: 5,
+        },
+        {
+          id: 10,
+          name: 'Plank',
+          description:
+            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
+          imgLink: {
+            uri:
+              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
+          },
+          caloBurned: 12,
+          exerciseType: 'tricep',
+          isSystem: 'false',
+          reps: 20,
+          sets: 3,
         },
       ],
       Tuesday: [],
@@ -146,22 +198,22 @@ class Schedule extends React.Component {
     this.setState({currentDayName: day});
     switch (day) {
       case 'Monday':
-        this.setState({currentDay: this.state.Monday});
+        this.setState({currentDayWorkouts: this.state.Monday});
         break;
       case 'Tuesday':
-        this.setState({currentDay: this.state.Tuesday});
+        this.setState({currentDayWorkouts: this.state.Tuesday});
         break;
       case 'Wednesday':
-        this.setState({currentDay: this.state.Wednesday});
+        this.setState({currentDayWorkouts: this.state.Wednesday});
         break;
       case 'Thursday':
-        this.setState({currentDay: this.state.Thursday});
+        this.setState({currentDayWorkouts: this.state.Thursday});
         break;
       case 'Friday':
-        this.setState({currentDay: this.state.Friday});
+        this.setState({currentDayWorkouts: this.state.Friday});
         break;
       case 'Saturday':
-        this.setState({currentDay: this.state.Saturday});
+        this.setState({currentDayWorkouts: this.state.Saturday});
         break;
     }
   };
@@ -175,7 +227,7 @@ class Schedule extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          this.setState({currentDay: []});
+          this.setState({currentDayWorkouts: []});
           this.setState({Monday: []});
           this.setState({Tuesday: []});
           this.setState({Wednesday: []});
@@ -188,7 +240,7 @@ class Schedule extends React.Component {
     ]);
   };
   deleteExercise = exercise => {
-    var newData = this.state.currentDay;
+    var newData = this.state.currentDayWorkouts;
     Alert.alert(
       'Xóa bài tập',
       'Bạn muốn xóa ' +
@@ -208,7 +260,7 @@ class Schedule extends React.Component {
             newData.map((element, index) => {
               if (element.id == exercise.id) newData.splice(index, 1);
             });
-            this.setState({currentDay: newData});
+            this.setState({currentDayWorkouts: newData});
             switch (this.state.currentDayName) {
               case 'Monday':
                 this.setState({Monday: newData});
@@ -246,9 +298,8 @@ class Schedule extends React.Component {
           <FlatList
             numColumns={1}
             contentContainerStyle={{}}
-            style={styles.flatListContainer}
             showsVerticalScrollIndicator={false}
-            data={this.state.currentDay}
+            data={this.state.currentDayWorkouts}
             renderItem={({item}) => (
               <Exercise
                 data={item}
@@ -339,8 +390,13 @@ class Exercise extends React.Component {
           source={dataIconType}
           style={{marginLeft: '3%', width: '8%', height: '80%'}}></Image>
         <Text style={styles.exerciseTitle}>{data.name}</Text>
-        <View style={styles.repsContainer}>
-          <Text style={styles.repsContentStyle}>x{data.reps}</Text>
+        <View style={styles.repSetContainer}>
+          <View style={styles.setsContainer}>
+            <Text style={styles.repsContentStyle}>{data.sets} sets</Text>
+          </View>
+          <View style={styles.repsContainer}>
+            <Text style={styles.repsContentStyle}>{data.reps} reps</Text>
+          </View>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -434,9 +490,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
   headerTitle: {
     fontSize: 45,
@@ -457,7 +513,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: '5%',
-    height: '60%',
+    height: '75%',
     width: '90%',
   },
   exerciseContainer: {
@@ -465,7 +521,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginVertical: 8,
-    borderRadius: 45,
+    borderRadius: 10,
     paddingHorizontal: '2%',
     height: 60,
     marginRight: '4%',
@@ -475,6 +531,7 @@ const styles = StyleSheet.create({
   exerciseTitle: {
     fontSize: 25,
     fontFamily: 'Roboto-Bold',
+    width: '40%',
   },
   infoModalContainer: {
     flexDirection: 'column',
@@ -492,20 +549,35 @@ const styles = StyleSheet.create({
   },
   infoExerciseTitle: {fontSize: 30, fontFamily: 'Roboto-Bold'},
   infoExerciseDescription: {fontSize: 20, fontFamily: 'Roboto-Regular'},
+  repSetContainer: {
+    height: '100%',
+    width: '20%',
+    borderRadius: 25,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
   repsContainer: {
-    height: '80%',
-    width: '18%',
+    height: '40%',
+    width: '80%',
     backgroundColor: '#1CA2BB',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
   },
   repsContentStyle: {
-    fontSize: 25,
+    fontSize: 18,
     color: 'white',
     fontFamily: 'Roboto-Bold',
   },
-  flatListContainer: {},
+  setsContainer: {
+    height: '40%',
+    width: '80%',
+    backgroundColor: '#5CEC4F',
+    borderRadius: 25,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
   addNewButton: {
     width: '100%',
     borderRadius: 5,

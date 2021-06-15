@@ -5,19 +5,18 @@ import {
   FlatList,
   Text,
   StyleSheet,
+  Button,
 } from 'react-native';
-import { Button } from 'react-native-elements/dist/buttons/Button';
-import {uploadExercises} from '../../Firebase/defaultExercises';
 class BFP extends React.Component {
   constructor (props) {
     super (props);
   }
-  uploadExercisesto = () => uploadExercises;
-  render () {
-    return <SafeAreaView style={styles.container}>
-   
-    </SafeAreaView>
-    
+  render() {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Button title={'uploadExercies'}></Button>
+      </SafeAreaView>
+    );
   }
 }
 
