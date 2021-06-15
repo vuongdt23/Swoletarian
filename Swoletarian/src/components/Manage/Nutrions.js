@@ -307,10 +307,28 @@ class Nutrions extends React.Component {
 function AddToMenuContainer (props) {
   const [isChecked, setIsChecked] = useState (false);
   //console.log ('props for funct', props);
+  let menuTypeName = '';
+  switch (props.menu.menuType) {
+    case 'breakfast':
+      menuTypeName = 'Sáng';
+      break;
+    case 'lunch':
+      menuTypeName = 'Trưa';
+      break;
+    case 'dinner':
+      menuTypeName = 'Tối';
+      break;
+    case 'snack':
+      menuTypeName = 'Bữa phụ';
+      break;
+    default:
+      menuTypeName = 'Sáng';
+      break;
+  }
   return (
     <View style={styles.addToMenuContainer}>
       <Text style={styles.addMenuTitle}>
-        {capitalizeFirstLetter (props.menu.menuType)}
+        {menuTypeName}
       </Text>
       <CheckBox
         checked={isChecked}
@@ -377,7 +395,19 @@ class Nutrion extends React.Component {
         ]
       );
     } else {
-      uploadMenuDetails (this.state.addFoodToMenu);
+      let addFoodRequests = [...this.state.addFoodToMenu];
+      addFoodRequests.forEach (request => {
+        request.amount = this.state.addFoodToMenuWithGrams;
+      });
+      uploadMenuDetails (addFoodRequests);
+      Alert.alert ('Thêm vào thực đơn thành công', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
       this.onToggleAddModal ();
     }
   };
@@ -457,7 +487,15 @@ class Nutrion extends React.Component {
                 keyboardType="numeric"
                 maxLength={3}
                 onChangeText={text => {
-                  this.setState ({addFoodToMenuWithGrams: parseInt (text)});
+                  this.setState (
+                    {addFoodToMenuWithGrams: parseInt (text)},
+                    () => {
+                      console.log (
+                        'grams: ',
+                        this.state.addFoodToMenuWithGrams
+                      );
+                    }
+                  );
                 }}
                 style={{
                   fontSize: 23,
