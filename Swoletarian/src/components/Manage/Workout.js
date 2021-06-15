@@ -24,11 +24,13 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
+import getExerciseTypes from '../../Firebase/exerciseAPI';
 class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       exercises: [],
+      exerciseTypes: [],
       type: [
         {id: 1, name: 'abs'},
         {id: 2, name: 'shoulder'},
@@ -107,7 +109,11 @@ class Workout extends React.Component {
       ],
     };
   }
-
+ componentDidMount(){
+getExerciseTypes().then(data=>{
+ 
+})
+ }
   render() {
     return (
       <View style={styles.container}>

@@ -20,23 +20,27 @@ class CalosAnalysis extends React.Component {
   constructor (props) {
     super (props);
   }
-  state={
-    caloriesRecaps:[],
-    labels:[],
-    data:[],
-  }
+  state = {
+    caloriesRecaps: [],
+    labels: [],
+    data: [],
+  };
   componentDidMount () {
-    let tempArray=[];
+    let tempArray = [];
+    let labArr = [];
     getCaloriesRecapByCurrentUser ()
       .then (res => {
         res.forEach (doc => {
-         
-         tempArray.push(doc.data());
+          tempArray.push (doc.data ().recapCalories);
+          labArr.push (doc.data ().caloriesRecapDate.toDate ().toUTCString());
         });
-        this.setState({caloriesRecaps: tempArray});
-        console.log(tempArray);
+
+        this.setState ({labels: labArr});
+        console.log (labArr);
+        this.setState ({caloriesRecaps: tempArray});
+        console.log (tempArray);
       })
-      .then (err => console.log (err));
+      .catch (err => console.log (err));
   }
 
   render () {
@@ -45,24 +49,16 @@ class CalosAnalysis extends React.Component {
         <Text>Bezier Line Chart</Text>
         <LineChart
           data={{
-            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+            labels: this.state.labels,
             datasets: [
-              {
-                data: [
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                  Math.random () * 100,
-                ],
-              },
+             1000,
+             2000,
             ],
           }}
           width={400} // from react-native
           height={400}
-          yAxisLabel="$"
-          yAxisSuffix="k"
+          yAxisLabel="calories hấp thụ"
+          yAxisSuffix="thời gian"
           yAxisInterval={1} // optional, defaults to 1
           chartConfig={{
             backgroundColor: '#58DADA',

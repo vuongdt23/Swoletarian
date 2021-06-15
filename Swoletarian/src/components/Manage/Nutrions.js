@@ -77,7 +77,7 @@ class Nutrions extends React.Component {
         food.id = doc.id;
         tempArray.push (food);
       });
-      console.log (tempArray);
+    //  console.log (tempArray);
       this.setState ({foods: tempArray});
     });
   }

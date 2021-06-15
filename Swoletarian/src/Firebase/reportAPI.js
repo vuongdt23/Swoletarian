@@ -8,7 +8,3 @@ export const getCaloriesRecapByCurrentUser = async () => {
     .where ('caloriesRecapOwner', '==', userID)
     .get ();
 };
-
-export const getFoodfromRecaps = async(recap)=>{
-    return recap.get();
-}
