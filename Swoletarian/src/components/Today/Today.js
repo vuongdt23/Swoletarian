@@ -21,6 +21,8 @@ import TricepIcon from '../../assets/Icon/workout/TricepIcon.png';
 import ShoulderIcon from '../../assets/Icon/workout/ShoulderIcon.png';
 import BicepIcon from '../../assets/Icon/workout/BicepIcon.png';
 import LegIcon from '../../assets/Icon/workout/LegIcon.png';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+const Tab = createMaterialTopTabNavigator();
 class Today extends React.Component {
   constructor(props) {
     super(props);
@@ -411,19 +413,55 @@ class Today extends React.Component {
       isCompleteNutrions: false,
     };
   }
+
+  resetCurrentCalosBurnedAndGained = () => {
+    this.setState({currentTotalCalosBurned: 0});
+    this.setState({currentTotalCalosGained: 0});
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.headerTitle}>Hôm nay</Text>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
+        </View>
+
+        <Tab.Navigator
+          style={styles.contentContainer}
+          tabBarOptions={{
+            labelStyle: {fontSize: 25, fontFamily: 'Roboto-Bold'},
+          }}>
+          <Tab.Screen
+            name="Luyện tập"
+            children={() => (
+              <ScheduleWrap
+                currentDayWorkouts={
+                  this.state.currentDayWorkouts
+                }></ScheduleWrap>
+            )}
+          />
+          <Tab.Screen
+            name="Dinh dưỡng"
+            children={() => (
+              <MenuWrap
+                currentDayNutrions={this.state.currentDayNutrions}></MenuWrap>
+            )}
+          />
+        </Tab.Navigator>
+      </View>
+    );
+  }
+}
+
+export class ScheduleWrap extends React.Component {
+  state = {currentTotalCalosBurned: 0};
   handleWorkoutChecked = (totalCalosBurned, isChecked) => {
     var newTotalCalosBurned = this.state.currentTotalCalosBurned;
     isChecked
       ? (newTotalCalosBurned = newTotalCalosBurned - totalCalosBurned)
       : (newTotalCalosBurned = newTotalCalosBurned + totalCalosBurned);
     this.setState({currentTotalCalosBurned: newTotalCalosBurned});
-  };
-  handleNutrionChecked = (totalCalosGained, isChecked) => {
-    var newTotalCalosGained = this.state.currentTotalCalosGained;
-    isChecked
-      ? (newTotalCalosGained = newTotalCalosGained - totalCalosGained)
-      : (newTotalCalosGained = newTotalCalosGained + totalCalosGained);
-    this.setState({currentTotalCalosGained: newTotalCalosGained});
   };
   completeCurrentDayWorkouts = () => {
     Alert.alert(
@@ -444,9 +482,50 @@ class Today extends React.Component {
       ],
     );
   };
-  resetCurrentCalosBurnedAndGained = () => {
-    this.setState({currentTotalCalosBurned: 0});
-    this.setState({currentTotalCalosGained: 0});
+  render() {
+    return (
+      <View style={styles.insideContentContainer}>
+        <FlatList
+          numColumns={1}
+          contentContainerStyle={{}}
+          showsVerticalScrollIndicator={false}
+          data={this.props.currentDayWorkouts}
+          renderItem={({item}) => (
+            <Exercise
+              data={item}
+              handleWorkoutChecked={(totalCalosBurned, isChecked) => {
+                this.handleWorkoutChecked(totalCalosBurned, isChecked);
+              }}></Exercise>
+          )}
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}></FlatList>
+        <View style={styles.totalContainer}>
+          <TouchableOpacity
+            disabled={this.state.isCompleteWorkouts ? true : false}
+            style={styles.completeButton}
+            onPress={() => {
+              this.completeCurrentDayWorkouts();
+            }}>
+            <Text style={styles.completeButtonTitle}>Hoàn thành</Text>
+          </TouchableOpacity>
+          <Text style={styles.currentTotalCalosBurned}>
+            {this.state.currentTotalCalosBurned} calos
+          </Text>
+        </View>
+      </View>
+    );
+  }
+}
+
+export class MenuWrap extends React.Component {
+  state = {currentTotalCalosGained: 0};
+  handleNutrionChecked = (totalCalosGained, isChecked) => {
+    var newTotalCalosGained = this.state.currentTotalCalosGained;
+    isChecked
+      ? (newTotalCalosGained = newTotalCalosGained - totalCalosGained)
+      : (newTotalCalosGained = newTotalCalosGained + totalCalosGained);
+    this.setState({currentTotalCalosGained: newTotalCalosGained});
   };
   completeCurrentDayNutrions = () => {
     Alert.alert(
@@ -469,89 +548,39 @@ class Today extends React.Component {
   };
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.headerTitle}>Hôm nay</Text>
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
-        </View>
-        <View>
-          <DropDown
-            callDropDownValue={value => {
-              this.setState({currentDisplayValue: value});
-              this.resetCurrentCalosBurnedAndGained();
-            }}></DropDown>
-        </View>
-        <View style={styles.contentContainer}>
-          {this.state.currentDisplayValue == 'Workout' ? (
-            <View style={styles.insideContentContainer}>
-              <FlatList
-                numColumns={1}
-                contentContainerStyle={{}}
-                showsVerticalScrollIndicator={false}
-                data={this.state.currentDayWorkouts}
-                renderItem={({item}) => (
-                  <Exercise
-                    data={item}
-                    handleWorkoutChecked={(totalCalosBurned, isChecked) => {
-                      this.handleWorkoutChecked(totalCalosBurned, isChecked);
-                    }}></Exercise>
-                )}
-                keyExtractor={(item, index) => {
-                  return item.id.toString();
-                }}></FlatList>
-              <View style={styles.totalContainer}>
-                <TouchableOpacity
-                  disabled={this.state.isCompleteWorkouts ? true : false}
-                  style={styles.completeButton}
-                  onPress={() => {
-                    this.completeCurrentDayWorkouts();
-                  }}>
-                  <Text style={styles.completeButtonTitle}>Hoàn thành</Text>
-                </TouchableOpacity>
-                <Text style={styles.currentTotalCalosBurned}>
-                  {this.state.currentTotalCalosBurned} calos
-                </Text>
-              </View>
-            </View>
-          ) : (
-            <View style={styles.insideContentContainer}>
-              <FlatList
-                numColumns={1}
-                contentContainerStyle={{}}
-                showsVerticalScrollIndicator={true}
-                data={this.state.currentDayNutrions}
-                renderItem={({item}) => (
-                  <NutrionWrap
-                    data={item}
-                    handleNutrionChecked={(totalCalosGained, isChecked) => {
-                      this.handleNutrionChecked(totalCalosGained, isChecked);
-                      console.log('Today: ' + totalCalosGained + isChecked);
-                    }}></NutrionWrap>
-                )}
-                keyExtractor={(item, index) => {
-                  return item.id.toString();
-                }}></FlatList>
-              <View style={styles.totalContainer}>
-                <TouchableOpacity
-                  disabled={this.state.isCompleteNutrions ? true : false}
-                  style={styles.completeButton}
-                  onPress={() => {
-                    this.completeCurrentDayNutrions();
-                  }}>
-                  <Text style={styles.completeButtonTitle}>Hoàn thành</Text>
-                </TouchableOpacity>
-                <Text style={styles.currentTotalCalosBurned}>
-                  {this.state.currentTotalCalosGained} calos
-                </Text>
-              </View>
-            </View>
+      <View style={styles.insideContentContainer}>
+        <FlatList
+          numColumns={1}
+          contentContainerStyle={{}}
+          showsVerticalScrollIndicator={true}
+          data={this.props.currentDayNutrions}
+          renderItem={({item}) => (
+            <NutrionWrap
+              data={item}
+              handleNutrionChecked={(totalCalosGained, isChecked) => {
+                this.handleNutrionChecked(totalCalosGained, isChecked);
+              }}></NutrionWrap>
           )}
+          keyExtractor={(item, index) => {
+            return index.toString();
+          }}></FlatList>
+        <View style={styles.totalContainer}>
+          <TouchableOpacity
+            disabled={this.state.isCompleteNutrions ? true : false}
+            style={styles.completeButton}
+            onPress={() => {
+              this.completeCurrentDayNutrions();
+            }}>
+            <Text style={styles.completeButtonTitle}>Hoàn thành</Text>
+          </TouchableOpacity>
+          <Text style={styles.currentTotalCalosBurned}>
+            {this.state.currentTotalCalosGained} calos
+          </Text>
         </View>
       </View>
     );
   }
 }
-
 class Exercise extends React.Component {
   constructor(props) {
     super(props);
@@ -740,38 +769,6 @@ class Nutrion extends React.Component {
   }
 }
 
-function DropDown(props) {
-  const itemsList = [
-    {label: 'Luyện tập', value: 'Workout'},
-    {label: 'Dinh dưỡng', value: 'Nutrion'},
-  ];
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState();
-  const [items, setItems] = useState(itemsList);
-  return (
-    <DropDownPicker
-      placeholder={'...'}
-      open={open}
-      value={value}
-      items={items}
-      setOpen={setOpen}
-      setValue={setValue}
-      setItems={setItems}
-      maxHeight={300}
-      containerStyle={{
-        width: '90%',
-      }}
-      textStyle={{
-        fontSize: 28,
-        fontFamily: 'Roboto-Bold',
-      }}
-      onChangeValue={value => {
-        props.callDropDownValue(value.toString());
-      }}
-    />
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -799,9 +796,9 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   contentContainer: {
-    marginTop: '5%',
-    height: '75%',
-    width: '90%',
+    height: '80%',
+    width: '100%',
+    backgroundColor: 'white',
   },
   insideContentContainer: {
     height: '100%',
