@@ -20,173 +20,21 @@ import ShoulderIcon from '../../assets/Icon/workout/ShoulderIcon.png';
 import BicepIcon from '../../assets/Icon/workout/BicepIcon.png';
 import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
+import TapLuyen from '../../assets/manage/TapLuyen.png';
 
+import {
+  getSchedulesbyUser,
+  getScheduleDetailsbySchedule,
+} from '../../Firebase/ScheduleAPI';
+import {getExercisebyID} from '../../Firebase/ExerciseAPI.js';
 class Schedule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      daysOfWeek: [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-      ],
+      scheduleDetails: [],
       currentDayWorkouts: [],
       currentDayName: '',
-      Monday: [
-        {
-          id: 1,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 30,
-          sets: 3,
-        },
-        {
-          id: 2,
-          name: 'Renegade row',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 3,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 4,
-          name: 'Squat to press',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 5,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 6,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 5,
-        },
-        {
-          id: 7,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 8,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 9,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 5,
-        },
-        {
-          id: 10,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-      ],
+      Monday: [],
       Tuesday: [],
       Wednesday: [],
       Thursday: [],
@@ -194,98 +42,126 @@ class Schedule extends React.Component {
       Saturday: [],
     };
   }
+  loadExercisesbyDay = day => {
+    let dayFiled = capitalizeFirstLetter(day);
+    let tempExercises = [];
+    let scheduleIndex = this.state.scheduleDetails.findIndex(
+      schedule => schedule.scheduleType === day,
+    );
+
+    //console.log('schedule index', scheduleIndex);
+    let details = [
+      ...this.state.scheduleDetails[scheduleIndex].scheduleDetails,
+    ];
+    //console.log('detail Array', details);
+
+    if (details.length === 0) {
+      this.setState({[dayFiled]: tempExercises}, () => {
+        this.setState({currentDayWorkouts: [...this.state[dayFiled]]});
+      });
+    } else {
+      details.forEach(detail => {
+        let exerciseObj = null;
+        //  console.log(detail);
+        getExercisebyID(detail.exerciseID)
+          .then(res => {
+            // console.log('id', detail.scheduleDetailID);
+            exerciseObj = res.data();
+            // console.log('exercise', res.data());
+
+            exerciseObj.scheduleDetailID = detail.scheduleDetailID;
+            exerciseObj.rep = detail.rep;
+            exerciseObj.set = detail.set;
+            //   console.log('exercise Object', exerciseObj);
+            tempExercises.push(exerciseObj);
+            this.setState({[dayFiled]: tempExercises}, () => {
+              this.setState({currentDayWorkouts: [...this.state[dayFiled]]});
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      });
+    }
+  };
   setDayOfWeek = day => {
     this.setState({currentDayName: day});
     switch (day) {
       case 'Monday':
-        this.setState({currentDayWorkouts: this.state.Monday});
+        this.loadExercisesbyDay('monday');
         break;
       case 'Tuesday':
-        this.setState({currentDayWorkouts: this.state.Tuesday});
+        this.loadExercisesbyDay('tuesday');
         break;
       case 'Wednesday':
-        this.setState({currentDayWorkouts: this.state.Wednesday});
+        this.loadExercisesbyDay('wednesday');
         break;
       case 'Thursday':
-        this.setState({currentDayWorkouts: this.state.Thursday});
+        this.loadExercisesbyDay('thursday');
         break;
       case 'Friday':
-        this.setState({currentDayWorkouts: this.state.Friday});
+        this.loadExercisesbyDay('friday');
         break;
       case 'Saturday':
-        this.setState({currentDayWorkouts: this.state.Saturday});
+        this.loadExercisesbyDay('saturday');
         break;
     }
   };
-  deleteCurrentSchedule = () => {
-    Alert.alert('Xóa lịch tập luyện', 'Bạn muốn xóa lịch tập luyện hiện tại?', [
-      {
-        text: 'Hủy',
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {
-        text: 'Xóa',
-        onPress: () => {
-          this.setState({currentDayWorkouts: []});
-          this.setState({Monday: []});
-          this.setState({Tuesday: []});
-          this.setState({Wednesday: []});
-          this.setState({Thursday: []});
-          this.setState({Friday: []});
-          this.setState({Saturday: []});
-          this.setState({currentDayName: ''});
-        },
-      },
-    ]);
+
+  loadSchedules = () => {
+    let tempScheduleArr = [];
+    let finalScheduleArr = [];
+    getSchedulesbyUser()
+      .then(res => {
+        res.forEach(doc => {
+          let tempSchObj = doc.data();
+          tempSchObj.scheduleID = doc.id;
+
+          tempScheduleArr.push(tempSchObj);
+        });
+        tempScheduleArr.forEach(schedule => {
+          let scheduleDetailList = {
+            scheduleID: schedule.scheduleID,
+            scheduleType: schedule.scheduleType,
+            scheduleDetails: [],
+          };
+
+          //  console.log ('initial menu list', menuDetailList);
+          getScheduleDetailsbySchedule(schedule.scheduleID)
+            .then(res => {
+              if (res.empty) finalScheduleArr.push(scheduleDetailList);
+              else {
+                res.forEach(doc => {
+                  let tempSchObj = doc.data();
+                  tempSchObj.scheduleDetailID = doc.id;
+                  scheduleDetailList.scheduleDetails.push(tempSchObj);
+                  //  console.log (menuDetailList);
+                });
+                finalScheduleArr.push(scheduleDetailList);
+              }
+              this.setState(
+                {scheduleDetails: finalScheduleArr, isLoading: false},
+                () => {},
+              );
+            })
+            .catch(err => console.log(err));
+        });
+
+        // console.log ('Menus by this user', tempMenuArr);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
-  deleteExercise = exercise => {
-    var newData = this.state.currentDayWorkouts;
-    Alert.alert(
-      'Xóa bài tập',
-      'Bạn muốn xóa ' +
-        exercise.name +
-        ' khỏi ' +
-        this.state.currentDayName +
-        '?',
-      [
-        {
-          text: 'Hủy',
-          onPress: () => {},
-          style: 'cancel',
-        },
-        {
-          text: 'Xóa',
-          onPress: () => {
-            newData.map((element, index) => {
-              if (element.id == exercise.id) newData.splice(index, 1);
-            });
-            this.setState({currentDayWorkouts: newData});
-            switch (this.state.currentDayName) {
-              case 'Monday':
-                this.setState({Monday: newData});
-                break;
-              case 'Tuesday':
-                this.setState({Tuesday: newData});
-                break;
-              case 'Wednesday':
-                this.setState({Wednesday: newData});
-                break;
-              case 'Thursday':
-                this.setState({Thursday: newData});
-                break;
-              case 'Friday':
-                this.setState({Friday: newData});
-                break;
-              case 'Saturday':
-                this.setState({Saturday: newData});
-                break;
-            }
-          },
-        },
-      ],
-    );
-  };
+
+  componentDidMount() {
+    this.loadSchedules();
+    getExercisebyID('14Qt61VLBIVsmrodYTVX')
+      .then(res => {
+        console.log('Test get by ID', res.data());
+      })
+      .catch(err => console.log(err));
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -308,7 +184,7 @@ class Schedule extends React.Component {
                 }}></Exercise>
             )}
             keyExtractor={(item, index) => {
-              return item.id.toString();
+              return index.toString();
             }}></FlatList>
           <View
             style={{
@@ -389,13 +265,13 @@ class Exercise extends React.Component {
         <Image
           source={dataIconType}
           style={{marginLeft: '3%', width: '8%', height: '80%'}}></Image>
-        <Text style={styles.exerciseTitle}>{data.name}</Text>
+        <Text style={styles.exerciseTitle}>{data.exerciseName}</Text>
         <View style={styles.repSetContainer}>
           <View style={styles.setsContainer}>
-            <Text style={styles.repsContentStyle}>{data.sets} sets</Text>
+            <Text style={styles.repsContentStyle}>{data.set} set</Text>
           </View>
           <View style={styles.repsContainer}>
-            <Text style={styles.repsContentStyle}>{data.reps} reps</Text>
+            <Text style={styles.repsContentStyle}>{data.rep} rep</Text>
           </View>
         </View>
         <TouchableOpacity
@@ -416,12 +292,12 @@ class Exercise extends React.Component {
             transparent={true}
             visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
-              <Text style={styles.infoExerciseTitle}>{data.name}</Text>
+              <Text style={styles.infoExerciseTitle}>{data.exerciseName}</Text>
               <Text style={styles.infoExerciseDescription}>
-                {data.description}
+                {data.exerciseDescription}
               </Text>
               <Image
-                source={data.imgLink}
+                source={data.exerciseImage.uri ? data.exerciseImage : TapLuyen}
                 style={{
                   height: '40%',
                   width: '90%',
@@ -464,7 +340,7 @@ function DropDown(props) {
   const [items, setItems] = useState(itemsList);
   return (
     <DropDownPicker
-      placeholder={'...'}
+      placeholder={''}
       open={open}
       value={value}
       items={items}
@@ -485,7 +361,9 @@ function DropDown(props) {
     />
   );
 }
-
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

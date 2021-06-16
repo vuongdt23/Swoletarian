@@ -2,32 +2,30 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 export const getScheduleTypes = async () => {
-  return await firestore ().collection ('scheduleTypes').get ();
+  return await firestore().collection('scheduleTypes').get();
 };
 
 export const createSchedule = schObj => {
-  return firestore ().collection ('workoutSchedules').add (schObj);
+  return firestore().collection('workoutSchedules').add(schObj);
 };
 
 export const getSchedulesbyUser = async () => {
-  const id = auth ().currentUser.uid;
-  return await firestore ()
-    .collection ('workoutSchedules')
-    .where ('scheduleOwner', '==', id)
-    .get ();
+  const id = auth().currentUser.uid;
+  return await firestore()
+    .collection('workoutSchedules')
+    .where('scheduleOwner', '==', id)
+    .get();
 };
 
 export const createScheduleDetail = scheduleDetail => {
-  return firestore ()
-    .collection ('workoutScheduleDetails')
-    .add (scheduleDetail);
+  return firestore().collection('workoutScheduleDetails').add(scheduleDetail);
 };
 
 export const createScheduleDetailfromParams = (
   scheduleID,
   exerciseID,
   rep,
-  set
+  set,
 ) => {
   let detailObj = {
     schedule: scheduleID,
@@ -35,5 +33,12 @@ export const createScheduleDetailfromParams = (
     rep: rep,
     set: set,
   };
-  return firestore ().collection ('workoutScheduleDetails').add (detailObj);
+  return firestore().collection('workoutScheduleDetails').add(detailObj);
+};
+
+export const getScheduleDetailsbySchedule = async scheduleID => {
+  return await firestore()
+    .collection('workoutScheduleDetails')
+    .where('scheduleID', '==', scheduleID)
+    .get();
 };
