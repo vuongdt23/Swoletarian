@@ -82,9 +82,15 @@ class Menu extends React.Component {
         menuIndex = this.state.menuDetails.findIndex (
           menu => menu.menuType === 'breakfast'
         );
+<<<<<<< HEAD
         //   console.log ('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
         //   console.log (details);
+=======
+           console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+          console.log (details);
+>>>>>>> parent of 3d25bdd (local delete from menu)
         tempFoods = [];
         if (details.length === 0) {
           this.setState ({Breakfast: []});
@@ -116,6 +122,7 @@ class Menu extends React.Component {
         details = [...this.state.menuDetails[menuIndex].menuDetails];
         console.log (details);
         tempFoods = [];
+<<<<<<< HEAD
         details.forEach (detail => {
           getFoodbyID (detail.foodID)
             .then (res => {
@@ -127,6 +134,29 @@ class Menu extends React.Component {
               this.setState ({Lunch: tempFoods}, () => {
                 console.log ('lunch', this.state.lunch);
                 this.setState ({currentMeal: [...this.state.Lunch]});
+=======
+        if (details.length === 0) {
+          this.setState ({Lunch: tempFoods}, () => {
+            console.log ('lunch', this.state.lunch);
+            this.setState ({currentMeal: [...this.state.Lunch]});
+          });
+        } else {
+          details.forEach (detail => {
+            getFoodbyID (detail.foodID)
+              .then (res => {
+                let foodObj = res.data ();
+                console.log ('food', res.data ());
+                foodObj.amount = detail.amount;
+                console.log ('Food OBject', foodObj);
+                tempFoods.push (foodObj);
+                this.setState ({Lunch: tempFoods}, () => {
+                  console.log ('lunch', this.state.lunch);
+                  this.setState ({currentMeal: [...this.state.Lunch]});
+                });
+              })
+              .catch (err => {
+                console.log (err);
+>>>>>>> parent of 3d25bdd (local delete from menu)
               });
             })
             .catch (err => {
@@ -142,6 +172,7 @@ class Menu extends React.Component {
         details = [...this.state.menuDetails[menuIndex].menuDetails];
         console.log (details);
         tempFoods = [];
+<<<<<<< HEAD
         details.forEach (detail => {
           getFoodbyID (detail.foodID)
             .then (res => {
@@ -162,6 +193,65 @@ class Menu extends React.Component {
         break;
       case 'Snack':
         this.setState ({currentMeal: this.state.Snack});
+=======
+        if (details.length === 0) {
+          this.setState ({Dinner: tempFoods}, () => {
+            console.log ('dinner', this.state.Dinner);
+            this.setState ({currentMeal: [...this.state.Dinner]});
+          });
+        } else {
+          details.forEach (detail => {
+            getFoodbyID (detail.foodID)
+              .then (res => {
+                let foodObj = res.data ();
+                console.log ('food', res.data ());
+                foodObj.amount = detail.amount;
+                console.log ('Food OBject', foodObj);
+                tempFoods.push (foodObj);
+                this.setState ({Dinner: tempFoods}, () => {
+                  console.log ('Dinner', this.state.Dinner);
+                  this.setState ({currentMeal: [...this.state.Dinner]});
+                });
+              })
+              .catch (err => {
+                console.log (err);
+              });
+          });
+        }
+        break;
+      case 'Snack':
+        menuIndex = this.state.menuDetails.findIndex (
+          menu => menu.menuType === 'snack'
+        );
+        console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+        console.log (details);
+        tempFoods = [];
+        if (details.length === 0) {
+          this.setState ({Snack: tempFoods}, () => {
+            console.log ('snack', this.state.Snack);
+            this.setState ({currentMeal: [...this.state.Snack]});
+          });
+        } else {
+          details.forEach (detail => {
+            getFoodbyID (detail.foodID)
+              .then (res => {
+                let foodObj = res.data ();
+                console.log ('food', res.data ());
+                foodObj.amount = detail.amount;
+                console.log ('Food OBject', foodObj);
+                tempFoods.push (foodObj);
+                this.setState ({Dinner: tempFoods}, () => {
+                  console.log ('Dinner', this.state.Dinner);
+                  this.setState ({currentMeal: [...this.state.Dinner]});
+                });
+              })
+              .catch (err => {
+                console.log (err);
+              });
+          });
+        }
+>>>>>>> parent of 3d25bdd (local delete from menu)
         break;
     }
   };

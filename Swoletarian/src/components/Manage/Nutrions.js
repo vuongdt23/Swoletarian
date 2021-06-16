@@ -317,6 +317,9 @@ function AddToMenuContainer (props) {
     <View style={styles.addToMenuContainer}>
       <Text style={styles.addMenuTitle}>
         {capitalizeFirstLetter (props.menu.menuType)}
+<<<<<<< HEAD
+>>>>>>> parent of 3d25bdd (local delete from menu)
+=======
 >>>>>>> parent of 3d25bdd (local delete from menu)
       </Text>
       <CheckBox
@@ -385,9 +388,12 @@ class Nutrion extends React.Component {
       );
     } else {
 <<<<<<< HEAD
+<<<<<<< HEAD
       uploadMenuDetails(this.state.addFoodToMenu);
       this.onToggleAddModal();
 =======
+=======
+>>>>>>> parent of 3d25bdd (local delete from menu)
       uploadMenuDetails (this.state.addFoodToMenu);
       this.onToggleAddModal ();
 >>>>>>> parent of 3d25bdd (local delete from menu)
@@ -470,7 +476,11 @@ class Nutrion extends React.Component {
                 maxLength={3}
                 onChangeText={text => {
 <<<<<<< HEAD
+<<<<<<< HEAD
                   this.setState({addFoodToMenuWithGrams: parseInt(text)});
+=======
+                  this.setState ({addFoodToMenuWithGrams: parseInt (text)});
+>>>>>>> parent of 3d25bdd (local delete from menu)
 =======
                   this.setState ({addFoodToMenuWithGrams: parseInt (text)});
 >>>>>>> parent of 3d25bdd (local delete from menu)
