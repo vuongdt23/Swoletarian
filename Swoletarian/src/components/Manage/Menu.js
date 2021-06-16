@@ -83,9 +83,15 @@ class Menu extends React.Component {
           menu => menu.menuType === 'breakfast'
         );
 <<<<<<< HEAD
+<<<<<<< HEAD
         //   console.log ('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
         //   console.log (details);
+=======
+           console.log ('menu index', menuIndex);
+        details = [...this.state.menuDetails[menuIndex].menuDetails];
+          console.log (details);
+>>>>>>> parent of 3d25bdd (local delete from menu)
 =======
            console.log ('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
@@ -251,6 +257,9 @@ class Menu extends React.Component {
               });
           });
         }
+<<<<<<< HEAD
+>>>>>>> parent of 3d25bdd (local delete from menu)
+=======
 >>>>>>> parent of 3d25bdd (local delete from menu)
         break;
     }

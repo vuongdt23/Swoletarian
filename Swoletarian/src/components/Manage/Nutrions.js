@@ -318,6 +318,9 @@ function AddToMenuContainer (props) {
       <Text style={styles.addMenuTitle}>
         {capitalizeFirstLetter (props.menu.menuType)}
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 3d25bdd (local delete from menu)
+=======
 >>>>>>> parent of 3d25bdd (local delete from menu)
 =======
 >>>>>>> parent of 3d25bdd (local delete from menu)
@@ -389,9 +392,12 @@ class Nutrion extends React.Component {
     } else {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       uploadMenuDetails(this.state.addFoodToMenu);
       this.onToggleAddModal();
 =======
+=======
+>>>>>>> parent of 3d25bdd (local delete from menu)
 =======
 >>>>>>> parent of 3d25bdd (local delete from menu)
       uploadMenuDetails (this.state.addFoodToMenu);
@@ -477,7 +483,11 @@ class Nutrion extends React.Component {
                 onChangeText={text => {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                   this.setState({addFoodToMenuWithGrams: parseInt(text)});
+=======
+                  this.setState ({addFoodToMenuWithGrams: parseInt (text)});
+>>>>>>> parent of 3d25bdd (local delete from menu)
 =======
                   this.setState ({addFoodToMenuWithGrams: parseInt (text)});
 >>>>>>> parent of 3d25bdd (local delete from menu)
