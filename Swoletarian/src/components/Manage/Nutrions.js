@@ -27,8 +27,8 @@ import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 class Nutrions extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       search: '',
       modalVisible: false,
@@ -38,57 +38,57 @@ class Nutrions extends React.Component {
       isLoading: true,
     };
   }
-  componentDidMount () {
+  componentDidMount() {
     let tempFoodArr = [];
     let tempMenusArr = [];
-    getFoodsbyCurrentUser ().then (data => {
-      data.forEach (doc => {
-        let food = doc.data ();
+    getFoodsbyCurrentUser().then(data => {
+      data.forEach(doc => {
+        let food = doc.data();
         food.foodID = doc.id;
-        tempFoodArr.push (food);
+        tempFoodArr.push(food);
       });
     });
-    getDefaultFoods ()
-      .then (data => {
-        data.forEach (doc => {
-          let food = doc.data ();
+    getDefaultFoods()
+      .then(data => {
+        data.forEach(doc => {
+          let food = doc.data();
           food.foodID = doc.id;
-          tempFoodArr.push (food);
+          tempFoodArr.push(food);
         });
 
         // console.log(tempFoodArr);
-        this.setState ({
+        this.setState({
           foods: tempFoodArr,
           currentDisplayFoods: tempFoodArr,
           isLoading: false,
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
 
-    getMenubyCurrentUser ().then (data => {
-      data.forEach (doc => {
-        let menu = doc.data ();
+    getMenubyCurrentUser().then(data => {
+      data.forEach(doc => {
+        let menu = doc.data();
         menu.menuID = doc.id;
-        tempMenusArr.push (menu);
+        tempMenusArr.push(menu);
       });
-      console.log (tempMenusArr);
-      this.setState ({menus: tempMenusArr, isLoading: false});
+      console.log(tempMenusArr);
+      this.setState({menus: tempMenusArr, isLoading: false});
     });
   }
   setModalVisible = visible => {
-    this.setState ({modalVisible: visible});
+    this.setState({modalVisible: visible});
   };
   updateSearch = search => {
-    this.setState ({search});
+    this.setState({search});
   };
-  closeAddForm () {
-    this.setState ({modalVisible: false});
+  closeAddForm() {
+    this.setState({modalVisible: false});
   }
   addNewNutrion = newNutrion => {
     if (newNutrion.name == '' || newNutrion.calo == 0) {
-      Alert.alert ('Chưa đủ thông tin', '', [
+      Alert.alert('Chưa đủ thông tin', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -97,19 +97,19 @@ class Nutrions extends React.Component {
         },
       ]);
     } else {
-      addFood (newNutrion)
-        .then (res => {
-          console.log (res);
+      addFood(newNutrion)
+        .then(res => {
+          console.log(res);
         })
-        .catch (err => console.log (err));
-      console.log ('new food added');
-      this.componentDidMount ();
-      this.setState ({modalVisible: false});
+        .catch(err => console.log(err));
+      console.log('new food added');
+      this.componentDidMount();
+      this.setState({modalVisible: false});
     }
   };
   deleteNutrion = Nutrion => {
     var newData = this.state.data;
-    Alert.alert ('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
+    Alert.alert('Xóa thực phẩm', 'Bạn muốn xóa thực phẩm này ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -118,11 +118,11 @@ class Nutrions extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          console.log (Nutrion.id);
-          deleteFood (Nutrion.id.toString ())
-            .then (res => console.log ('a', res))
-            .catch (err => console.log ('b', err));
-          this.componentDidMount ();
+          console.log(Nutrion.id);
+          deleteFood(Nutrion.id.toString())
+            .then(res => console.log('a', res))
+            .catch(err => console.log('b', err));
+          this.componentDidMount();
         },
       },
     ]);
@@ -130,28 +130,26 @@ class Nutrions extends React.Component {
 
   searchFood = () => {
     if (this.state.search === '') {
-      this.setState ({currentDisplayFoods: this.state.foods});
+      this.setState({currentDisplayFoods: this.state.foods});
     } else {
       let resultSearchArr = [];
-      this.state.foods.forEach (food => {
+      this.state.foods.forEach(food => {
         if (
-          food.foodName
-            .toLowerCase ()
-            .includes (this.state.search.toLowerCase ())
+          food.foodName.toLowerCase().includes(this.state.search.toLowerCase())
         )
-          resultSearchArr.push (food);
+          resultSearchArr.push(food);
       });
-      resultSearchArr.sort ();
-      this.setState ({currentDisplayFoods: resultSearchArr});
+      resultSearchArr.sort();
+      this.setState({currentDisplayFoods: resultSearchArr});
     }
   };
-  render () {
+  render() {
     const {search} = this.state;
     const {modalVisible} = this.state;
     let newNutrion = {
       foodName: '',
       foodCalories: 0,
-      foodOwner: auth ().currentUser.uid,
+      foodOwner: auth().currentUser.uid,
       isSystem: false,
     };
     return (
@@ -160,7 +158,7 @@ class Nutrions extends React.Component {
         <View style={styles.searchBarContainer}>
           <TextInput
             onChangeText={text => {
-              this.setState ({search: text});
+              this.setState({search: text});
             }}
             style={{
               width: '90%',
@@ -172,9 +170,8 @@ class Nutrions extends React.Component {
           />
           <TouchableOpacity
             onPress={() => {
-              this.searchFood ();
-            }}
-          >
+              this.searchFood();
+            }}>
             <Icon name="search" size={28} />
           </TouchableOpacity>
         </View>
@@ -182,8 +179,7 @@ class Nutrions extends React.Component {
         <View style={styles.addNewContainer}>
           <TouchableOpacity
             style={{justifyContent: 'center', alignItems: 'center'}}
-            onPress={() => this.setModalVisible (!modalVisible)}
-          >
+            onPress={() => this.setModalVisible(!modalVisible)}>
             <Icon name="add" size={40} />
             <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
               Thêm thực phẩm
@@ -191,26 +187,28 @@ class Nutrions extends React.Component {
           </TouchableOpacity>
         </View>
 
-        {this.state.isLoading
-          ? <View style={styles.container}>
-              <ActivityIndicator size="large" color="#1CA2BB" />
-            </View>
-          : <FlatList
-              style={{width: '90%'}}
-              showsVerticalScrollIndicator={false}
-              data={this.state.currentDisplayFoods}
-              renderItem={({item}) => (
-                <Nutrion
-                  detail={item}
-                  menus={this.state.menus}
-                  deleteNutrion={Nutrion => this.deleteNutrion (Nutrion)}
-                />
-              )}
-              extraData={this.state.data}
-              keyExtractor={(item, index) => {
-                return index.toString ();
-              }}
-            />}
+        {this.state.isLoading ? (
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color="#1CA2BB" />
+          </View>
+        ) : (
+          <FlatList
+            style={{width: '90%'}}
+            showsVerticalScrollIndicator={false}
+            data={this.state.currentDisplayFoods}
+            renderItem={({item}) => (
+              <Nutrion
+                detail={item}
+                menus={this.state.menus}
+                deleteNutrion={Nutrion => this.deleteNutrion(Nutrion)}
+              />
+            )}
+            extraData={this.state.data}
+            keyExtractor={(item, index) => {
+              return index.toString();
+            }}
+          />
+        )}
 
         <View style={styles.modalContainer}>
           <Modal animationType="fade" transparent={true} visible={modalVisible}>
@@ -223,8 +221,7 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Tên thực phẩm
                 </Text>
@@ -243,8 +240,7 @@ class Nutrions extends React.Component {
                   alignItems: 'center',
                   width: '70%',
                   margin: 10,
-                }}
-              >
+                }}>
                 <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
                   Calories/100gram
                 </Text>
@@ -261,8 +257,7 @@ class Nutrions extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
+                }}>
                 <Pressable
                   style={{
                     width: '40%',
@@ -274,9 +269,8 @@ class Nutrions extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.closeAddForm ();
-                  }}
-                >
+                    this.closeAddForm();
+                  }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
                   </Text>
@@ -290,8 +284,7 @@ class Nutrions extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={() => this.addNewNutrion (newNutrion)}
-                >
+                  onPress={() => this.addNewNutrion(newNutrion)}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     OK
                   </Text>
@@ -304,8 +297,8 @@ class Nutrions extends React.Component {
     );
   }
 }
-function AddToMenuContainer (props) {
-  const [isChecked, setIsChecked] = useState (false);
+function AddToMenuContainer(props) {
+  const [isChecked, setIsChecked] = useState(false);
   //console.log ('props for funct', props);
   let menuTypeName = '';
   switch (props.menu.menuType) {
@@ -327,15 +320,13 @@ function AddToMenuContainer (props) {
   }
   return (
     <View style={styles.addToMenuContainer}>
-      <Text style={styles.addMenuTitle}>
-        {menuTypeName}
-      </Text>
+      <Text style={styles.addMenuTitle}>{menuTypeName}</Text>
       <CheckBox
         checked={isChecked}
         size={40}
         onPress={() => {
-          setIsChecked (!isChecked);
-          props.requestFoodToMenu (isChecked, props.menu);
+          setIsChecked(!isChecked);
+          props.requestFoodToMenu(isChecked, props.menu);
         }}
       />
     </View>
@@ -343,8 +334,8 @@ function AddToMenuContainer (props) {
 }
 
 class Nutrion extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       menus: [],
       addModalVisible: false,
@@ -354,7 +345,7 @@ class Nutrion extends React.Component {
   }
 
   requestFoodToMenu = (isChecked, menu) => {
-    console.log (isChecked);
+    console.log(isChecked);
     let tempAddFoodToMenu = [...this.state.addFoodToMenu];
 
     if (!isChecked) {
@@ -363,18 +354,18 @@ class Nutrion extends React.Component {
         foodID: this.props.detail.foodID,
         amount: this.state.addFoodToMenuWithGrams,
       };
-      tempAddFoodToMenu.push (newFoodToMenu);
-      this.setState ({addFoodToMenu: tempAddFoodToMenu});
+      tempAddFoodToMenu.push(newFoodToMenu);
+      this.setState({addFoodToMenu: tempAddFoodToMenu});
     } else {
-      let index = tempAddFoodToMenu.findIndex (
-        add => add.menuID === menu.menuID
+      let index = tempAddFoodToMenu.findIndex(
+        add => add.menuID === menu.menuID,
       );
       if (index > -1) {
-        tempAddFoodToMenu.splice (index, 1);
+        tempAddFoodToMenu.splice(index, 1);
       }
-      this.setState ({addFoodToMenu: tempAddFoodToMenu});
+      this.setState({addFoodToMenu: tempAddFoodToMenu});
     }
-    console.log (tempAddFoodToMenu);
+    console.log(tempAddFoodToMenu);
   };
 
   uploadMenuFoods = () => {
@@ -382,7 +373,7 @@ class Nutrion extends React.Component {
       this.state.addFoodToMenu.length < 1 ||
       this.addFoodToMenuWithGrams < 10
     ) {
-      Alert.alert (
+      Alert.alert(
         'Chưa đủ thông tin',
         'Chọn ít nhất một bữa ăn và không được để trống Grams',
         [
@@ -392,15 +383,15 @@ class Nutrion extends React.Component {
               return;
             },
           },
-        ]
+        ],
       );
     } else {
       let addFoodRequests = [...this.state.addFoodToMenu];
-      addFoodRequests.forEach (request => {
+      addFoodRequests.forEach(request => {
         request.amount = this.state.addFoodToMenuWithGrams;
       });
-      uploadMenuDetails (addFoodRequests);
-      Alert.alert ('Thêm vào thực đơn thành công', '', [
+      uploadMenuDetails(addFoodRequests);
+      Alert.alert('Thêm vào thực đơn thành công', '', [
         {
           text: 'OK',
           onPress: () => {
@@ -408,14 +399,14 @@ class Nutrion extends React.Component {
           },
         },
       ]);
-      this.onToggleAddModal ();
+      this.onToggleAddModal();
     }
   };
 
   onToggleAddModal = () => {
-    this.setState ({addModalVisible: !this.state.addModalVisible});
+    this.setState({addModalVisible: !this.state.addModalVisible});
   };
-  render () {
+  render() {
     const detail = this.props.detail;
     return (
       <View
@@ -429,15 +420,13 @@ class Nutrion extends React.Component {
           alignItems: 'center',
           marginVertical: 10,
           paddingHorizontal: 30,
-        }}
-      >
+        }}>
         <View
           style={{
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'flex-start',
-          }}
-        >
+          }}>
           <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
             {detail.foodName}
           </Text>
@@ -446,12 +435,11 @@ class Nutrion extends React.Component {
           </Text>
         </View>
         <View
-          style={{flexDirection: 'column', justifyContent: 'space-between'}}
-        >
+          style={{flexDirection: 'column', justifyContent: 'space-between'}}>
           <TouchableOpacity onPress={this.onToggleAddModal}>
             <Icon name="add-circle-outline" size={35} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.props.deleteNutrion (detail)}>
+          <TouchableOpacity onPress={() => this.props.deleteNutrion(detail)}>
             <Icon
               name="close-circle-outline"
               size={detail.isSystem ? 0 : 35}
@@ -463,8 +451,7 @@ class Nutrion extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.addModalVisible}
-          >
+            visible={this.state.addModalVisible}>
             <View style={styles.addModalView}>
               <Text style={styles.addMenuTitle}>Thêm vào thực đơn</Text>
               <FlatList
@@ -474,11 +461,12 @@ class Nutrion extends React.Component {
                     menu={item}
                     food={detail}
                     requestFoodToMenu={(isChecked, menu) =>
-                      this.requestFoodToMenu (isChecked, menu)}
+                      this.requestFoodToMenu(isChecked, menu)
+                    }
                   />
                 )}
                 keyExtractor={(item, index) => {
-                  return index.toString ();
+                  return index.toString();
                 }}
               />
 
@@ -487,14 +475,11 @@ class Nutrion extends React.Component {
                 keyboardType="numeric"
                 maxLength={3}
                 onChangeText={text => {
-                  this.setState (
-                    {addFoodToMenuWithGrams: parseInt (text)},
+                  this.setState(
+                    {addFoodToMenuWithGrams: parseInt(text)},
                     () => {
-                      console.log (
-                        'grams: ',
-                        this.state.addFoodToMenuWithGrams
-                      );
-                    }
+                      console.log('grams: ', this.state.addFoodToMenuWithGrams);
+                    },
                   );
                 }}
                 style={{
@@ -511,8 +496,7 @@ class Nutrion extends React.Component {
                   flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-              >
+                }}>
                 <Pressable
                   style={{
                     width: '40%',
@@ -524,9 +508,8 @@ class Nutrion extends React.Component {
                     marginRight: '5%',
                   }}
                   onPress={() => {
-                    this.onToggleAddModal ();
-                  }}
-                >
+                    this.onToggleAddModal();
+                  }}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     Hủy
                   </Text>
@@ -540,8 +523,7 @@ class Nutrion extends React.Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
-                  onPress={() => this.uploadMenuFoods ()}
-                >
+                  onPress={() => this.uploadMenuFoods()}>
                   <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                     OK
                   </Text>
@@ -554,10 +536,10 @@ class Nutrion extends React.Component {
     );
   }
 }
-function capitalizeFirstLetter (string) {
-  return string.charAt (0).toUpperCase () + string.slice (1);
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',

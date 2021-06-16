@@ -11,6 +11,8 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import {LogBox} from 'react-native';
+LogBox.ignoreLogs(['Reanimated 2']);
 import {CheckBox} from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {FlatList} from 'react-native-gesture-handler';

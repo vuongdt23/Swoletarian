@@ -35,6 +35,7 @@ import {
   getDefaultExercises,
 } from '../../Firebase/ExerciseAPI';
 import {
+  createScheduleDetail,
   getSchedulesbyUser,
   getScheduleTypeNamebyID,
   getScheduleTypes,
@@ -57,7 +58,7 @@ class Workout extends React.Component {
       .then(res => {
         res.forEach(doc => {
           let schObj = {scheduleType: doc.data().scheduleType};
-          schObj.schID = doc.id;
+          schObj.scheduleID = doc.id;
           tempScheduleArr.push(schObj);
         });
 
@@ -98,8 +99,9 @@ class Workout extends React.Component {
       .then(data => {
         data.forEach(doc => {
           let exercise = doc.data();
-          exercise.id = doc.id;
+          exercise.exerciseID = doc.id;
           tempExerciseArr.push(exercise);
+          //console.log('exericse by current user');
         });
       })
       .catch(err => console.log(err));
@@ -107,12 +109,12 @@ class Workout extends React.Component {
       .then(data => {
         data.forEach(doc => {
           let exercise = doc.data();
-          exercise.id = doc.id;
+          exercise.exerciseID = doc.id;
           tempExerciseArr.push(exercise);
         });
         this.setState({workouts: tempExerciseArr});
 
-        //console.log(tempExerciseArr);
+        //console.log(tempExerciseArr.length);
       })
       .catch(err => console.log(err));
   };
@@ -219,6 +221,14 @@ class ExerciseWrap extends React.Component {
         });
       this.props.reloadAll();
       this.onToggleAddNewModal();
+      Alert.alert('Thêm mới thành công', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
     }
   };
   deleteExercise = exercise => {
@@ -291,7 +301,7 @@ class ExerciseWrap extends React.Component {
         uri: '',
       },
       exerciseCalories: 0,
-      exerciseType: exerciseType.exerciseTypeName,
+      exerciseType: exerciseType.exerciseTypeID,
       isSystem: 'false',
       exerciseOwner: auth().currentUser.uid,
     };
@@ -375,6 +385,7 @@ class ExerciseWrap extends React.Component {
                   <View style={styles.rowStyleContainer}>
                     <Text style={styles.textInside}>Calo/phút</Text>
                     <TextInput
+                      maxLength={2}
                       onChangeText={text => {
                         newExercise.exerciseCalories = parseInt(text);
                       }}
@@ -455,51 +466,90 @@ class Exercise extends React.Component {
     this.state = {
       infoModalVisible: false,
       addModalVisible: false,
-      daysOfWeek: [],
-      addtoSchedule: [
-        {
-          schID: '',
-          exercise: {},
-          rep: 0,
-          set: 0,
-          isChecked: false,
-        },
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-        {schID: '', exercise: {}, rep: 0, set: 0, isChecked: false},
-      ],
+      addWorkoutToSchedule: [],
+      rep: 0,
+      set: 0,
     };
   }
 
-  componentDidMount() {
-    const schedules = this.props.schedules;
-    this.setState({daysOfWeek: schedules});
-    const {exercise} = this.props;
-    let tempAddToSchedule = this.state.addtoSchedule;
-    for (var i = 0; i < 7; i++) {
-      //tempAddToSchedule[i].schID = this.state.daysOfWeek[i].schID;
-      tempAddToSchedule[i].exercise = exercise;
+  requestWorkoutToSchedule = (isChecked, scheduleID) => {
+    //console.log(isChecked);
+    let tempAddWorkoutToSchedule = [...this.state.addWorkoutToSchedule];
+
+    if (!isChecked) {
+      const newWorkoutToSchedule = {
+        scheduleID: scheduleID,
+        exerciseID: this.props.exercise.exerciseID,
+        rep: this.state.rep,
+        set: this.state.set,
+      };
+      tempAddWorkoutToSchedule.push(newWorkoutToSchedule);
+      this.setState({addWorkoutToSchedule: tempAddWorkoutToSchedule});
+    } else {
+      let index = tempAddWorkoutToSchedule.findIndex(
+        add => add.scheduleID === scheduleID,
+      );
+      if (index > -1) {
+        tempAddWorkoutToSchedule.splice(index, 1);
+      }
+      this.setState({addWorkoutToSchedule: tempAddWorkoutToSchedule});
     }
-    this.setState({
-      addtoSchedule: tempAddToSchedule,
-    });
-    // console.log(this.state.addtoSchedule);
-  }
+    //console.log(tempAddWorkoutToSchedule);
+  };
+  uploadScheduleWorkouts = () => {
+    if (
+      this.state.addWorkoutToSchedule.length < 1 ||
+      this.state.rep < 1 ||
+      this.state.set < 1
+    ) {
+      Alert.alert(
+        'Chưa đủ thông tin',
+        'Chọn ít nhất một ngày và không được để trống rep,set',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              return;
+            },
+          },
+        ],
+      );
+    } else {
+      let addWorkoutToScheduleRequest = [...this.state.addWorkoutToSchedule];
+      addWorkoutToScheduleRequest.forEach(request => {
+        request.rep = this.state.rep;
+        request.set = this.state.set;
+
+        createScheduleDetail(request)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      });
+      console.log(addWorkoutToScheduleRequest);
+      Alert.alert('Thêm vào lịch tập thành công', '', [
+        {
+          text: 'OK',
+          onPress: () => {
+            return;
+          },
+        },
+      ]);
+      this.onToggleAddModal();
+    }
+  };
+
   onToggleInfoModal = () => {
     this.setState({infoModalVisible: !this.state.infoModalVisible});
   };
   onToggleAddModal = () => {
     this.setState({addModalVisible: !this.state.addModalVisible});
   };
-  addToWorkoutSchedule = exercise => {};
 
   render() {
     const {exercise} = this.props;
-    let newExercise = {};
     return (
       <View style={styles.exerciseContainer}>
         <View
@@ -604,21 +654,27 @@ class Exercise extends React.Component {
             <View style={styles.addModalView}>
               <Text style={styles.addExerciseTitle}>Thêm vào lịch tập</Text>
               <FlatList
-                data={this.state.daysOfWeek}
+                data={this.props.schedules}
                 renderItem={({item}) => (
-                  <AddToDayContainer day={item} exercise={exercise} />
+                  <AddToDayContainer
+                    day={item}
+                    exercise={exercise}
+                    requestWorkoutToSchedule={(isChecked, scheduleID) => {
+                      this.requestWorkoutToSchedule(isChecked, scheduleID);
+                    }}
+                  />
                 )}
-                keyExtractor={item => {
-                  return item.schID.toString();
+                keyExtractor={(item, index) => {
+                  return index.toString();
                 }}
               />
 
               <TextInput
                 placeholder={'Số set'}
                 onChangeText={text => {
-                  newExercise.exerciseName = text;
+                  this.setState({set: parseInt(text)});
                 }}
-                maxLength={2}
+                maxLength={1}
                 style={{
                   fontSize: 23,
                   fontFamily: 'Roboto-Regular',
@@ -631,7 +687,7 @@ class Exercise extends React.Component {
               <TextInput
                 placeholder={'Số rep'}
                 onChangeText={text => {
-                  newExercise.exerciseName = text;
+                  this.setState({rep: parseInt(text)});
                 }}
                 maxLength={2}
                 style={{
@@ -643,21 +699,44 @@ class Exercise extends React.Component {
                   borderBottomColor: 'black',
                 }}
               />
-
-              <Pressable
+              <View
                 style={{
-                  width: '40%',
-                  height: '8%',
-                  borderRadius: 25,
-                  backgroundColor: '#C8FFFF',
+                  flexDirection: 'row',
                   justifyContent: 'center',
                   alignItems: 'center',
-                }}
-                onPress={this.onToggleAddModal}>
-                <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
-                  OK
-                </Text>
-              </Pressable>
+                }}>
+                <Pressable
+                  style={{
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
+                    backgroundColor: '#FFA693',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: '5%',
+                  }}
+                  onPress={() => {
+                    this.onToggleAddModal();
+                  }}>
+                  <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                    Hủy
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={{
+                    width: '40%',
+                    height: '45%',
+                    borderRadius: 25,
+                    backgroundColor: '#C8FFFF',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  onPress={() => this.uploadScheduleWorkouts()}>
+                  <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
+                    OK
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           </Modal>
         </View>
@@ -665,17 +744,20 @@ class Exercise extends React.Component {
     );
   }
 }
-function AddToDayContainer(params) {
+function AddToDayContainer(props) {
   const [isChecked, setIsChecked] = useState(false);
   return (
     <View style={styles.addToDayContainer}>
       <Text style={styles.addExerciseTitle}>
-        {capitalizeFirstLetter(params.day.scheduleType)}
+        {capitalizeFirstLetter(props.day.scheduleType)}
       </Text>
       <CheckBox
         checked={isChecked}
         size={40}
-        onPress={() => setIsChecked(!isChecked)}
+        onPress={() => {
+          setIsChecked(!isChecked);
+          props.requestWorkoutToSchedule(isChecked, props.day.scheduleID);
+        }}
       />
     </View>
   );
