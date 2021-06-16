@@ -35,7 +35,3 @@ export const getMenuDetailsfromMenu = async menuID => {
     .where ('menuID', '==', menuID)
     .get ();
 };
-
-export const deleteMenuDetail = menuDetailID => {
-  return firestore ().collection ('menuDetails').doc (menuDetailID).delete ();
-};

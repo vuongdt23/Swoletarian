@@ -301,6 +301,7 @@ class Nutrions extends React.Component {
     );
   }
 }
+<<<<<<< HEAD
 function AddToMenuContainer(props) {
   const [isChecked, setIsChecked] = useState(false);
 
@@ -308,6 +309,15 @@ function AddToMenuContainer(props) {
     <View style={styles.addToMenuContainer}>
       <Text style={styles.addMenuTitle}>
         {capitalizeFirstLetter(props.menu.menuType)}
+=======
+function AddToMenuContainer (props) {
+  const [isChecked, setIsChecked] = useState (false);
+  //console.log ('props for funct', props);
+  return (
+    <View style={styles.addToMenuContainer}>
+      <Text style={styles.addMenuTitle}>
+        {capitalizeFirstLetter (props.menu.menuType)}
+>>>>>>> parent of 3d25bdd (local delete from menu)
       </Text>
       <CheckBox
         checked={isChecked}
@@ -374,8 +384,13 @@ class Nutrion extends React.Component {
         ],
       );
     } else {
+<<<<<<< HEAD
       uploadMenuDetails(this.state.addFoodToMenu);
       this.onToggleAddModal();
+=======
+      uploadMenuDetails (this.state.addFoodToMenu);
+      this.onToggleAddModal ();
+>>>>>>> parent of 3d25bdd (local delete from menu)
     }
   };
 
@@ -454,7 +469,11 @@ class Nutrion extends React.Component {
                 keyboardType="numeric"
                 maxLength={3}
                 onChangeText={text => {
+<<<<<<< HEAD
                   this.setState({addFoodToMenuWithGrams: parseInt(text)});
+=======
+                  this.setState ({addFoodToMenuWithGrams: parseInt (text)});
+>>>>>>> parent of 3d25bdd (local delete from menu)
                 }}
                 style={{
                   fontSize: 23,
