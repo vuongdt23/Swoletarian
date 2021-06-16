@@ -8,8 +8,8 @@ import {
   Button,
 } from 'react-native';
 class BFP extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
   }
   render() {
     return (
@@ -20,7 +20,7 @@ class BFP extends React.Component {
   }
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',

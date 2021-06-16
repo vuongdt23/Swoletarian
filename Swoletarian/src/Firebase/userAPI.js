@@ -1,6 +1,4 @@
 import auth from '@react-native-firebase/auth';
-<<<<<<< HEAD
-=======
 import firestore from '@react-native-firebase/firestore';
 import {
   getScheduleTypes,
@@ -8,7 +6,6 @@ import {
   createScheduleDetail,
 } from './ScheduleAPI';
 import {getMenuTypes, createMenu} from './MenuAPI';
->>>>>>> 86d65a33621de1ff6f1d3d94f6bba38d66d8ec17
 export const signUp = (email, password) => {
   return auth ().createUserWithEmailAndPassword (email, password);
 };
@@ -18,12 +15,7 @@ export const logOut = () => {
 };
 
 export const logIn = (email, password) => {
-<<<<<<< HEAD
-  return auth ()
-    .signInWithEmailAndPassword (email, password);
-=======
   return auth ().signInWithEmailAndPassword (email, password);
->>>>>>> 86d65a33621de1ff6f1d3d94f6bba38d66d8ec17
 };
 
 export const forgetPassword = email => {
@@ -41,8 +33,6 @@ export const reauthenticate = currentPassword => {
   const user = auth ().currentUser;
   const cred = auth.EmailAuthProvider.credential (user.email, currentPassword);
   return user.reauthenticateWithCredential (cred);
-<<<<<<< HEAD
-=======
 };
 
 export const uploadUserSetup = infoObj => {
@@ -126,5 +116,4 @@ export const createInitialUserMenus = () => {
     .catch (err => {
       console.log (err);
     });
->>>>>>> 86d65a33621de1ff6f1d3d94f6bba38d66d8ec17
 };

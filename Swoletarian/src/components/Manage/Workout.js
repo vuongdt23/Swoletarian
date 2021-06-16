@@ -25,9 +25,6 @@ import LegIcon from '../../assets/Icon/workout/LegIcon.png';
 import AddIcon from '../../assets/Icon/AddIcon.png';
 import DeleteIcon from '../../assets/Icon/DeleteIcon.png';
 import InfoIcon from '../../assets/Icon/InfoIcon.png';
-<<<<<<< HEAD
-import getExerciseTypes from '../../Firebase/exerciseAPI';
-=======
 import TapLuyen from '../../assets/manage/TapLuyen.png';
 import auth from '@react-native-firebase/auth';
 import {
@@ -42,7 +39,6 @@ import {
   getScheduleTypeNamebyID,
   getScheduleTypes,
 } from '../../Firebase/ScheduleAPI';
->>>>>>> 86d65a33621de1ff6f1d3d94f6bba38d66d8ec17
 class Workout extends React.Component {
   constructor (props) {
     super (props);
@@ -50,127 +46,6 @@ class Workout extends React.Component {
       isLoading: true,
       exerciseTypes: [],
       exercises: [],
-<<<<<<< HEAD
-      exerciseTypes: [],
-      type: [
-        {id: 1, name: 'abs'},
-        {id: 2, name: 'shoulder'},
-        {id: 3, name: 'tricep'},
-        {id: 4, name: 'back'},
-        {id: 5, name: 'bicep'},
-        {id: 6, name: 'leg'},
-        {id: 7, name: 'chest'},
-      ],
-      absExcs: [
-        {
-          id: 1,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-        },
-        {
-          id: 2,
-          name: 'Jump lunges',
-          description:
-            'Bắt đầu với hai bàn chân của bạn với nhau, khuỷu tay uốn cong 90 độ và sau đó lao về phía trước như hình minh họa. Tiếp theo, nhảy thẳng lên khi bạn giơ hai tay lên trần nhà (nhưng vẫn giữ cho khuỷu tay cong!) Sau đó tiếp đất bằng tư thế lunge với chân đối diện về phía trước lần này.',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2068.jpeg',
-          },
-          caloBurned: 14,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 3,
-          name: 'Renegade row',
-          description:
-            'Bạn sẽ cần hai tạ tay cho cái này. Vào tư thế plank với tạ trên tay đỡ bạn. Nâng một cánh tay so với cơ thể của bạn, sao cho cẳng tay của bạn thẳng hàng với lưng và khuỷu tay của bạn ở góc 90 độ. Giữ trong 2 lần đếm, sau đó hạ lưng xuống để bắt đầu. Lặp lại trên cánh tay đối diện',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2085.jpeg',
-          },
-          caloBurned: 15,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 4,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F12%2F2013%2F08%2Fimg_2055.jpeg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'true',
-        },
-        {
-          id: 5,
-          name: 'Squat to press',
-          description:
-            'Lấy hai tạ tay nhẹ và đứng, hai chân rộng bằng vai, khuỷu tay cong 90 độ và lòng bàn tay hướng về phía trước. Vào tư thế ngồi xổm và giữ trong hai giây. Tiếp theo, đẩy qua gót chân để đứng thẳng trong khi nâng tạ về phía trần nhà.',
-          imgLink: {
-            uri:
-              'https://www.muscleandfitness.com/wp-content/uploads/2018/02/FrontSquatPress-MU.jpg?quality=86&strip=all',
-          },
-          caloBurned: 15,
-          exerciseType: 'abs',
-          isSystem: 'false',
-        },
-      ],
-    };
-  }
- componentDidMount(){
-getExerciseTypes().then(data=>{
- 
-})
- }
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.headerTitle}>Luyện tập</Text>
-        <View style={styles.searchBarContainer}>
-          <TextInput
-            style={{
-              width: '90%',
-              height: 100,
-              fontSize: 20,
-              fontFamily: 'Roboto-Bold',
-              paddingLeft: 20,
-            }}></TextInput>
-          <TouchableOpacity>
-            <Icon name="search" size={28}></Icon>
-          </TouchableOpacity>
-        </View>
-        <FlatList
-          contentContainerStyle={{
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          style={styles.flatListContainer}
-          showsVerticalScrollIndicator={false}
-          data={this.state.type}
-          renderItem={({item}) => (
-            <ExerciseWrap
-              exerciseType={item}
-              data={this.state.absExcs}></ExerciseWrap>
-          )}
-          keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}></FlatList>
-      </View>
-=======
       workouts: [],
       schedules: [],
     };
@@ -264,7 +139,6 @@ getExerciseTypes().then(data=>{
       this.state.workouts.length,
       this.state.schedules.length,
       this.state.exerciseTypes.length
->>>>>>> 86d65a33621de1ff6f1d3d94f6bba38d66d8ec17
     );
     if (
       this.state.workouts.length === 0 ||
