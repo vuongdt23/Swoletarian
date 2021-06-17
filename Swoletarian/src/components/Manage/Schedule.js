@@ -9,6 +9,7 @@ import {
   Modal,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {FlatList} from 'react-native-gesture-handler';
@@ -25,12 +26,14 @@ import TapLuyen from '../../assets/manage/TapLuyen.png';
 import {
   getSchedulesbyUser,
   getScheduleDetailsbySchedule,
+  deleteScheduleDetail,
 } from '../../Firebase/ScheduleAPI';
 import {getExercisebyID} from '../../Firebase/ExerciseAPI.js';
 class Schedule extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       scheduleDetails: [],
       currentDayWorkouts: [],
       currentDayName: '',
@@ -42,6 +45,26 @@ class Schedule extends React.Component {
       Saturday: [],
     };
   }
+
+  reloadAfterDeletion = (currentSchedule, deletedScheduleDetailID) => {
+    let tempWorkoutState = [...this.state[currentSchedule]];
+    console.log('current list to delete', tempWorkoutState);
+    console.log('current schedule day', currentSchedule);
+
+    let indexDel = tempWorkoutState.findIndex(
+      detail => detail.scheduleDetailID === deletedScheduleDetailID,
+    );
+    console.log('delete at ', indexDel);
+    if (indexDel > -1) {
+      tempWorkoutState.splice(indexDel, 1);
+      console.log('workouts state after deletion', tempWorkoutState);
+    }
+    this.loadSchedules();
+    this.setState({
+      currentDayWorkouts: tempWorkoutState,
+      [currentSchedule]: tempWorkoutState,
+    });
+  };
   loadExercisesbyDay = day => {
     let dayFiled = capitalizeFirstLetter(day);
     let tempExercises = [];
@@ -153,16 +176,48 @@ class Schedule extends React.Component {
         console.log(err);
       });
   };
-
+  deleteScheduleDetail = scheduleDetailID => {
+    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này khỏi lịch tập ?', [
+      {
+        text: 'Hủy',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'Xóa',
+        onPress: () => {
+          deleteScheduleDetail(scheduleDetailID)
+            .then(res => {
+              console.log(res);
+              this.reloadAfterDeletion(
+                this.state.currentDayName,
+                scheduleDetailID,
+              );
+              Alert.alert('Xóa thành công', '', [
+                {
+                  text: 'OK',
+                  onPress: () => {},
+                  style: 'cancel',
+                },
+              ]);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        },
+      },
+    ]);
+  };
   componentDidMount() {
     this.loadSchedules();
-    getExercisebyID('14Qt61VLBIVsmrodYTVX')
-      .then(res => {
-        console.log('Test get by ID', res.data());
-      })
-      .catch(err => console.log(err));
   }
   render() {
+    if (this.state.isLoading)
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#1CA2BB" />
+        </View>
+      );
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Lịch tập luyện</Text>
@@ -179,8 +234,8 @@ class Schedule extends React.Component {
             renderItem={({item}) => (
               <Exercise
                 data={item}
-                deleteExercise={exercise => {
-                  this.deleteExercise(exercise);
+                deleteScheduleDetail={scheduleDetailID => {
+                  this.deleteScheduleDetail(scheduleDetailID);
                 }}></Exercise>
             )}
             keyExtractor={(item, index) => {
@@ -276,7 +331,7 @@ class Exercise extends React.Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.deleteExercise(data);
+            this.props.deleteScheduleDetail(data.scheduleDetailID);
           }}
           style={{width: '10%', height: '80%'}}>
           <Image
@@ -368,7 +423,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
   },

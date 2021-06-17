@@ -42,3 +42,10 @@ export const getScheduleDetailsbySchedule = async scheduleID => {
     .where('scheduleID', '==', scheduleID)
     .get();
 };
+
+export const deleteScheduleDetail = scheduleDetailID => {
+  return firestore()
+    .collection('workoutScheduleDetails')
+    .doc(scheduleDetailID)
+    .delete();
+};
