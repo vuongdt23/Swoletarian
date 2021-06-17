@@ -1,19 +1,5 @@
 import React from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-  Image,
-  Button,
-  ImageBackground,
-  TextInput,
-  TouchableOpacity,
-  TouchableHighlight,
-} from 'react-native';
+import {StyleSheet} from 'react-native';
 import MainBottomtabNavigator from '../navigators/MainBottomtabNavigator';
 
 class Main extends React.Component {

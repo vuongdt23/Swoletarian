@@ -8,47 +8,66 @@ import {
   Pressable,
   Alert,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {logOut, getUserSetup} from '../../Firebase/userAPI';
 import auth from '@react-native-firebase/auth';
-import {Button} from 'react-native';
 import Female from '../../assets/Icon/Female.png';
 import Male from '../../assets/Icon/Male.png';
 import EditIcon from '../../assets/Icon/EditIcon.png';
 import SettingIcon from '../../assets/Icon/SettingIcon.png';
+import UpdateUserInfoModal from './UpdateInfoModal';
 class MySelf extends React.Component {
   constructor(props) {
     super(props);
   }
   state = {
+    isLoading: true,
     passwordModalVisible: false,
+    updateUserInfoModalVisible: false,
     lastPassword: '',
     newPassword: '',
     user: null,
     userInfo: {
-      userName: 'Phan Duy Đức',
-      userHeight: 170,
-      userWeight: 65,
-      userSex: 'Male',
-      userAge: 21,
+      userName: '',
+      userHeight: 0,
+      userWeight: 0,
+      userSex: '',
+      userAge: 0,
+      userType: '',
+      ownerID: '',
     },
+    userInfoID: '',
+  };
+  onToggleUpdateModal = () => {
+    this.setState({
+      updateUserInfoModalVisible: !this.state.updateUserInfoModalVisible,
+    });
   };
   ontogglePassWordModal = () => {
-    this.setState({modalVisible: !this.state.modalVisible});
+    this.setState({passwordModalVisible: !this.state.passwordModalVisible});
   };
   componentDidMount() {
     getUserSetup()
       .then(data => {
+        console.log(data.size);
         if (data.size === 1) {
-          data.forEach(doc => this.setState({user: doc.data()}));
+          data.forEach(doc => {
+            let userInfoObject = doc.data();
+            this.setState({
+              userInfo: userInfoObject,
+              isLoading: false,
+              userInfoID: doc.id,
+            });
+            console.log('data of this user', doc.data());
+            console.log('user info ID', doc.id);
+          });
         }
 
-        data.forEach(doc => console.log('1', doc.data()));
+        // data.forEach(doc => console.log('1', doc.data()));
       })
       .catch(err => console.log(err));
-    console.log('1' + this.state.user);
-    console.log('2' + this.state.userInfo);
   }
   render() {
     const userInfo = this.state.userInfo;
@@ -60,18 +79,23 @@ class MySelf extends React.Component {
     else if (BMI >= 18.5 && BMI <= 24.9) temp = 'BMI chuẩn';
     else if (BMI > 24.9 && BMI <= 29.9) temp = 'Bạn đang thừa cân';
     else temp = 'Bạn đang béo phì';
+    if (this.setState.isLoading)
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#1CA2BB" />
+        </View>
+      );
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Cá nhân</Text>
         <View style={styles.userInfoContainer}>
           <View style={styles.userNameContainer}>
-            <Image source={userInfo.userSex === 'Male' ? Male : Female}></Image>
+            <Image source={userInfo.userSex === 'male' ? Male : Female}></Image>
             <Text style={styles.userNameTitle}>{userInfo.userName}</Text>
             <TouchableOpacity
               style={styles.EditButton}
               onPress={() => {
-                const {navigation} = this.props;
-                navigation.navigate('SetUp');
+                this.onToggleUpdateModal();
               }}>
               <Image
                 source={EditIcon}
@@ -80,7 +104,7 @@ class MySelf extends React.Component {
           </View>
           <Text style={styles.userAge}>Tuổi: {userInfo.userAge}</Text>
           <Text style={styles.userAge}>
-            Giới tính: {userInfo.userSex === 'Male' ? 'Nam' : 'Nữ'}
+            Giới tính: {userInfo.userSex === 'male' ? 'Nam' : 'Nữ'}
           </Text>
           <View style={styles.BMIContainer}>
             <View style={styles.BMIDetail}>
@@ -117,7 +141,7 @@ class MySelf extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.modalVisible}>
+            visible={this.state.passwordModalVisible}>
             <View style={styles.modalView}>
               <Text style={styles.headerTitle}>Thêm mới</Text>
               <View
@@ -210,9 +234,23 @@ class MySelf extends React.Component {
             </View>
           </Modal>
         </View>
+        <UpdateUserInfoModal
+          userInfoID={this.state.userInfoID}
+          userInfo={this.state.userInfo}
+          updateUserInfoModalVisible={this.state.updateUserInfoModalVisible}
+          onToggleUpdateModal={() => this.onToggleUpdateModal()}
+          reloadAfterUpdate={() =>
+            this.reloadAfterUpdate()
+          }></UpdateUserInfoModal>
       </View>
     );
   }
+
+  reloadAfterUpdate = () => {
+    this.setState({isLoading: true});
+    this.componentDidMount();
+    this.onToggleUpdateModal();
+  };
   handleLogout = () => {
     logOut();
     const {navigation} = this.props;
@@ -257,37 +295,6 @@ class MySelf extends React.Component {
   };
 }
 
-function DropDown(props) {
-  const itemsList = [
-    {label: 'Nam', value: 'Male'},
-    {label: 'Nữ', value: 'Female'},
-  ];
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState();
-  const [items, setItems] = useState(itemsList);
-  return (
-    <DropDownPicker
-      placeholder={'...'}
-      open={open}
-      value={value}
-      items={items}
-      setOpen={setOpen}
-      setValue={setValue}
-      setItems={setItems}
-      maxHeight={300}
-      containerStyle={{
-        width: '90%',
-      }}
-      textStyle={{
-        fontSize: 28,
-        fontFamily: 'Roboto-Bold',
-      }}
-      onChangeValue={value => {
-        props.onChangeValue(value);
-      }}
-    />
-  );
-}
 const styles = StyleSheet.create({
   container: {
     flex: 1,

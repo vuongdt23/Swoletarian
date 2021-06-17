@@ -13,9 +13,13 @@ class SetUp extends React.Component {
     ownerID: '',
     userHeight: 0,
     userWeight: 0,
+    userType: '',
   };
-  setDropdownValue = value => {
+  setSex = value => {
     this.setState({userSex: value});
+  };
+  setUserType = value => {
+    this.setState({userType: value});
   };
   checkUserInfo = () => {
     if (
@@ -23,7 +27,8 @@ class SetUp extends React.Component {
       this.state.userAge === '' ||
       this.state.userSex === '' ||
       this.state.userHeight === 0 ||
-      this.state.userWeight === 0
+      this.state.userWeight === 0 ||
+      this.state.userType === ''
     )
       return false;
     return true;
@@ -33,11 +38,11 @@ class SetUp extends React.Component {
       let submitValue = {...this.state};
       submitValue.ownerID = auth().currentUser.uid;
       console.log(submitValue);
-      uploadUserSetup(submitValue)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(err => console.log(err));
+      // uploadUserSetup(submitValue)
+      //   .then(res => {
+      //     console.log(res);
+      //   })
+      //   .catch(err => console.log(err));
       Alert.alert('Cập nhật thông tin thành công', '', [
         {
           text: 'OK',
@@ -73,10 +78,10 @@ class SetUp extends React.Component {
           onChangeText={value => this.setState({userAge: value})}
           style={styles.inputContainer}></TextInput>
         <Text style={styles.title}>Giới Tính</Text>
-        <DropDown
+        <SexDropDown
           onChangeValue={value => {
-            this.setDropdownValue(value);
-          }}></DropDown>
+            this.setSex(value);
+          }}></SexDropDown>
         <Text style={styles.title}>Chiều cao(cm)</Text>
         <TextInput
           maxLength={3}
@@ -93,6 +98,11 @@ class SetUp extends React.Component {
           onChangeText={value =>
             this.setState({userWeight: value})
           }></TextInput>
+        <Text style={styles.title}>Bạn là ?</Text>
+        <UserTypeDropDown
+          onChangeValue={value => {
+            this.setUserType(value);
+          }}></UserTypeDropDown>
         <View
           style={{
             width: '100%',
@@ -120,17 +130,17 @@ class SetUp extends React.Component {
     );
   }
 }
-function DropDown(props) {
+function SexDropDown(props) {
   const itemsList = [
-    {label: 'Nam', value: 'Male'},
-    {label: 'Nữ', value: 'Female'},
+    {label: 'Nam', value: 'male'},
+    {label: 'Nữ', value: 'female'},
   ];
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
   const [items, setItems] = useState(itemsList);
   return (
     <DropDownPicker
-      placeholder={'...'}
+      placeholder={''}
       open={open}
       value={value}
       items={items}
@@ -152,6 +162,41 @@ function DropDown(props) {
     />
   );
 }
+
+function UserTypeDropDown(props) {
+  const itemsList = [
+    {label: 'Beginner', value: 'beginner'},
+    {label: 'Intermediate', value: 'intermediate'},
+    {label: 'Advanced', value: 'advanced'},
+  ];
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
+  const [items, setItems] = useState(itemsList);
+  return (
+    <DropDownPicker
+      placeholder={''}
+      open={open}
+      value={value}
+      items={items}
+      setOpen={setOpen}
+      setValue={setValue}
+      setItems={setItems}
+      maxHeight={300}
+      containerStyle={{
+        width: '100%',
+        height: '8%',
+      }}
+      textStyle={{
+        fontSize: 25,
+        fontFamily: 'Roboto-Regular',
+      }}
+      onChangeValue={value => {
+        props.onChangeValue(value);
+      }}
+    />
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -174,12 +219,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
     color: 'white',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 20,
   },
   buttonDK: {
     width: '100%',
