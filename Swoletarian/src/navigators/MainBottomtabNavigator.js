@@ -46,10 +46,19 @@ function MainBottomtabNavigator() {
         options={{
           tabBarBadge: 3,
           tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
+          unmountOnBlur: true,
         }}
       />
-      <Tab.Screen name="Today" component={Today} />
-      <Tab.Screen name="Myself" component={MySelf} />
+      <Tab.Screen
+        options={{unmountOnBlur: true}}
+        name="Today"
+        component={Today}
+      />
+      <Tab.Screen
+        name="Myself"
+        component={MySelf}
+        options={{unmountOnBlur: true}}
+      />
     </Tab.Navigator>
   );
 }

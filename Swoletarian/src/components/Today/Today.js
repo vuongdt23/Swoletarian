@@ -32,11 +32,19 @@ import {
 } from '../../Firebase/ScheduleAPI';
 import {getExercisebyID} from '../../Firebase/ExerciseAPI';
 import {
+  uploadGainRecap,
+  getTodaysGainRecapByUser,
+  getTodaysBurnRecapByUser,
+} from '../../Firebase/reportAPI';
+import {
   getMenubyCurrentUser,
   getMenuDetailsfromMenu,
 } from '../../Firebase/MenuAPI';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {getFoodbyID} from '../../Firebase/foodAPI';
+import {getUserSetup} from '../../Firebase/userAPI';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 const Tab = createMaterialTopTabNavigator();
 const todayString = () => {
   var d = new Date();
@@ -64,21 +72,48 @@ class Today extends React.Component {
       Lunch: {},
       Dinner: {},
       Snack: {},
+      userInfo: {},
     };
   }
-  componentDidUpdate() {
-    // const unsubscribe = this.props.navigation.addListener('focus', () => {
-    //   this.componentDidMount();
-    // });
-  }
+  reload = () => {
+    this.setState({
+      isLoading: true,
+      Breakfast: {},
+      Lunch: {},
+      Dinner: {},
+      Snack: {},
+    });
+    this.componentDidMount();
+  };
   componentDidMount() {
+    this.loadUserInfo();
+    getTodaysGainRecapByUser()
+      .then(res => {
+        if (!res.empty) {
+          this.setState({isCompleteNutrions: true});
+        }
+      })
+      .catch(err => console.log(err));
+    getTodaysBurnRecapByUser()
+      .then(res => {
+        if (!res.empty) {
+          this.setState({isCompleteWorkouts: true});
+        }
+      })
+      .catch(err => console.log(err));
     this.loadSchedules();
     this.loadMenus();
     setTimeout(() => {
       this.setState({isLoading: false});
     }, 5000);
   }
-
+  loadUserInfo = () => {
+    getUserSetup().then(res => {
+      res.forEach(doc => {
+        this.setState({userInfo: doc.data()});
+      });
+    });
+  };
   resetCurrentCalosBurnedAndGained = () => {
     this.setState({currentTotalCalosBurned: 0});
     this.setState({currentTotalCalosGained: 0});
@@ -231,7 +266,9 @@ class Today extends React.Component {
                 Breakfast={this.state.Breakfast}
                 Lunch={this.state.Lunch}
                 Dinner={this.state.Dinner}
-                Snack={this.state.Snack}></MenuWrap>
+                Snack={this.state.Snack}
+                isCompleteNutrions={this.state.isCompleteNutrions}
+                reload={() => this.reload()}></MenuWrap>
             )}
           />
         </Tab.Navigator>
@@ -307,7 +344,7 @@ export class ScheduleWrap extends React.Component {
 }
 
 export class MenuWrap extends React.Component {
-  state = {currentTotalCalosGained: 0};
+  state = {currentTotalCalosGained: 0, isLoading: true};
   handleNutrionChecked = (totalCalosGained, isChecked) => {
     var newTotalCalosGained = this.state.currentTotalCalosGained;
     isChecked
@@ -328,7 +365,27 @@ export class MenuWrap extends React.Component {
         {
           text: 'OK',
           onPress: () => {
-            this.setState({isCompleteNutrions: true});
+            let gainObj = {
+              gainRecapOwner: auth().currentUser.uid,
+              gainRecapDate: firestore.Timestamp.fromDate(new Date()),
+              gainCalories: this.state.currentTotalCalosGained,
+            };
+            console.log('obj', gainObj);
+            uploadGainRecap(gainObj)
+              .then(res => {
+                console.log(res);
+                Alert.alert('Xác nhận hoàn thành thành công', '', [
+                  {
+                    text: 'OK',
+                    onPress: () => {},
+                    style: 'cancel',
+                  },
+                ]);
+                this.props.reload();
+              })
+              .catch(err => {
+                console.log(err);
+              });
           },
         },
       ],
@@ -391,8 +448,12 @@ export class MenuWrap extends React.Component {
         />
         <View style={styles.totalContainer}>
           <TouchableOpacity
-            disabled={this.state.isCompleteNutrions ? true : false}
-            style={styles.completeButton}
+            disabled={this.props.isCompleteNutrions ? true : false}
+            style={
+              this.props.isCompleteNutrions
+                ? styles.completeButtonDisable
+                : styles.completeButton
+            }
             onPress={() => {
               this.completeCurrentDayNutrions();
             }}>
@@ -423,7 +484,7 @@ class Exercise extends React.Component {
     this.setState({isChecked: check});
     let totalCalosBurned = (
       ((parseInt(data.exerciseCalories) * data.rep * data.set) / 60) *
-      2.5
+      25
     ).toPrecision(2);
     this.props.handleWorkoutChecked(
       parseInt(totalCalosBurned),
@@ -682,6 +743,15 @@ const styles = StyleSheet.create({
   },
   completeButton: {
     backgroundColor: '#1CA2BB',
+    borderRadius: 10,
+    width: '40%',
+    height: '70%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '5%',
+  },
+  completeButtonDisable: {
+    backgroundColor: 'gray',
     borderRadius: 10,
     width: '40%',
     height: '70%',
