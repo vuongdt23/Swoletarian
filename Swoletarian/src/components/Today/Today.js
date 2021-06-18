@@ -66,6 +66,11 @@ class Today extends React.Component {
       Snack: {},
     };
   }
+  componentDidUpdate() {
+    // const unsubscribe = this.props.navigation.addListener('focus', () => {
+    //   this.componentDidMount();
+    // });
+  }
   componentDidMount() {
     this.loadSchedules();
     this.loadMenus();
@@ -330,27 +335,47 @@ export class MenuWrap extends React.Component {
     );
   };
   render() {
+    const DATA = [
+      {
+        title: 'Sáng',
+        data: this.props.Breakfast.menuDetails
+          ? this.props.Breakfast.menuDetails.length > 0
+            ? this.props.Breakfast.menuDetails
+            : []
+          : [],
+      },
+      {
+        title: 'Trưa',
+        //data: this.props.Lunch.menuDetails,
+        data: this.props.Lunch.menuDetails
+          ? this.props.Lunch.menuDetails.length > 0
+            ? this.props.Lunch.menuDetails
+            : []
+          : [],
+      },
+      {
+        title: 'Tối',
+        //data: this.props.Dinner.menuDetails,
+        data: this.props.Dinner.menuDetails
+          ? this.props.Dinner.menuDetails.length > 0
+            ? this.props.Dinner.menuDetails
+            : []
+          : [],
+      },
+      {
+        title: 'Bữa phụ',
+        //data: this.props.Snack.menuDetails,
+        data: this.props.Snack.menuDetails
+          ? this.props.Snack.menuDetails.length > 0
+            ? this.props.Snack.menuDetails
+            : []
+          : [],
+      },
+    ];
     return (
       <View style={styles.insideContentContainer}>
         <SectionList
-          sections={[
-            {
-              title: 'Sáng',
-              data: this.props.Breakfast.menuDetails,
-            },
-            {
-              title: 'Trưa',
-              data: this.props.Lunch.menuDetails,
-            },
-            {
-              title: 'Tối',
-              data: this.props.Dinner.menuDetails,
-            },
-            {
-              title: 'Bữa phụ',
-              data: this.props.Snack.menuDetails,
-            },
-          ]}
+          sections={DATA}
           renderItem={({item}) => (
             <Nutrion
               data={item}
@@ -462,14 +487,14 @@ class Exercise extends React.Component {
             transparent={true}
             visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
-              <Text style={styles.infoExerciseTitle}>{data.exercisesName}</Text>
+              <Text style={styles.infoExerciseTitle}>{data.exerciseName}</Text>
               <ScrollView style={{height: '30%'}}>
                 <Text style={styles.infoExerciseDescription}>
-                  {data.description}
+                  {data.exerciseDescription}
                 </Text>
               </ScrollView>
               <Image
-                source={data.imgLink}
+                source={data.exerciseImage}
                 style={{
                   height: '40%',
                   width: '90%',
@@ -576,6 +601,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     paddingHorizontal: '3%',
+    paddingVertical: '3%',
   },
   exerciseContainer: {
     flexDirection: 'row',
@@ -643,7 +669,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     flexDirection: 'row',
-    height: '15%',
+    height: '10%',
     width: '100%',
     paddingHorizontal: '5%',
   },

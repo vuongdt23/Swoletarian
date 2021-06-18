@@ -48,28 +48,27 @@ class Workout extends React.Component {
       isLoading: true,
       exerciseTypes: [],
       currentDisplayExercise: [],
-      exercises: [],
       workouts: [],
       schedules: [],
     };
   }
   searchExercise = () => {
-    // if (this.state.search === '') {
-    //   this.setState({currentDisplayExercise: this.state.workouts});
-    // } else {
-    //   let resultSearchArr = [];
-    //   this.state.workouts.forEach(exercise => {
-    //     if (
-    //       exercise.exerciseName
-    //         .toLowerCase()
-    //         .includes(this.state.search.toLowerCase())
-    //     )
-    //       resultSearchArr.push(exercise);
-    //   });
-    //   resultSearchArr.sort();
-    //   this.setState({currentDisplayExercise: resultSearchArr});
-    //   console.log(resultSearchArr.length);
-    // }
+    if (this.state.search === '') {
+      this.setState({currentDisplayExercise: this.state.workouts});
+    } else {
+      let resultSearchArr = [];
+      this.state.workouts.forEach(exercise => {
+        if (
+          exercise.exerciseName
+            .toLowerCase()
+            .includes(this.state.search.toLowerCase())
+        )
+          resultSearchArr.push(exercise);
+      });
+      resultSearchArr.sort();
+      this.setState({currentDisplayExercise: resultSearchArr});
+      console.log(this.state.currentDisplayExercise.length);
+    }
   };
 
   loadSchedules = () => {
@@ -309,7 +308,7 @@ class ExerciseWrap extends React.Component {
       }
     });
     this.setState({data: workouts});
-    //console.log('workouts data length', workouts.length);
+    //console.log('workouts data length wrap', workouts.length);
   }
   render() {
     const {exerciseType} = this.props;
@@ -375,6 +374,7 @@ class ExerciseWrap extends React.Component {
             style={styles.flatListStyle}
             showsHorizontalScrollIndicator={false}
             data={this.state.data.length > 0 ? this.state.data : []}
+            extraData={this.props.data}
             renderItem={({item}) => (
               <Exercise
                 schedules={this.props.schedules}
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    borderColor: 'black',
+    borderColor: 'white',
     borderWidth: 3,
     marginRight: '0%',
     width: '30%',

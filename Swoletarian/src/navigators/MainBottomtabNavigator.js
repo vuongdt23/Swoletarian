@@ -6,14 +6,12 @@ import ManageNavigator from './ManageNavigator';
 import MySelf from '../components/Myself/Myself';
 import Today from '../components/Today/Today';
 const Tab = createBottomTabNavigator();
-
 function MainBottomtabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
-
           if (route.name === 'Manage') {
             iconName = focused ? 'home-outline' : 'home-outline';
           } else if (route.name === 'Today') {
