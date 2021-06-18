@@ -1,20 +1,23 @@
-import React, {useState} from 'react';
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable no-const-assign */
+/* eslint-disable no-undef */
+import React from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  TextInput,
   Image,
   TouchableOpacity,
   Modal,
   Pressable,
   Alert,
   ScrollView,
+  ActivityIndicator,
+  SectionList,
 } from 'react-native';
 import {LogBox} from 'react-native';
 LogBox.ignoreLogs(['Reanimated 2']);
 import {CheckBox} from 'react-native-elements';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {FlatList} from 'react-native-gesture-handler';
 import AbsIcon from '../../assets/Icon/workout/AbsIcon.png';
 import BackIcon from '../../assets/Icon/workout/BackIcon.png';
@@ -23,412 +26,186 @@ import TricepIcon from '../../assets/Icon/workout/TricepIcon.png';
 import ShoulderIcon from '../../assets/Icon/workout/ShoulderIcon.png';
 import BicepIcon from '../../assets/Icon/workout/BicepIcon.png';
 import LegIcon from '../../assets/Icon/workout/LegIcon.png';
+import {
+  getSchedulesbyUser,
+  getScheduleDetailsbySchedule,
+} from '../../Firebase/ScheduleAPI';
+import {getExercisebyID} from '../../Firebase/ExerciseAPI';
+import {
+  getMenubyCurrentUser,
+  getMenuDetailsfromMenu,
+} from '../../Firebase/MenuAPI';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {getFoodbyID} from '../../Firebase/foodAPI';
 const Tab = createMaterialTopTabNavigator();
+const todayString = () => {
+  var d = new Date();
+  var weekday = new Array(7);
+  weekday[0] = 'sunday';
+  weekday[1] = 'monday';
+  weekday[2] = 'tuesday';
+  weekday[3] = 'wednesday';
+  weekday[4] = 'thursday';
+  weekday[5] = 'friday';
+  weekday[6] = 'saturday';
+  var today = weekday[d.getDay()];
+  return today;
+};
 class Today extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       currentDisplayValue: '',
-      currentDayWorkouts: [
-        {
-          id: 1,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 30,
-          sets: 3,
-        },
-        {
-          id: 2,
-          name: 'Renegade row',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 3,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'abs',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 4,
-          name: 'Squat to press',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 5,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 6,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 5,
-        },
-        {
-          id: 7,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-        {
-          id: 8,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'shoulder',
-          isSystem: 'false',
-          reps: 20,
-          sets: 2,
-        },
-        {
-          id: 9,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 5,
-        },
-        {
-          id: 10,
-          name: 'Plank',
-          description:
-            'Vào tư thế plank, đặt tay ngay dưới vai, hóp cơ và lưng phẳng. Ngoài ra, bạn sẽ muốn đặt một chiếc khăn nhỏ dưới mỗi bàn chân. Trên sàn gỗ cứng hoặc vải sơn, kéo cơ thể của bạn từ bên này sang bên kia của căn phòng, kéo trọng lượng cơ thể của bạn bằng cách sử dụng cánh tay của bạn để di chuyển xung quanh. Một chuyến đi qua phòng, cả ở đó và trở lại, được tính là một vòng. Lặp lại điều này ba lần.',
-          imgLink: {
-            uri:
-              'https://wheyshop.vn/wp-content/uploads/2017/07/maxresdefault.jpg',
-          },
-          caloBurned: 12,
-          exerciseType: 'tricep',
-          isSystem: 'false',
-          reps: 20,
-          sets: 3,
-        },
-      ],
-      currentTotalCalosBurned: 0,
-      currentDayNutrions: [
-        {
-          id: 1,
-          mealName: 'Buổi sáng',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 3,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 4,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-            {
-              id: 5,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 6,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 7,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-          ],
-        },
-        {
-          id: 2,
-          mealName: 'Lunch',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 3,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 4,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-            {
-              id: 5,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 6,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 7,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-          ],
-        },
-        {
-          id: 3,
-          mealName: 'Dinner',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 3,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 4,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-            {
-              id: 5,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 6,
-              name: 'Thịt bò',
-              calo: 278,
-              isSystem: 'true',
-              grams: 100,
-            },
-            {
-              id: 7,
-              name: 'Khoai tây',
-              calo: 90,
-              isSystem: 'true',
-              grams: 200,
-            },
-          ],
-        },
-        {
-          id: 4,
-          mealName: 'supMeal1',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-          ],
-        },
-        {
-          id: 5,
-          mealName: 'supMeal2',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-          ],
-        },
-        {
-          id: 6,
-          mealName: 'supMeal3',
-          nutrions: [
-            {
-              id: 1,
-              name: 'Gạo nếp',
-              calo: 130,
-              isSystem: 'true',
-              grams: 300,
-            },
-            {
-              id: 2,
-              name: 'Bơ đậu',
-              calo: 580,
-              isSystem: 'true',
-              grams: 300,
-            },
-          ],
-        },
-      ],
-      currentTotalCalosGained: 0,
+      currentDayWorkouts: [],
       isCompleteWorkouts: false,
       isCompleteNutrions: false,
+      Breakfast: {},
+      Lunch: {},
+      Dinner: {},
+      Snack: {},
     };
+  }
+  componentDidMount() {
+    this.loadSchedules();
+    this.loadMenus();
+    setTimeout(() => {
+      this.setState({isLoading: false});
+    }, 5000);
   }
 
   resetCurrentCalosBurnedAndGained = () => {
     this.setState({currentTotalCalosBurned: 0});
     this.setState({currentTotalCalosGained: 0});
   };
+  loadMenus = () => {
+    let tempMenuArr = [];
+    //let finalMenuArr = [];
+    getMenubyCurrentUser()
+      .then(res => {
+        res.forEach(doc => {
+          let tempMenuObj = doc.data();
+          tempMenuObj.menuID = doc.id;
+
+          tempMenuArr.push(tempMenuObj);
+        });
+        tempMenuArr.forEach(menu => {
+          let menuDetailList = {
+            menuID: menu.menuID,
+            menuType: menu.menuType,
+            menuDetails: [],
+          };
+
+          //  console.log ('initial menu list', menuDetailList);
+          getMenuDetailsfromMenu(menu.menuID)
+            .then(res => {
+              if (res.empty) {
+                this.setState({
+                  Breakfast: [],
+                  Lunch: [],
+                  Dinner: [],
+                  Snack: [],
+                });
+              } else {
+                res.forEach(doc => {
+                  let tempMenuObj = doc.data();
+                  tempMenuObj.menuDetailID = doc.id;
+                  getFoodbyID(doc.data().foodID)
+                    .then(resp => {
+                      tempMenuObj.foodCalories = resp.data().foodCalories;
+                      tempMenuObj.foodName = resp.data().foodName;
+                      menuDetailList.menuDetails.push(tempMenuObj);
+                      //console.log('menu getting', menuDetailList);
+                      if (menuDetailList.menuType === 'breakfast') {
+                        this.setState({Breakfast: menuDetailList}, () => {});
+                      }
+                      if (menuDetailList.menuType === 'lunch') {
+                        this.setState({Lunch: menuDetailList});
+                      }
+                      if (menuDetailList.menuType === 'dinner') {
+                        this.setState({Dinner: menuDetailList});
+                      }
+                      if (menuDetailList.menuType === 'snack') {
+                        this.setState({Snack: menuDetailList});
+                      }
+                    })
+                    .catch(err => {
+                      console.log(err);
+                    });
+                });
+              }
+            })
+            .catch(err => console.log(err));
+        });
+
+        // console.log ('Menus by this user', tempMenuArr);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  loadSchedules = () => {
+    let weekday = todayString();
+    //console.log(todayString);
+    let tempScheduleArr = [];
+    let scheduleDetailArr = [];
+    let exerciseArr = [];
+    getSchedulesbyUser()
+      .then(res => {
+        res.forEach(doc => {
+          let tempSchObj = doc.data();
+          tempSchObj.scheduleID = doc.id;
+
+          tempScheduleArr.push(tempSchObj);
+        });
+
+        let todayIndex = tempScheduleArr.findIndex(
+          schedule => schedule.scheduleType === weekday,
+        );
+
+        getScheduleDetailsbySchedule(tempScheduleArr[todayIndex].scheduleID)
+          .then(res => {
+            res.forEach(doc => {
+              let scheduleDetailObj = doc.data();
+              scheduleDetailObj.scheduleDetailID = doc.id;
+              scheduleDetailArr.push(scheduleDetailObj);
+            });
+            if (scheduleDetailArr.length === 0) {
+              this.setState({currentDayWorkouts: exerciseArr});
+            } else {
+              scheduleDetailArr.forEach(scheduleDetail => {
+                getExercisebyID(scheduleDetail.exerciseID)
+                  .then(res => {
+                    let exerciseObj = res.data();
+                    (exerciseObj.rep = scheduleDetail.rep),
+                      (exerciseObj.set = scheduleDetail.set);
+                    exerciseArr.push(exerciseObj);
+                    this.setState({currentDayWorkouts: exerciseArr});
+                  })
+                  .catch(err => console.log(err));
+              });
+            }
+          })
+          .catch(err => console.log(err));
+
+        // console.log ('Menus by this user', tempMenuArr);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#1CA2BB" />
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
-        <Text style={styles.headerTitle}>Hôm nay</Text>
-        <View style={styles.dateContainer}>
-          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
-        </View>
-
         <Tab.Navigator
           style={styles.contentContainer}
           tabBarOptions={{
@@ -438,16 +215,18 @@ class Today extends React.Component {
             name="Luyện tập"
             children={() => (
               <ScheduleWrap
-                currentDayWorkouts={
-                  this.state.currentDayWorkouts
-                }></ScheduleWrap>
+                currentDayWorkouts={this.state.currentDayWorkouts}
+              />
             )}
           />
           <Tab.Screen
             name="Dinh dưỡng"
             children={() => (
               <MenuWrap
-                currentDayNutrions={this.state.currentDayNutrions}></MenuWrap>
+                Breakfast={this.state.Breakfast}
+                Lunch={this.state.Lunch}
+                Dinner={this.state.Dinner}
+                Snack={this.state.Snack}></MenuWrap>
             )}
           />
         </Tab.Navigator>
@@ -497,11 +276,13 @@ export class ScheduleWrap extends React.Component {
               data={item}
               handleWorkoutChecked={(totalCalosBurned, isChecked) => {
                 this.handleWorkoutChecked(totalCalosBurned, isChecked);
-              }}></Exercise>
+              }}
+            />
           )}
           keyExtractor={(item, index) => {
             return index.toString();
-          }}></FlatList>
+          }}
+        />
         <View style={styles.totalContainer}>
           <TouchableOpacity
             disabled={this.state.isCompleteWorkouts ? true : false}
@@ -551,21 +332,38 @@ export class MenuWrap extends React.Component {
   render() {
     return (
       <View style={styles.insideContentContainer}>
-        <FlatList
-          numColumns={1}
-          contentContainerStyle={{}}
-          showsVerticalScrollIndicator={true}
-          data={this.props.currentDayNutrions}
+        <SectionList
+          sections={[
+            {
+              title: 'Sáng',
+              data: this.props.Breakfast.menuDetails,
+            },
+            {
+              title: 'Trưa',
+              data: this.props.Lunch.menuDetails,
+            },
+            {
+              title: 'Tối',
+              data: this.props.Dinner.menuDetails,
+            },
+            {
+              title: 'Bữa phụ',
+              data: this.props.Snack.menuDetails,
+            },
+          ]}
           renderItem={({item}) => (
-            <NutrionWrap
+            <Nutrion
               data={item}
               handleNutrionChecked={(totalCalosGained, isChecked) => {
                 this.handleNutrionChecked(totalCalosGained, isChecked);
-              }}></NutrionWrap>
+              }}
+            />
           )}
-          keyExtractor={(item, index) => {
-            return index.toString();
-          }}></FlatList>
+          renderSectionHeader={({section}) => (
+            <Text style={styles.nutrionWrapTitle}>{section.title}</Text>
+          )}
+          keyExtractor={(item, index) => index}
+        />
         <View style={styles.totalContainer}>
           <TouchableOpacity
             disabled={this.state.isCompleteNutrions ? true : false}
@@ -599,8 +397,8 @@ class Exercise extends React.Component {
     const {data} = this.props;
     this.setState({isChecked: check});
     let totalCalosBurned = (
-      (data.caloBurned * data.reps * data.sets) /
-      60
+      ((parseInt(data.exerciseCalories) * data.rep * data.set) / 60) *
+      2.5
     ).toPrecision(2);
     this.props.handleWorkoutChecked(
       parseInt(totalCalosBurned),
@@ -642,27 +440,29 @@ class Exercise extends React.Component {
         onPress={this.onToggleInfoModal}>
         <Image
           source={dataIconType}
-          style={{marginLeft: '3%', width: '8%', height: '80%'}}></Image>
-        <Text style={styles.exerciseTitle}>{data.name}</Text>
+          style={{marginLeft: '3%', width: '8%', height: '80%'}}
+        />
+        <Text style={styles.exerciseTitle}>{data.exerciseName}</Text>
         <View style={styles.repSetContainer}>
           <View style={styles.setsContainer}>
-            <Text style={styles.repsContentStyle}>{data.sets} sets</Text>
+            <Text style={styles.repsContentStyle}>{data.set} sets</Text>
           </View>
           <View style={styles.repsContainer}>
-            <Text style={styles.repsContentStyle}>{data.reps} reps</Text>
+            <Text style={styles.repsContentStyle}>{data.rep} reps</Text>
           </View>
         </View>
         <CheckBox
           checked={this.state.isChecked}
           size={35}
-          onPress={() => this.setIsChecked(!this.state.isChecked)}></CheckBox>
+          onPress={() => this.setIsChecked(!this.state.isChecked)}
+        />
         <View style={styles.infoModalContainer}>
           <Modal
             animationType="fade"
             transparent={true}
             visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
-              <Text style={styles.infoExerciseTitle}>{data.name}</Text>
+              <Text style={styles.infoExerciseTitle}>{data.exercisesName}</Text>
               <ScrollView style={{height: '30%'}}>
                 <Text style={styles.infoExerciseDescription}>
                   {data.description}
@@ -675,7 +475,8 @@ class Exercise extends React.Component {
                   width: '90%',
                   resizeMode: 'stretch',
                   margin: '2%',
-                }}></Image>
+                }}
+              />
               <Pressable
                 style={{
                   width: '40%',
@@ -697,43 +498,6 @@ class Exercise extends React.Component {
     );
   }
 }
-
-class NutrionWrap extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isChecked: false,
-    };
-  }
-  render() {
-    const {data} = this.props;
-    return (
-      <View style={styles.container}>
-        <View style={styles.nutrionWrapTitleContainer}>
-          <Text style={styles.nutrionWrapTitle}>{data.mealName}</Text>
-        </View>
-        <FlatList
-          numColumns={1}
-          contentContainerStyle={{}}
-          showsVerticalScrollIndicator={true}
-          data={data.nutrions}
-          renderItem={({item}) => (
-            <Nutrion
-              data={item}
-              handleNutrionChecked={(totalCalosGained, isChecked) => {
-                this.props.handleNutrionChecked(totalCalosGained, isChecked);
-                console.log(
-                  'NutrionWrap: ' + totalCalosGained + isChecked.toString(),
-                );
-              }}></Nutrion>
-          )}
-          keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}></FlatList>
-      </View>
-    );
-  }
-}
 class Nutrion extends React.Component {
   constructor(props) {
     super(props);
@@ -742,22 +506,22 @@ class Nutrion extends React.Component {
     };
   }
   setIsChecked = () => {
-    console.log('Nutrion:1 ' + this.state.isChecked);
+    //console.log('Nutrion:1 ' + this.state.isChecked);
     const {data} = this.props;
     this.setState({isChecked: !this.state.isChecked});
-    let calos = (data.calo * data.grams) / 100;
+    let calos = Math.round((parseInt(data.foodCalories) * data.amount) / 100);
     this.props.handleNutrionChecked(calos, this.state.isChecked);
-    console.log('Nutrion:2 ' + calos + this.state.isChecked.toString());
+    //console.log('Nutrion:2 ' + calos + this.state.isChecked.toString());
   };
   render() {
     const {data} = this.props;
-    let calos = (data.calo * data.grams) / 100;
+    let calos = Math.round((parseInt(data.foodCalories) * data.amount) / 100);
     return (
       <View style={styles.nutrionContainer}>
-        <Text style={styles.nutrionTitle}>{data.name}</Text>
-        <Text style={styles.caloTitle}>{data.calo} calos/100gram</Text>
+        <Text style={styles.nutrionTitle}>{data.foodName}</Text>
+        <Text style={styles.caloTitle}>{data.foodCalories} calos/100gram</Text>
         <View style={styles.calosContainer}>
-          <Text style={styles.gramsTitle}>{data.grams} grams</Text>
+          <Text style={styles.gramsTitle}>{data.amount} grams</Text>
           <Text style={styles.calosTitle}>{calos.toString()} calos</Text>
         </View>
         <CheckBox
@@ -765,12 +529,15 @@ class Nutrion extends React.Component {
           size={35}
           onPress={() => {
             this.setIsChecked();
-          }}></CheckBox>
+          }}
+        />
       </View>
     );
   }
 }
-
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -808,6 +575,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
+    paddingHorizontal: '3%',
   },
   exerciseContainer: {
     flexDirection: 'row',

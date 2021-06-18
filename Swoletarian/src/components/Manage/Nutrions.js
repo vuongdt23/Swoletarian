@@ -426,6 +426,7 @@ class Nutrion extends React.Component {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'flex-start',
+            width: '80%',
           }}>
           <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
             {detail.foodName}
@@ -543,7 +544,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
   },

@@ -3,7 +3,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Login from '../components/Screen/SignUp';
 import ManageNavigator from './ManageNavigator';
-import StatisticNavigator from './StatisticNavigator';
 import MySelf from '../components/Myself/Myself';
 import Today from '../components/Today/Today';
 const Tab = createBottomTabNavigator();
@@ -16,9 +15,7 @@ function MainBottomtabNavigator() {
           let iconName;
 
           if (route.name === 'Manage') {
-            iconName = focused ? 'list' : 'list';
-          } else if (route.name === 'Statistic') {
-            iconName = focused ? 'bar-chart-outline' : 'bar-chart-outline';
+            iconName = focused ? 'home-outline' : 'home-outline';
           } else if (route.name === 'Today') {
             iconName = focused ? 'checkmark-done' : 'checkmark-done';
           } else if (route.name === 'Myself') {
@@ -53,7 +50,6 @@ function MainBottomtabNavigator() {
           tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
         }}
       />
-      <Tab.Screen name="Statistic" component={StatisticNavigator}></Tab.Screen>
       <Tab.Screen name="Today" component={Today} />
       <Tab.Screen name="Myself" component={MySelf} />
     </Tab.Navigator>

@@ -133,7 +133,11 @@ class MySelf extends React.Component {
             onPress={() => this.ontogglePassWordModal()}>
             <Text style={styles.BMITitle}>Đổi mật khẩu</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.LogOutButton}>
+          <TouchableOpacity
+            style={styles.LogOutButton}
+            onPress={() => {
+              this.handleLogout();
+            }}>
             <Text style={styles.BMITitle}>Đăng xuất</Text>
           </TouchableOpacity>
         </View>
@@ -252,9 +256,21 @@ class MySelf extends React.Component {
     this.onToggleUpdateModal();
   };
   handleLogout = () => {
-    logOut();
-    const {navigation} = this.props;
-    navigation.navigate('Start');
+    Alert.alert('Đăng xuất', 'Bạn muốn đăng xuất ?', [
+      {
+        text: 'Hủy',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          logOut();
+          const {navigation} = this.props;
+          navigation.navigate('Start');
+        },
+      },
+    ]);
   };
   handleChangePassword = (currentPassword, newPassword) => {
     this.reauthenticate(currentPassword)

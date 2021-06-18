@@ -44,13 +44,33 @@ class Workout extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      search: '',
       isLoading: true,
       exerciseTypes: [],
+      currentDisplayExercise: [],
       exercises: [],
       workouts: [],
       schedules: [],
     };
   }
+  searchExercise = () => {
+    // if (this.state.search === '') {
+    //   this.setState({currentDisplayExercise: this.state.workouts});
+    // } else {
+    //   let resultSearchArr = [];
+    //   this.state.workouts.forEach(exercise => {
+    //     if (
+    //       exercise.exerciseName
+    //         .toLowerCase()
+    //         .includes(this.state.search.toLowerCase())
+    //     )
+    //       resultSearchArr.push(exercise);
+    //   });
+    //   resultSearchArr.sort();
+    //   this.setState({currentDisplayExercise: resultSearchArr});
+    //   console.log(resultSearchArr.length);
+    // }
+  };
 
   loadSchedules = () => {
     let tempScheduleArr = [];
@@ -112,7 +132,10 @@ class Workout extends React.Component {
           exercise.exerciseID = doc.id;
           tempExerciseArr.push(exercise);
         });
-        this.setState({workouts: tempExerciseArr});
+        this.setState({
+          workouts: tempExerciseArr,
+          currentDisplayExercise: tempExerciseArr,
+        });
 
         //console.log(tempExerciseArr.length);
       })
@@ -137,22 +160,37 @@ class Workout extends React.Component {
     this.loadSchedules();
   };
   render() {
-    if (
-      this.state.workouts.length === 0 ||
-      this.state.schedules.length === 0 ||
-      this.state.exerciseTypes.length === 0
-    ) {
-      return (
-        <View style={styles.container}>
-          <ActivityIndicator size="large" color="#1CA2BB" />
-        </View>
-      );
-    }
     // console.log(this.state.exerciseTypes[2]);
-    else
-      return (
-        <View style={styles.container}>
-          <Text style={styles.headerTitle}>Luyện tập</Text>
+    return (
+      <View style={styles.container}>
+        <Text style={styles.headerTitle}>Workout</Text>
+        <View style={styles.searchBarContainer}>
+          <TextInput
+            onChangeText={text => {
+              this.setState({search: text});
+            }}
+            style={{
+              width: '90%',
+              height: 100,
+              fontSize: 20,
+              fontFamily: 'Roboto-Bold',
+              paddingLeft: 20,
+            }}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              this.searchExercise();
+            }}>
+            <Icon name="search" size={28} />
+          </TouchableOpacity>
+        </View>
+        {this.state.workouts.length === 0 ||
+        this.state.schedules.length === 0 ||
+        this.state.exerciseTypes.length === 0 ? (
+          <View style={styles.container}>
+            <ActivityIndicator size="large" color="#1CA2BB" />
+          </View>
+        ) : (
           <FlatList
             contentContainerStyle={{
               flexDirection: 'column',
@@ -165,7 +203,7 @@ class Workout extends React.Component {
             renderItem={({item}) => (
               <ExerciseWrap
                 exerciseType={item}
-                data={this.state.workouts.length > 0 ? this.state.workouts : []}
+                data={this.state.currentDisplayExercise}
                 reloadAll={() => {
                   this.reload();
                   //console.log('child calls reload');
@@ -177,8 +215,9 @@ class Workout extends React.Component {
               return index.toString();
             }}
           />
-        </View>
-      );
+        )}
+      </View>
+    );
   }
 }
 
@@ -242,10 +281,17 @@ class ExerciseWrap extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          deleteExercise(exercise.id)
+          deleteExercise(exercise.exerciseID)
             .then(res => {
               console.log(res);
               this.props.reloadAll();
+              Alert.alert('Xóa thành công', '', [
+                {
+                  text: 'OK',
+                  onPress: () => {},
+                  style: 'cancel',
+                },
+              ]);
             })
             .catch(err => {
               console.log(err);
