@@ -40,6 +40,9 @@ class CalosAnalysis extends React.Component {
     loading: true,
   };
   componentDidMount() {
+    this.loadData();
+  }
+  loadData = () => {
     const days30Prior =
       new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime() / 86400000; //this is to get the number of dates since epoch from 30 days ago since today;
     let crcArr = [];
@@ -91,7 +94,7 @@ class CalosAnalysis extends React.Component {
       .catch(err => console.log(err));
 
     this.setState({loading: false});
-  }
+  };
   dropDownSelectHandler = (index, option) => {
     this.setState({dropdownValue: option});
     console.log(option);
@@ -139,7 +142,7 @@ class CalosAnalysis extends React.Component {
                   ]
             }
             padding={{left: 40, bottom: 20, right: 20, top: 20}}
-            xDomain={{min: 18500, max: 19000}}
+            xDomain={{min: 18700, max: 19000}}
             yDomain={{min: 0, max: 5000}}>
             <VerticalAxis
               tickCount={10}
