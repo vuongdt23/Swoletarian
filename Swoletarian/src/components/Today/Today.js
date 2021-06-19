@@ -33,6 +33,7 @@ import {
 import {getExercisebyID} from '../../Firebase/ExerciseAPI';
 import {
   uploadGainRecap,
+  uploadBurnRecap,
   getTodaysGainRecapByUser,
   getTodaysBurnRecapByUser,
 } from '../../Firebase/reportAPI';
@@ -85,6 +86,7 @@ class Today extends React.Component {
     });
     this.componentDidMount();
   };
+
   componentDidMount() {
     this.loadUserInfo();
     getTodaysGainRecapByUser()
@@ -97,7 +99,12 @@ class Today extends React.Component {
     getTodaysBurnRecapByUser()
       .then(res => {
         if (!res.empty) {
-          this.setState({isCompleteWorkouts: true});
+          this.setState({isCompleteWorkouts: true}, () => {
+            // console.log(
+            //   'finished todays exercises',
+            //   this.state.isCompleteWorkouts,
+            // );
+          });
         }
       })
       .catch(err => console.log(err));
@@ -255,7 +262,10 @@ class Today extends React.Component {
             name="Luyện tập"
             children={() => (
               <ScheduleWrap
+                userInfo={this.state.userInfo}
+                isCompleteWorkouts={this.state.isCompleteWorkouts}
                 currentDayWorkouts={this.state.currentDayWorkouts}
+                reload={() => this.reload()}
               />
             )}
           />
@@ -286,6 +296,37 @@ export class ScheduleWrap extends React.Component {
       : (newTotalCalosBurned = newTotalCalosBurned + totalCalosBurned);
     this.setState({currentTotalCalosBurned: newTotalCalosBurned});
   };
+  calculateTDEE = () => {
+    const userInfo = this.props.userInfo;
+    let Z = 0;
+    switch (userInfo.userType) {
+      case 'beginner':
+        Z = 1.55;
+        break;
+      case 'intermediate':
+        Z = 1.725;
+        break;
+      case 'advanced':
+        Z = 1.9;
+        break;
+    }
+    let BMR = 0;
+    if (userInfo.userSex === 'male') {
+      BMR =
+        10 * userInfo.userWeight +
+        6.25 * userInfo.userHeight -
+        5 * userInfo.userAge +
+        5;
+    } else {
+      BMR =
+        10 * userInfo.userWeight +
+        6.25 * userInfo.userHeight -
+        5 * userInfo.userAge -
+        161;
+    }
+    console.log('BMR', BMR, 'Z', Z);
+    return Math.round(BMR * Z);
+  };
   completeCurrentDayWorkouts = () => {
     Alert.alert(
       'Xác nhận hoàn thành',
@@ -299,7 +340,20 @@ export class ScheduleWrap extends React.Component {
         {
           text: 'OK',
           onPress: () => {
-            this.setState({isCompleteWorkouts: true});
+            let burnObj = {
+              burnRecapOwner: auth().currentUser.uid,
+              burnRecapDate: firestore.Timestamp.fromDate(new Date()),
+              burnByExercises: this.state.currentTotalCalosBurned,
+              burnByTDEE: this.calculateTDEE(),
+            };
+            uploadBurnRecap(burnObj)
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+            console.log(burnObj);
           },
         },
       ],
@@ -327,8 +381,12 @@ export class ScheduleWrap extends React.Component {
         />
         <View style={styles.totalContainer}>
           <TouchableOpacity
-            disabled={this.state.isCompleteWorkouts ? true : false}
-            style={styles.completeButton}
+            disabled={this.props.isCompleteWorkouts}
+            style={
+              this.props.isCompleteWorkouts
+                ? styles.completeButtonDisable
+                : styles.completeButton
+            }
             onPress={() => {
               this.completeCurrentDayWorkouts();
             }}>

@@ -9,7 +9,7 @@ export const getCaloriesGainRecapByCurrentUser = async () => {
     .get();
 };
 
-export const getCaloriesGainRecapBByCurrentUser = async () => {
+export const getCaloriesBurnRecapByCurrentUser = async () => {
   const userID = auth().currentUser.uid;
   return await firestore()
     .collection('dailyCaloriesBurnRecaps')

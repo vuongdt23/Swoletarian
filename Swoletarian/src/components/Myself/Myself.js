@@ -9,6 +9,7 @@ import {
   Alert,
   Image,
   ActivityIndicator,
+  Button,
 } from 'react-native';
 import {Input} from 'react-native-elements/dist/input/Input';
 import {logOut, getUserSetup} from '../../Firebase/userAPI';
@@ -79,7 +80,7 @@ class MySelf extends React.Component {
     else if (BMI >= 18.5 && BMI <= 24.9) temp = 'BMI chuẩn';
     else if (BMI > 24.9 && BMI <= 29.9) temp = 'Bạn đang thừa cân';
     else temp = 'Bạn đang béo phì';
-    if (this.setState.isLoading)
+    if (this.state.isLoading)
       return (
         <View style={styles.container}>
           <ActivityIndicator size="large" color="#1CA2BB" />
@@ -106,6 +107,11 @@ class MySelf extends React.Component {
           <Text style={styles.userAge}>
             Giới tính: {userInfo.userSex === 'male' ? 'Nam' : 'Nữ'}
           </Text>
+          <Button
+            title="TDEE"
+            onPress={() => {
+              this.props.navigation.navigate('CalosAnalysis');
+            }}></Button>
           <View style={styles.BMIContainer}>
             <View style={styles.BMIDetail}>
               <Text style={styles.BMITitle}>BMI</Text>
@@ -315,7 +321,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
   },

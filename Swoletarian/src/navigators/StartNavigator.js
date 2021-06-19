@@ -11,6 +11,7 @@ import SetUp from '../components/Screen/SetUp';
 import auth from '@react-native-firebase/auth';
 import {View, Text} from 'react-native';
 import ForgotPassword from '../components/Screen/ForgotPassword';
+import CalosAnalysis from '../components/Statistic/CalosAnalysis';
 
 const Stack = createStackNavigator();
 class StartNavigator extends React.Component {
@@ -32,6 +33,7 @@ class StartNavigator extends React.Component {
           <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="MySelf" component={MySelf} />
           <Stack.Screen name="SetUp" component={SetUp} />
+          <Stack.Screen name="CalosAnalysis" component={CalosAnalysis} />
         </Stack.Navigator>
       </NavigationContainer>
     );

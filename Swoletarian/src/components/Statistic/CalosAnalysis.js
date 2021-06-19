@@ -21,14 +21,14 @@ import {
 } from 'react-native-responsive-linechart';
 
 import {
-  getCaloriesRecapByCurrentUser,
-  getWorkoutRecapByCurrentUser,
+  getCaloriesGainRecapByCurrentUser,
+  getCaloriesBurnRecapByCurrentUser,
 } from '../../Firebase/reportAPI';
-const windowWidth = Dimensions.get ('window').width * 2;
-const windowHeight = Dimensions.get ('window').height;
+const windowWidth = Dimensions.get('window').width * 2;
+const windowHeight = Dimensions.get('window').height;
 class CalosAnalysis extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
   }
   state = {
     caloriesRecaps: [],
@@ -39,65 +39,65 @@ class CalosAnalysis extends React.Component {
 
     loading: true,
   };
-  componentDidMount () {
+  componentDidMount() {
     const days30Prior =
-      new Date (Date.now () - 30 * 24 * 60 * 60 * 1000).getTime () / 86400000; //this is to get the number of dates since epoch from 30 days ago since today;
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime() / 86400000; //this is to get the number of dates since epoch from 30 days ago since today;
     let crcArr = [];
     let wrcArr = [];
     let crc30Arr = [];
     let wrc30Arr = [];
-    getCaloriesRecapByCurrentUser ()
-      .then (res => {
-        res.forEach (doc => {
-          let crcObj = {y: doc.data ().recapCalories};
+    getCaloriesGainRecapByCurrentUser()
+      .then(res => {
+        res.forEach(doc => {
+          let crcObj = {y: doc.data().gainCalories};
 
-          crcObj.x = Math.floor (
-            doc.data ().caloriesRecapDate.toDate ().getTime () / 86400000 //this is to get the number of dates since epoch
+          crcObj.x = Math.floor(
+            doc.data().gainRecapDate.toDate().getTime() / 86400000, //this is to get the number of dates since epoch
           );
-          crcArr.push (crcObj);
+          crcArr.push(crcObj);
         });
-        console.log ('All calories Recaps', crcArr);
+        console.log('All calories Recaps', crcArr);
 
-        this.setState ({caloriesRecaps: crcArr});
+        this.setState({caloriesRecaps: crcArr});
 
-        crcArr.forEach (caloriesRecap => {
-          if (caloriesRecap.x >= days30Prior) crc30Arr.push (caloriesRecap);
+        crcArr.forEach(caloriesRecap => {
+          if (caloriesRecap.x >= days30Prior) crc30Arr.push(caloriesRecap);
         });
 
-        this.setState ({caloriesRecaps30days: crc30Arr});
-        console.log ('30 days recaps', crc30Arr);
+        this.setState({caloriesRecaps30days: crc30Arr});
+        console.log('30 days recaps', crc30Arr);
       })
-      .catch (err => console.log (err));
-    getWorkoutRecapByCurrentUser ()
-      .then (res => {
-        res.forEach (doc => {
-          let wrcObj = {y: doc.data ().workoutCalories};
+      .catch(err => console.log(err));
+    getCaloriesBurnRecapByCurrentUser()
+      .then(res => {
+        res.forEach(doc => {
+          let wrcObj = {y: doc.data().burnByTDEE + doc.data().burnByExercises};
 
-          wrcObj.x = Math.floor (
-            doc.data ().recapDate.toDate ().getTime () / 86400000 //this is to get the number of dates since epoch
+          wrcObj.x = Math.floor(
+            doc.data().burnRecapDate.toDate().getTime() / 86400000, //this is to get the number of dates since epoch
           );
-          wrcArr.push (wrcObj);
+          wrcArr.push(wrcObj);
         });
-        console.log ('All workout Recaps', wrcArr);
+        console.log('All workout Recaps', wrcArr);
 
-        this.setState ({workoutRecaps: wrcArr});
+        this.setState({workoutRecaps: wrcArr});
 
-        wrcArr.forEach (workoutRecap => {
-          if (workoutRecap.x >= days30Prior) wrc30Arr.push (workoutRecap);
+        wrcArr.forEach(workoutRecap => {
+          if (workoutRecap.x >= days30Prior) wrc30Arr.push(workoutRecap);
         });
-        console.log ('30 days recaps', wrc30Arr);
-        this.setState ({workOutRecaps30days: wrc30Arr});
+        console.log('30 days recaps', wrc30Arr);
+        this.setState({workOutRecaps30days: wrc30Arr});
       })
-      .catch (err => console.log (err));
+      .catch(err => console.log(err));
 
-    this.setState ({loading: false});
+    this.setState({loading: false});
   }
   dropDownSelectHandler = (index, option) => {
-    this.setState ({dropdownValue: option});
-    console.log (option);
+    this.setState({dropdownValue: option});
+    console.log(option);
   };
 
-  render () {
+  render() {
     if (this.state.loading) {
       return <View />;
     } else {
@@ -109,8 +109,8 @@ class CalosAnalysis extends React.Component {
         workoutData = [...this.state.workoutRecaps];
       }
 
-      console.log ('workout Data', workoutData);
-      console.log ('calories Data', caloriesData);
+      console.log('workout Data', workoutData);
+      console.log('calories Data', caloriesData);
       return (
         <View style={styles.container}>
           <View>
@@ -118,24 +118,32 @@ class CalosAnalysis extends React.Component {
               defaultValue={'30 ngày'}
               animated
               onSelect={(index, option) =>
-                this.dropDownSelectHandler (index, option)}
+                this.dropDownSelectHandler(index, option)
+              }
               options={['30 ngày', 'Tất cả thời gian']}
             />
           </View>
           <Chart
-            style={{height: windowHeight * 0.8, width: windowWidth / 2.5}}
+            style={{
+              height: windowHeight * 0.8,
+              width: windowWidth / 2.5,
+              backgroundColor: '#1CA2BB',
+            }}
             data={
               caloriesData.length > 0
                 ? caloriesData
-                : [{x: 1, y: 2}, {x: 3, y: 4}, {x: 5, y: 6}]
+                : [
+                    {x: 1, y: 2},
+                    {x: 3, y: 4},
+                    {x: 5, y: 6},
+                  ]
             }
             padding={{left: 40, bottom: 20, right: 20, top: 20}}
             xDomain={{min: 18500, max: 19000}}
-            yDomain={{min: 0, max: 5000}}
-          >
+            yDomain={{min: 0, max: 5000}}>
             <VerticalAxis
               tickCount={10}
-              theme={{labels: {formatter: v => v.toFixed (0)}}}
+              theme={{labels: {formatter: v => v.toFixed(0)}}}
             />
             <HorizontalAxis tickCount={0} />
             <Line
@@ -163,7 +171,11 @@ class CalosAnalysis extends React.Component {
               data={
                 workoutData.length > 0
                   ? workoutData
-                  : [{x: 1, y: 2}, {x: 3, y: 4}, {x: 5, y: 6}]
+                  : [
+                      {x: 1, y: 2},
+                      {x: 3, y: 4},
+                      {x: 5, y: 6},
+                    ]
               }
               tooltipComponent={<Tooltip />}
               theme={{
@@ -181,7 +193,11 @@ class CalosAnalysis extends React.Component {
               data={
                 workoutData.length > 0
                   ? workoutData
-                  : [{x: 1, y: 2}, {x: 3, y: 4}, {x: 5, y: 6}]
+                  : [
+                      {x: 1, y: 2},
+                      {x: 3, y: 4},
+                      {x: 5, y: 6},
+                    ]
               }
               theme={{
                 gradient: {
@@ -190,25 +206,22 @@ class CalosAnalysis extends React.Component {
                 },
               }}
             />
-
           </Chart>
 
-          <Text>
-            See your progress here
-          </Text>
+          <Text>See your progress here</Text>
         </View>
       );
     }
   }
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FFDD93',
+    backgroundColor: '#E9E9E9',
   },
 });
 
