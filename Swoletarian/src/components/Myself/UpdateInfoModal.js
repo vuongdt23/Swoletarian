@@ -33,7 +33,8 @@ function UpdateUserInfoModal(props) {
       });
   };
   useEffect(() => {
-    setUserInfo(props.userInfo);
+    let userInfo = Object.assign({}, props.userInfo);
+    setUserInfo(userInfo);
     //   console.log('user Info', props.userInfo);
   }, [props.userInfo]);
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 import React from 'react';
 import {
   SafeAreaView,
@@ -5,12 +6,15 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
+  View,
 } from 'react-native';
 import {BackgroundImage} from 'react-native-elements/dist/config';
-import DinhDuong from '../../assets/manage/DinhDuong.png';
-import TapLuyen from '../../assets/manage/TapLuyen.png';
-import LichTap from '../../assets/manage/LichTap.png';
-import ThucDon from '../../assets/manage/ThucDon.png';
+import DinhDuong from '../../assets/home/DinhDuong.png';
+import TapLuyen from '../../assets/home/Workout.png';
+import LichTap from '../../assets/home/LichTap.png';
+import ThucDon from '../../assets/home/ThucDon.png';
+import Logo from '../../assets/Logo.png';
 
 class Manage extends React.Component {
   constructor(props) {
@@ -44,18 +48,66 @@ class Manage extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.headerTitle}> Home </Text>
-        <FlatList
-          style={styles.flatListStyle}
-          showsVerticalScrollIndicator={false}
-          data={DATA}
-          renderItem={({item}) => (
-            <ManageComponent
-              detail={item}
-              navigateTo={name => navigation.navigate(name)}></ManageComponent>
-          )}
-          keyExtractor={(item, index) => {
-            return item.id.toString();
-          }}></FlatList>
+        <Image style={styles.Logo} source={Logo} />
+        <View
+          style={{
+            width: '100%',
+            height: '30%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Nutrions')}
+            style={styles.componentContainer}>
+            <BackgroundImage
+              source={DinhDuong}
+              style={styles.backgroundImage}
+              imageStyle={{borderRadius: 20}}>
+              {/* <Text style={styles.title}> {detail.name}</Text> */}
+            </BackgroundImage>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Workout')}
+            style={styles.componentContainer}>
+            <BackgroundImage
+              source={TapLuyen}
+              style={styles.backgroundImage}
+              imageStyle={{borderRadius: 20}}>
+              {/* <Text style={styles.title}> {detail.name}</Text> */}
+            </BackgroundImage>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            height: '30%',
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            marginBottom: '15%',
+          }}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Schedule')}
+            style={styles.componentContainer}>
+            <BackgroundImage
+              source={LichTap}
+              style={styles.backgroundImage}
+              imageStyle={{borderRadius: 20}}>
+              {/* <Text style={styles.title}> {detail.name}</Text> */}
+            </BackgroundImage>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Menu')}
+            style={styles.componentContainer}>
+            <BackgroundImage
+              source={ThucDon}
+              style={styles.backgroundImage}
+              imageStyle={{borderRadius: 20}}>
+              {/* <Text style={styles.title}> {detail.name}</Text> */}
+            </BackgroundImage>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
@@ -81,7 +133,7 @@ class ManageComponent extends React.Component {
           source={detail.image}
           style={styles.backgroundImage}
           imageStyle={{borderRadius: 20}}>
-          <Text style={styles.title}> {detail.name}</Text>
+          {/* <Text style={styles.title}> {detail.name}</Text> */}
         </BackgroundImage>
       </TouchableOpacity>
     );
@@ -90,14 +142,14 @@ class ManageComponent extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
+    height: '100%',
   },
   flatListStyle: {
-    width: '80%',
+    width: '100%',
     marginTop: '3%',
   },
   backgroundImage: {
@@ -108,9 +160,10 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   componentContainer: {
-    width: '100%',
-    height: 200,
-    marginVertical: 20,
+    width: '35%',
+    height: 190,
+    marginVertical: '5%',
+    //marginLeft: '3%',
   },
   title: {
     color: 'white',
@@ -122,6 +175,12 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontFamily: 'Roboto-Bold',
     marginVertical: '2%',
+  },
+  Logo: {
+    width: '80%',
+    height: '10%',
+    marginTop: '5%',
+    marginBottom: '5%',
   },
 });
 

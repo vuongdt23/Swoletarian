@@ -253,6 +253,10 @@ class Today extends React.Component {
     }
     return (
       <View style={styles.container}>
+        <Text style={styles.headerTitle}>Hôm nay</Text>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
+        </View>
         <Tab.Navigator
           style={styles.contentContainer}
           tabBarOptions={{
@@ -694,7 +698,6 @@ const styles = StyleSheet.create({
     fontSize: 45,
     color: '#000000',
     fontFamily: 'Roboto-Bold',
-    marginVertical: '2%',
   },
   dateContent: {
     fontSize: 30,
@@ -706,7 +709,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     width: '90%',
-    marginBottom: '5%',
+    marginBottom: '2%',
   },
   contentContainer: {
     height: '80%',

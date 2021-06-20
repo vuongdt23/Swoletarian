@@ -103,15 +103,37 @@ class MySelf extends React.Component {
                 style={{width: '100%', height: '100%'}}></Image>
             </TouchableOpacity>
           </View>
-          <Text style={styles.userAge}>Tuổi: {userInfo.userAge}</Text>
-          <Text style={styles.userAge}>
-            Giới tính: {userInfo.userSex === 'male' ? 'Nam' : 'Nữ'}
-          </Text>
-          <Button
-            title="TDEE"
-            onPress={() => {
-              this.props.navigation.navigate('CalosAnalysis');
-            }}></Button>
+          <View
+            style={{
+              width: '90%',
+              height: '20%',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <View
+              style={{
+                height: '100%',
+                width: '50%',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.userAge}>Tuổi: {userInfo.userAge}</Text>
+              <Text style={styles.userAge}>
+                Giới tính: {userInfo.userSex === 'male' ? 'Nam' : 'Nữ'}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                this.props.navigation.navigate('CalosAnalysis');
+              }}
+              style={styles.TDEEButton}>
+              <Text style={styles.TDEETitle}>TDEE</Text>
+              <ActivityIndicator size="large" color="#1CA2BB" />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.BMIContainer}>
             <View style={styles.BMIDetail}>
               <Text style={styles.BMITitle}>BMI</Text>
@@ -363,6 +385,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: '5%',
+    marginVertical: '5%',
   },
   userNameContainer: {
     flexDirection: 'row',
@@ -469,6 +492,22 @@ const styles = StyleSheet.create({
   comment: {
     fontSize: 25,
     fontFamily: 'Roboto-Light',
+  },
+  TDEEButton: {
+    width: '30%',
+    height: '100%',
+    borderRadius: 15,
+    borderColor: '#1CA2BB',
+    borderWidth: 3,
+    backgroundColor: 'white',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  TDEETitle: {
+    fontSize: 30,
+    fontFamily: 'Roboto-Bold',
+    color: '#1CA2BB',
   },
 });
 

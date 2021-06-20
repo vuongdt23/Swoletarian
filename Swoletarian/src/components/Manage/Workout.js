@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import {BackgroundImage} from 'react-native-elements/dist/config';
 import {CheckBox} from 'react-native-elements';
 import {FlatList} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -163,7 +164,7 @@ class Workout extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Workout</Text>
-        <View style={styles.searchBarContainer}>
+        {/* <View style={styles.searchBarContainer}>
           <TextInput
             onChangeText={text => {
               this.setState({search: text});
@@ -182,7 +183,7 @@ class Workout extends React.Component {
             }}>
             <Icon name="search" size={28} />
           </TouchableOpacity>
-        </View>
+        </View> */}
         {this.state.workouts.length === 0 ||
         this.state.schedules.length === 0 ||
         this.state.exerciseTypes.length === 0 ? (
@@ -597,8 +598,12 @@ class Exercise extends React.Component {
   render() {
     const {exercise} = this.props;
     return (
-      <View style={styles.exerciseContainer}>
+      <BackgroundImage
+        source={exercise.exerciseImage}
+        style={styles.exerciseContainer}
+        imageStyle={{opacity: 0.5, borderRadius: 15}}>
         <View
+          source={exercise.exerciseImage}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -786,7 +791,7 @@ class Exercise extends React.Component {
             </View>
           </Modal>
         </View>
-      </View>
+      </BackgroundImage>
     );
   }
 }

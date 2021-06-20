@@ -43,6 +43,7 @@ class Schedule extends React.Component {
       Thursday: [],
       Friday: [],
       Saturday: [],
+      Sunday: [],
     };
   }
 
@@ -127,6 +128,9 @@ class Schedule extends React.Component {
         break;
       case 'Saturday':
         this.loadExercisesbyDay('saturday');
+        break;
+      case 'Sunday':
+        this.loadExercisesbyDay('sunday');
         break;
     }
   };
@@ -257,7 +261,7 @@ class Schedule extends React.Component {
               <Text style={styles.addNewContent}>Xóa lịch hiện tại</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => {}}>
-              <Text style={styles.addNewContent}>Tạo lịch tự động</Text>
+              <Text style={styles.addNewContent}>Lịch tập đề xuất</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
@@ -389,6 +393,7 @@ function DropDown(props) {
     {label: 'Thursday', value: 'Thursday'},
     {label: 'Friday', value: 'Friday'},
     {label: 'Saturday', value: 'Saturday'},
+    {label: 'Sunday', value: 'Sunday'},
   ];
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();

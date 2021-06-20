@@ -40,15 +40,7 @@ function MainBottomtabNavigator() {
           backgroundColor: '#0C2750',
         },
       }}>
-      <Tab.Screen
-        name="Manage"
-        component={ManageNavigator}
-        options={{
-          tabBarBadge: 3,
-          tabBarBadgeStyle: {backgroundColor: '#1CA2BB'},
-          unmountOnBlur: true,
-        }}
-      />
+      <Tab.Screen name="Manage" component={ManageNavigator} />
       <Tab.Screen
         options={{unmountOnBlur: true}}
         name="Today"
