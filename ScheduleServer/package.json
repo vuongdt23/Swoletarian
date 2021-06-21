@@ -1,0 +1,16 @@
+{
+  "name": "scheduleserver",
+  "version": "1.0.0",
+  "description": "schedule updater for firestore project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^8.6.8",
+    "firebase-admin": "^9.9.0",
+    "node-schedule": "^2.0.0"
+  }
+}
