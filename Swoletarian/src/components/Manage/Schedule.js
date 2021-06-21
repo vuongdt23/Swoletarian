@@ -27,8 +27,13 @@ import {
   getSchedulesbyUser,
   getScheduleDetailsbySchedule,
   deleteScheduleDetail,
+  getDefautSchedulesbyName,
+  clearCurrentUserSchedule,
+  createScheduleDetail,
 } from '../../Firebase/ScheduleAPI';
 import {getExercisebyID} from '../../Firebase/ExerciseAPI.js';
+import {getUserSetup} from '../../Firebase/userAPI.js';
+import firestore from '@react-native-firebase/firestore';
 class Schedule extends React.Component {
   constructor(props) {
     super(props);
@@ -44,6 +49,7 @@ class Schedule extends React.Component {
       Friday: [],
       Saturday: [],
       Sunday: [],
+      userInfo: null,
     };
   }
 
@@ -77,7 +83,7 @@ class Schedule extends React.Component {
     let details = [
       ...this.state.scheduleDetails[scheduleIndex].scheduleDetails,
     ];
-    //console.log('detail Array', details);
+    console.log('detail Array', details);
 
     if (details.length === 0) {
       this.setState({[dayFiled]: tempExercises}, () => {
@@ -85,13 +91,14 @@ class Schedule extends React.Component {
       });
     } else {
       details.forEach(detail => {
+        console.log('detail', detail);
         let exerciseObj = null;
         //  console.log(detail);
         getExercisebyID(detail.exerciseID)
           .then(res => {
             // console.log('id', detail.scheduleDetailID);
             exerciseObj = res.data();
-            // console.log('exercise', res.data());
+            console.log('exercise', res.data());
 
             exerciseObj.scheduleDetailID = detail.scheduleDetailID;
             exerciseObj.rep = detail.rep;
@@ -192,7 +199,7 @@ class Schedule extends React.Component {
         onPress: () => {
           deleteScheduleDetail(scheduleDetailID)
             .then(res => {
-              console.log(res);
+              //   console.log(res);
               this.reloadAfterDeletion(
                 this.state.currentDayName,
                 scheduleDetailID,
@@ -212,9 +219,199 @@ class Schedule extends React.Component {
       },
     ]);
   };
+  useRecommendedSchedule = async () => {
+    let BMI = parseFloat(
+      (this.state.userInfo.userWeight /
+        this.state.userInfo.userHeight /
+        this.state.userInfo.userHeight) *
+        10000,
+    ).toPrecision(4);
+    switch (this.state.userInfo.userType) {
+      case 'beginner':
+        if (BMI <= 18.5) {
+          await this.createCopyfromDefaultSchedule('beginnerOne').then(
+            result => {
+              let finalArr = [];
+              result.forEach(guy => finalArr.push(guy));
+              finalArr.forEach(detail => {
+                createScheduleDetail(detail)
+                  .then(res => {
+                    console.log(res);
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  });
+              });
+            },
+          );
+        } else {
+          await this.createCopyfromDefaultSchedule('beginnerTwo').then(
+            result => {
+              let finalArr = [];
+              result.forEach(guy => finalArr.push(guy));
+              finalArr.forEach(detail => {
+                createScheduleDetail(detail)
+                  .then(res => {
+                    //  console.log(res);
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  });
+              });
+            },
+          );
+        }
+        break;
+      case 'intermediate':
+        await this.createCopyfromDefaultSchedule('intermediate').then(
+          result => {
+            //    console.log('intermediate exercises', result);
+            let finalArr = [];
+            result.forEach(guy => finalArr.push(guy));
+            finalArr.forEach(detail => {
+              createScheduleDetail(detail)
+                .then(res => {
+                  //     console.log(res);
+                })
+                .catch(err => {
+                  console.log(err);
+                });
+            });
+          },
+        );
+        break;
+      case 'advanced':
+        await this.createCopyfromDefaultSchedule('advanced').then(result => {
+          let finalArr = [];
+          result.forEach(guy => finalArr.push(guy));
+          finalArr.forEach(detail => {
+            createScheduleDetail(detail)
+              .then(res => {
+                //    console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          });
+        });
+        break;
+    }
+  };
   componentDidMount() {
     this.loadSchedules();
+    getUserSetup().then(res => {
+      res.forEach(doc => {
+        this.setState({userInfo: doc.data()});
+      });
+    });
   }
+
+  handleUseRecomendedSchedule = () => {
+    Alert.alert(
+      'Lịch tập đề xuất',
+      'Bạn muốn sử dụng lịch tập do hệ thống đề xuất ?',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            //  this.useRecommendedSchedule();
+            this.reloadAfterDeletion();
+            Alert.alert('Cập nhật lịch tập thành công', '', [
+              {
+                text: 'OK',
+                onPress: () => {},
+                style: 'cancel',
+              },
+            ]);
+          },
+        },
+      ],
+    );
+  };
+  createCopyfromDefaultSchedule = async scheduleName => {
+    let userScheduleArr = [];
+    this.state.scheduleDetails.forEach(schedule => {
+      let schObj = {
+        scheduleID: schedule.scheduleID,
+        scheduleType: schedule.scheduleType,
+      };
+      userScheduleArr.push(schObj);
+    });
+
+    //console.log('userSchedule List', userScheduleArr);
+
+    await this.loadDefaultSchedulesbyName(scheduleName)
+      .then(res => {
+        res.forEach(async schedule => {
+          let scheduleIndex = userScheduleArr.findIndex(
+            userSch => userSch.scheduleType === schedule.scheduleType,
+          );
+          let newSchID = userScheduleArr[scheduleIndex].scheduleID;
+          await this.setdefaultSchedulesasNew(schedule.scheduleID, newSchID)
+            .then(resultz => {
+              resultz.forEach(document => {
+                createScheduleDetail(document)
+                  .then(result => {
+                    console.log(result);
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  });
+              });
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  setdefaultSchedulesasNew = async (oldscheduleID, newScheduleID) => {
+    let resultArr = [];
+    await this.loadScheduleDetailfromID(oldscheduleID).then(result => {
+      result.forEach(doc => {
+        doc.scheduleID = newScheduleID;
+        resultArr.push(doc);
+      });
+    });
+    return resultArr;
+  };
+  loadScheduleDetailfromID = async scheduleID => {
+    let detailList = [];
+    await getScheduleDetailsbySchedule(scheduleID)
+      .then(res => {
+        res.forEach(doc => {
+          detailList.push(doc.data());
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    return detailList;
+  };
+  loadDefaultSchedulesbyName = async scheduleName => {
+    let ScheduleList = [];
+    await getDefautSchedulesbyName(scheduleName)
+      .then(res => {
+        res.forEach(doc => {
+          let schObj = doc.data();
+          schObj.scheduleID = doc.id;
+          ScheduleList.push(schObj);
+          //  console.log(doc.data());
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    return ScheduleList;
+  };
   render() {
     if (this.state.isLoading)
       return (
@@ -260,7 +457,11 @@ class Schedule extends React.Component {
               }}>
               <Text style={styles.addNewContent}>Xóa lịch hiện tại</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                // this.createCopyfromDefaultSchedule('intermediate');
+              }}>
               <Text style={styles.addNewContent}>Lịch tập đề xuất</Text>
             </TouchableOpacity>
           </View>

@@ -49,3 +49,35 @@ export const deleteScheduleDetail = scheduleDetailID => {
     .doc(scheduleDetailID)
     .delete();
 };
+
+export const getDefautSchedulesbyName = scheduleName => {
+  return firestore()
+    .collection('workoutSchedules')
+    .where('scheduleName', '==', scheduleName)
+    .get();
+};
+
+export const clearCurrentUserSchedule = async () => {
+  await getSchedulesbyUser()
+    .then(res => {
+      res.forEach(doc => {
+        firestore()
+          .collection('workoutScheduleDetails')
+          .where('scheduleID', '==', doc.id)
+          .get()
+          .then(result => {
+            let batch = firestore().batch();
+            result.forEach(docu => {
+              batch.delete(docu.ref);
+            });
+            return batch.commit();
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      });
+    })
+    .catch(err => {
+      console.log(err);
+    });
+};
