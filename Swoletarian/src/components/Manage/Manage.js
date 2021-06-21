@@ -47,7 +47,6 @@ class Manage extends React.Component {
     const {navigation} = this.props;
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.headerTitle}> Home </Text>
         <Image style={styles.Logo} source={Logo} />
         <View
           style={{
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   Logo: {
     width: '80%',
     height: '10%',
-    marginTop: '5%',
+    marginTop: '15%',
     marginBottom: '5%',
   },
 });
