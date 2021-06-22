@@ -55,7 +55,7 @@ scheduleUpdater = () => {
             db.collection("dailyCaloriesBurnRecaps")
               .add({
                 burnRecapOwner: user.ownerID,
-                burnbyExercises: 0,
+                burnByExercises: 0,
                 burnByTDEE: TDEE,
                 burnRecapDate: new Date(),
               })

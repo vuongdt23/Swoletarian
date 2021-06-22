@@ -48,3 +48,25 @@ export const getTodaysBurnRecapByUser = async () => {
     .where('burnRecapDate', '>=', midnightToday)
     .get();
 };
+
+export const getUserGainRecapsbyRange = async (timeFrom, timeTo) => {
+  const userID = auth().currentUser.uid;
+
+  return await firestore()
+    .collection('dailyCaloriesGainRecaps')
+    .where('gainRecapOwner', '==', userID)
+    .where('gainRecapDate', '<', timeTo)
+    .where('gainRecapDate', '>=', timeFrom)
+    .get();
+};
+
+export const getUserBurnRecapsbyRange = async (timeFrom, timeTo) => {
+  const userID = auth().currentUser.uid;
+
+  return await firestore()
+    .collection('dailyCaloriesBurnRecaps')
+    .where('burnRecapOwner', '==', userID)
+    .where('burnRecapDate', '<', timeTo)
+    .where('burnRecapDate', '>=', timeFrom)
+    .get();
+};

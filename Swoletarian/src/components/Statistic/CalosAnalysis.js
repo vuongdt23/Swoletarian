@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   TouchableOpacity,
@@ -8,9 +8,9 @@ import {
   View,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
-import ModalDropdown from 'react-native-modal-dropdown';
-
+import DropDownPicker from 'react-native-dropdown-picker';
 import {
   Chart,
   Line,
@@ -21,8 +21,8 @@ import {
 } from 'react-native-responsive-linechart';
 
 import {
-  getCaloriesGainRecapByCurrentUser,
-  getCaloriesBurnRecapByCurrentUser,
+  getUserBurnRecapsbyRange,
+  getUserGainRecapsbyRange,
 } from '../../Firebase/reportAPI';
 const windowWidth = Dimensions.get('window').width * 2;
 const windowHeight = Dimensions.get('window').height;
@@ -31,198 +31,275 @@ class CalosAnalysis extends React.Component {
     super(props);
   }
   state = {
-    caloriesRecaps: [],
-    workoutRecaps: [],
-    caloriesRecaps30days: [],
-    workOutRecaps30days: [],
-    dropdownValue: '30 ngày',
+    dropdownSelect: '',
+    burnRecaps30days: [],
+    burnRecaps7days: [],
+    gainRecaps30days: [],
+    gainRecaps7days: [],
+    dateStart30: 0,
+    dateFinish: 0,
+    dateStart7: 0,
 
-    loading: true,
+    isLoading: true,
   };
   componentDidMount() {
     this.loadData();
   }
   loadData = () => {
-    const days30Prior =
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).getTime() / 86400000; //this is to get the number of dates since epoch from 30 days ago since today;
-    let crcArr = [];
-    let wrcArr = [];
-    let crc30Arr = [];
-    let wrc30Arr = [];
-    getCaloriesGainRecapByCurrentUser()
+    let today = new Date();
+    let oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+
+    let OneMonthAgo = new Date();
+    OneMonthAgo.setDate(OneMonthAgo.getDate() - 30);
+    OneMonthAgo.setHours(0, 0, 0, 0);
+
+    let yRangeStartMonth = Math.floor(OneMonthAgo.getTime() / 86400000);
+    let yRangeStartWeek = Math.floor(oneWeekAgo.getTime() / 86400000);
+    let tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    let yRangeFinish = Math.floor(tomorrow.getTime() / 86400000);
+
+    this.setState({
+      dateStart30: yRangeStartMonth,
+      dateStart7: yRangeStartWeek,
+      dateFinish: yRangeFinish,
+    });
+    //console.log('range', yRangeStart, yRangeFinish);
+    // console.log('tomorrrow', tomorrow);
+    let burn30Arr = [];
+    let burn7Arr = [];
+    let gain30Arr = [];
+    let gain7Arr = [];
+
+    let counter = 0;
+    getUserBurnRecapsbyRange(oneWeekAgo, today)
       .then(res => {
         res.forEach(doc => {
-          let crcObj = {y: doc.data().gainCalories};
-
-          crcObj.x = Math.floor(
-            doc.data().gainRecapDate.toDate().getTime() / 86400000, //this is to get the number of dates since epoch
-          );
-          crcArr.push(crcObj);
+          let burnOBj = {x: 0, y: 0};
+          burnOBj.x = Math.floor(doc.data().burnRecapDate.seconds / 86400);
+          burnOBj.y = doc.data().burnByTDEE + doc.data().burnByExercises;
+          console.log(burnOBj);
+          burn7Arr.push(burnOBj);
         });
-        console.log('All calories Recaps', crcArr);
-
-        this.setState({caloriesRecaps: crcArr});
-
-        crcArr.forEach(caloriesRecap => {
-          if (caloriesRecap.x >= days30Prior) crc30Arr.push(caloriesRecap);
+        this.setState({burnRecaps7days: burn7Arr}, () => {
+          counter++;
+          if (counter === 4) {
+            this.setState({isLoading: false});
+          }
         });
-
-        this.setState({caloriesRecaps30days: crc30Arr});
-        console.log('30 days recaps', crc30Arr);
       })
-      .catch(err => console.log(err));
-    getCaloriesBurnRecapByCurrentUser()
+      .catch(err => {
+        console.log(err);
+      });
+
+    getUserBurnRecapsbyRange(OneMonthAgo, today)
       .then(res => {
         res.forEach(doc => {
-          let wrcObj = {y: doc.data().burnByTDEE + doc.data().burnByExercises};
-
-          wrcObj.x = Math.floor(
-            doc.data().burnRecapDate.toDate().getTime() / 86400000, //this is to get the number of dates since epoch
-          );
-          wrcArr.push(wrcObj);
+          let burnOBj = {x: 0, y: 0};
+          burnOBj.x = Math.floor(doc.data().burnRecapDate.seconds / 86400);
+          burnOBj.y = doc.data().burnByTDEE + doc.data().burnByExercises;
+          console.log(burnOBj);
+          burn30Arr.push(burnOBj);
         });
-        console.log('All workout Recaps', wrcArr);
-
-        this.setState({workoutRecaps: wrcArr});
-
-        wrcArr.forEach(workoutRecap => {
-          if (workoutRecap.x >= days30Prior) wrc30Arr.push(workoutRecap);
+        this.setState({burnRecaps30days: burn30Arr}, () => {
+          counter++;
+          if (counter === 4) {
+            this.setState({isLoading: false});
+          }
         });
-        console.log('30 days recaps', wrc30Arr);
-        this.setState({workOutRecaps30days: wrc30Arr});
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+      });
 
-    this.setState({loading: false});
+    getUserGainRecapsbyRange(oneWeekAgo, today)
+      .then(res => {
+        res.forEach(doc => {
+          let gainObj = {x: 0, y: 0};
+          gainObj.x = Math.floor(doc.data().gainRecapDate.seconds / 86400);
+          gainObj.y = doc.data().gainCalories;
+          console.log(gainObj);
+          gain7Arr.push(gainObj);
+        });
+        this.setState({gainRecaps7days: gain7Arr}, () => {
+          counter++;
+          if (counter === 4) {
+            this.setState({isLoading: false});
+          }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    getUserGainRecapsbyRange(OneMonthAgo, today)
+      .then(res => {
+        res.forEach(doc => {
+          let gainObj = {x: 0, y: 0};
+          gainObj.x = Math.floor(doc.data().gainRecapDate.seconds / 86400);
+          gainObj.y = doc.data().gainCalories;
+          console.log(gainObj);
+          gain30Arr.push(gainObj);
+        });
+        this.setState({gainRecaps30days: gain30Arr}, () => {
+          counter++;
+          if (counter === 4) {
+            this.setState({isLoading: false});
+          }
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
-  dropDownSelectHandler = (index, option) => {
-    this.setState({dropdownValue: option});
-    console.log(option);
-  };
-
   render() {
-    if (this.state.loading) {
-      return <View />;
-    } else {
-      let workoutData = [...this.state.workOutRecaps30days];
-
-      let caloriesData = [...this.state.caloriesRecaps30days];
-      if (this.state.dropdownValue === 'Tất cả thời gian') {
-        caloriesData = [...this.state.caloriesRecaps];
-        workoutData = [...this.state.workoutRecaps];
-      }
-
-      console.log('workout Data', workoutData);
-      console.log('calories Data', caloriesData);
+    if (this.state.isLoading) {
       return (
         <View style={styles.container}>
-          <View>
-            <ModalDropdown
-              defaultValue={'30 ngày'}
-              animated
-              onSelect={(index, option) =>
-                this.dropDownSelectHandler(index, option)
-              }
-              options={['30 ngày', 'Tất cả thời gian']}
-            />
-          </View>
+          <ActivityIndicator size="large" color="#1CA2BB" />
+        </View>
+      );
+    } else {
+      let dataGain = [];
+      let dataBurn = [];
+      let dateStart = 0;
+
+      if (this.state.dropdownSelect === '7day') {
+        dataGain = [...this.state.gainRecaps7days];
+        dataBurn = [...this.state.burnRecaps7days];
+        dateStart = this.state.dateStart7;
+      } else {
+        dataGain = [...this.state.gainRecaps30days];
+        dataBurn = [...this.state.burnRecaps30days];
+        dateStart = this.state.dateStart30;
+      }
+      return (
+        <View style={styles.container}>
+          <DropDown
+            callDropDownValue={value => {
+              this.setState({dropdownSelect: value});
+            }}></DropDown>
           <Chart
-            style={{
-              height: windowHeight * 0.8,
-              width: windowWidth / 2.5,
-              backgroundColor: '#1CA2BB',
-            }}
+            style={{height: 400, width: 400}}
             data={
-              caloriesData.length > 0
-                ? caloriesData
+              this.state.burnRecaps30days.length > 0
+                ? dataBurn
                 : [
-                    {x: 1, y: 2},
-                    {x: 3, y: 4},
-                    {x: 5, y: 6},
+                    {x: -2, y: 15},
+                    {x: -1, y: 10},
+                    {x: 0, y: 12},
+                    {x: 1, y: 7},
+                    {x: 2, y: 6},
+                    {x: 3, y: 8},
+                    {x: 4, y: 10},
+                    {x: 5, y: 8},
+                    {x: 6, y: 12},
+                    {x: 7, y: 14},
+                    {x: 8, y: 12},
+                    {x: 9, y: 13.5},
+                    {x: 10, y: 18},
                   ]
             }
             padding={{left: 40, bottom: 20, right: 20, top: 20}}
-            xDomain={{min: 18700, max: 19000}}
+            xDomain={{min: dateStart, max: this.state.dateFinish}}
             yDomain={{min: 0, max: 5000}}>
             <VerticalAxis
-              tickCount={10}
+              tickCount={11}
               theme={{labels: {formatter: v => v.toFixed(0)}}}
             />
-            <HorizontalAxis tickCount={0} />
-            <Line
-              tooltipComponent={<Tooltip />}
+            <HorizontalAxis
               theme={{
-                opacity: '0.3',
-                stroke: {color: '#44bd32', width: 3},
-                scatter: {
-                  default: {width: 8, height: 8, rx: 4, color: '#44ad32'},
-                  selected: {color: 'red'},
+                labels: {
+                  formatter: date =>
+                    new Date(date * 86400000).toLocaleDateString(),
                 },
               }}
+              tickCount={5}
             />
-            <Area
+
+            <Line
               theme={{
-                gradient: {
-                  from: {color: '#44bd32'},
-                  to: {color: '#83d475', opacity: 0.2},
+                stroke: {color: '#ffa502', width: 5},
+                scatter: {
+                  default: {width: 4, height: 4, rx: 2, color: '#ffa502'},
                 },
               }}
             />
 
             <Line
-              smoothing={'bezier'}
               data={
-                workoutData.length > 0
-                  ? workoutData
+                this.state.gainRecaps30days.length > 0
+                  ? dataGain
                   : [
-                      {x: 1, y: 2},
-                      {x: 3, y: 4},
-                      {x: 5, y: 6},
+                      {x: -2, y: 15},
+                      {x: -1, y: 10},
+                      {x: 0, y: 12},
+                      {x: 1, y: 7},
+                      {x: 2, y: 6},
+                      {x: 3, y: 8},
+                      {x: 4, y: 10},
+                      {x: 5, y: 8},
+                      {x: 6, y: 12},
+                      {x: 7, y: 14},
+                      {x: 8, y: 12},
+                      {x: 9, y: 13.5},
+                      {x: 10, y: 18},
                     ]
               }
-              tooltipComponent={<Tooltip />}
               theme={{
-                opacity: '0.3',
-
-                stroke: {color: '#F07470', width: 3},
+                stroke: {color: '#1CA2BB', width: 5},
                 scatter: {
-                  default: {width: 8, height: 8, rx: 4, color: '#000000'},
-                  selected: {color: 'red'},
-                },
-              }}
-            />
-            <Area
-              smoothing={'bezier'}
-              data={
-                workoutData.length > 0
-                  ? workoutData
-                  : [
-                      {x: 1, y: 2},
-                      {x: 3, y: 4},
-                      {x: 5, y: 6},
-                    ]
-              }
-              theme={{
-                gradient: {
-                  from: {color: '#DC1C13'},
-                  to: {color: '#F6BDC0', opacity: 0.2},
+                  default: {width: 4, height: 4, rx: 2, color: '#1CA2BB'},
                 },
               }}
             />
           </Chart>
-
-          <Text>See your progress here</Text>
         </View>
       );
     }
   }
 }
-
+function DropDown(props) {
+  const itemsList = [
+    {label: '7 ngày', value: '7day'},
+    {label: '30 ngày', value: '30day'},
+  ];
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
+  const [items, setItems] = useState(itemsList);
+  return (
+    <DropDownPicker
+      placeholder={'30 ngày'}
+      open={open}
+      value={value}
+      items={items}
+      setOpen={setOpen}
+      setValue={setValue}
+      setItems={setItems}
+      maxHeight={300}
+      containerStyle={{
+        width: '30%',
+        height: '8%',
+        marginLeft: '50%',
+      }}
+      textStyle={{
+        fontSize: 20,
+        fontFamily: 'Roboto-Bold',
+      }}
+      onChangeValue={value => {
+        props.callDropDownValue(value.toString());
+      }}
+      style={styles.dropdown}
+    />
+  );
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E9E9E9',
   },

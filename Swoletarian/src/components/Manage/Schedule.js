@@ -10,6 +10,7 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {FlatList} from 'react-native-gesture-handler';
@@ -35,8 +36,8 @@ import {getExercisebyID} from '../../Firebase/ExerciseAPI.js';
 import {getUserSetup} from '../../Firebase/userAPI.js';
 import firestore from '@react-native-firebase/firestore';
 class Schedule extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       isLoading: true,
       scheduleDetails: [],
@@ -53,33 +54,33 @@ class Schedule extends React.Component {
     };
   }
   reload = () => {
-    this.setState ({isLoading: true});
-    this.componentDidMount ();
+    this.setState({isLoading: true});
+    this.componentDidMount();
   };
   reloadAfterDeletion = (currentSchedule, deletedScheduleDetailID) => {
     let tempWorkoutState = [...this.state[currentSchedule]];
-    console.log ('current list to delete', tempWorkoutState);
-    console.log ('current schedule day', currentSchedule);
+    console.log('current list to delete', tempWorkoutState);
+    console.log('current schedule day', currentSchedule);
 
-    let indexDel = tempWorkoutState.findIndex (
-      detail => detail.scheduleDetailID === deletedScheduleDetailID
+    let indexDel = tempWorkoutState.findIndex(
+      detail => detail.scheduleDetailID === deletedScheduleDetailID,
     );
-    console.log ('delete at ', indexDel);
+    console.log('delete at ', indexDel);
     if (indexDel > -1) {
-      tempWorkoutState.splice (indexDel, 1);
-      console.log ('workouts state after deletion', tempWorkoutState);
+      tempWorkoutState.splice(indexDel, 1);
+      console.log('workouts state after deletion', tempWorkoutState);
     }
-    this.loadSchedules ();
-    this.setState ({
+    this.loadSchedules();
+    this.setState({
       currentDayWorkouts: tempWorkoutState,
       [currentSchedule]: tempWorkoutState,
     });
   };
   loadExercisesbyDay = day => {
-    let dayFiled = capitalizeFirstLetter (day);
+    let dayFiled = capitalizeFirstLetter(day);
     let tempExercises = [];
-    let scheduleIndex = this.state.scheduleDetails.findIndex (
-      schedule => schedule.scheduleType === day
+    let scheduleIndex = this.state.scheduleDetails.findIndex(
+      schedule => schedule.scheduleType === day,
     );
 
     //console.log('schedule index', scheduleIndex);
@@ -89,58 +90,58 @@ class Schedule extends React.Component {
     // console.log ('detail Array', details);
 
     if (details.length === 0) {
-      this.setState ({[dayFiled]: tempExercises}, () => {
-        this.setState ({currentDayWorkouts: [...this.state[dayFiled]]});
+      this.setState({[dayFiled]: tempExercises}, () => {
+        this.setState({currentDayWorkouts: [...this.state[dayFiled]]});
       });
     } else {
-      details.forEach (detail => {
+      details.forEach(detail => {
         //console.log ('detail', detail);
         let exerciseObj = null;
         //  console.log(detail);
-        getExercisebyID (detail.exerciseID)
-          .then (res => {
+        getExercisebyID(detail.exerciseID)
+          .then(res => {
             // console.log('id', detail.scheduleDetailID);
-            exerciseObj = res.data ();
+            exerciseObj = res.data();
             // console.log ('exercise', res.data ());
 
             exerciseObj.scheduleDetailID = detail.scheduleDetailID;
             exerciseObj.rep = detail.rep;
             exerciseObj.set = detail.set;
             //   console.log('exercise Object', exerciseObj);
-            tempExercises.push (exerciseObj);
-            this.setState ({[dayFiled]: tempExercises}, () => {
-              this.setState ({currentDayWorkouts: [...this.state[dayFiled]]});
+            tempExercises.push(exerciseObj);
+            this.setState({[dayFiled]: tempExercises}, () => {
+              this.setState({currentDayWorkouts: [...this.state[dayFiled]]});
             });
           })
-          .catch (err => {
-            console.log (err);
+          .catch(err => {
+            console.log(err);
           });
       });
     }
   };
   setDayOfWeek = day => {
-    this.setState ({currentDayName: day});
+    this.setState({currentDayName: day});
     switch (day) {
       case 'Monday':
-        this.loadExercisesbyDay ('monday');
+        this.loadExercisesbyDay('monday');
         break;
       case 'Tuesday':
-        this.loadExercisesbyDay ('tuesday');
+        this.loadExercisesbyDay('tuesday');
         break;
       case 'Wednesday':
-        this.loadExercisesbyDay ('wednesday');
+        this.loadExercisesbyDay('wednesday');
         break;
       case 'Thursday':
-        this.loadExercisesbyDay ('thursday');
+        this.loadExercisesbyDay('thursday');
         break;
       case 'Friday':
-        this.loadExercisesbyDay ('friday');
+        this.loadExercisesbyDay('friday');
         break;
       case 'Saturday':
-        this.loadExercisesbyDay ('saturday');
+        this.loadExercisesbyDay('saturday');
         break;
       case 'Sunday':
-        this.loadExercisesbyDay ('sunday');
+        this.loadExercisesbyDay('sunday');
         break;
     }
   };
@@ -148,15 +149,15 @@ class Schedule extends React.Component {
   loadSchedules = () => {
     let tempScheduleArr = [];
     let finalScheduleArr = [];
-    getSchedulesbyUser ()
-      .then (res => {
-        res.forEach (doc => {
-          let tempSchObj = doc.data ();
+    getSchedulesbyUser()
+      .then(res => {
+        res.forEach(doc => {
+          let tempSchObj = doc.data();
           tempSchObj.scheduleID = doc.id;
 
-          tempScheduleArr.push (tempSchObj);
+          tempScheduleArr.push(tempSchObj);
         });
-        tempScheduleArr.forEach (schedule => {
+        tempScheduleArr.forEach(schedule => {
           let scheduleDetailList = {
             scheduleID: schedule.scheduleID,
             scheduleType: schedule.scheduleType,
@@ -164,34 +165,38 @@ class Schedule extends React.Component {
           };
 
           //  console.log ('initial menu list', menuDetailList);
-          getScheduleDetailsbySchedule (schedule.scheduleID)
-            .then (res => {
-              if (res.empty) finalScheduleArr.push (scheduleDetailList);
+          getScheduleDetailsbySchedule(schedule.scheduleID)
+            .then(res => {
+              if (res.empty) finalScheduleArr.push(scheduleDetailList);
               else {
-                res.forEach (doc => {
-                  let tempSchObj = doc.data ();
+                res.forEach(doc => {
+                  let tempSchObj = doc.data();
                   tempSchObj.scheduleDetailID = doc.id;
-                  scheduleDetailList.scheduleDetails.push (tempSchObj);
+                  scheduleDetailList.scheduleDetails.push(tempSchObj);
                   //  console.log (menuDetailList);
                 });
-                finalScheduleArr.push (scheduleDetailList);
+                finalScheduleArr.push(scheduleDetailList);
               }
-              this.setState (
-                {scheduleDetails: finalScheduleArr, isLoading: false},
-                () => {}
+              this.setState(
+                {
+                  scheduleDetails: finalScheduleArr,
+                  isLoading: false,
+                  currentDayWorkouts: [],
+                },
+                () => {},
               );
             })
-            .catch (err => console.log (err));
+            .catch(err => console.log(err));
         });
 
         // console.log ('Menus by this user', tempMenuArr);
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
   };
   deleteScheduleDetail = scheduleDetailID => {
-    Alert.alert ('Xóa bài tập', 'Bạn muốn xóa bài tập này khỏi lịch tập ?', [
+    Alert.alert('Xóa bài tập', 'Bạn muốn xóa bài tập này khỏi lịch tập ?', [
       {
         text: 'Hủy',
         onPress: () => {},
@@ -200,14 +205,14 @@ class Schedule extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          deleteScheduleDetail (scheduleDetailID)
-            .then (res => {
+          deleteScheduleDetail(scheduleDetailID)
+            .then(res => {
               //   console.log(res);
-              this.reloadAfterDeletion (
+              this.reloadAfterDeletion(
                 this.state.currentDayName,
-                scheduleDetailID
+                scheduleDetailID,
               );
-              Alert.alert ('Xóa thành công', '', [
+              Alert.alert('Xóa thành công', '', [
                 {
                   text: 'OK',
                   onPress: () => {},
@@ -215,25 +220,51 @@ class Schedule extends React.Component {
                 },
               ]);
             })
-            .catch (err => {
-              console.log (err);
+            .catch(err => {
+              console.log(err);
             });
         },
       },
     ]);
   };
 
-  componentDidMount () {
-    this.loadSchedules ();
-    getUserSetup ().then (res => {
-      res.forEach (doc => {
-        this.setState ({userInfo: doc.data ()});
+  componentDidMount() {
+    this.loadSchedules();
+    getUserSetup().then(res => {
+      res.forEach(doc => {
+        this.setState({userInfo: doc.data()});
       });
     });
   }
-
+  handleClearCurrentUserSchedule = () => {
+    Alert.alert('Xóa lịch tập', 'Bạn muốn xóa lịch tập hiện tại?', [
+      {
+        text: 'Hủy',
+        onPress: () => {
+          return;
+        },
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: () => {
+          clearCurrentUserSchedule();
+          this.reload();
+          Alert.alert('Xóa lịch tập thành công', '', [
+            {
+              text: 'OK',
+              onPress: () => {
+                return;
+              },
+              style: 'cancel',
+            },
+          ]);
+        },
+      },
+    ]);
+  };
   handleUseRecomendedSchedule = () => {
-    Alert.alert (
+    Alert.alert(
       'Lịch tập đề xuất',
       'Bạn muốn sử dụng lịch tập do hệ thống đề xuất ?',
       [
@@ -245,46 +276,42 @@ class Schedule extends React.Component {
         {
           text: 'OK',
           onPress: () => {
-            let BMI = parseFloat (
-              this.state.userInfo.userWeight /
+            let BMI = parseFloat(
+              (this.state.userInfo.userWeight /
                 this.state.userInfo.userHeight /
-                this.state.userInfo.userHeight *
-                10000
-            ).toPrecision (4);
-            console.log ('bmi', BMI);
-            console.log ('type of user', this.state.userInfo.userType);
+                this.state.userInfo.userHeight) *
+                10000,
+            ).toPrecision(4);
+            console.log('bmi', BMI);
+            console.log('type of user', this.state.userInfo.userType);
             switch (this.state.userInfo.userType) {
               case 'beginner':
                 if (BMI <= 18.5) {
-                  clearCurrentUserSchedule ();
-                  this.createCopyfromDefaultSchedule ('beginnerOne').then (
-                    this.reload ()
+                  clearCurrentUserSchedule();
+                  this.createCopyfromDefaultSchedule('beginnerOne').then(
+                    this.reload(),
                   );
                 } else {
-                  clearCurrentUserSchedule ();
-                  this.createCopyfromDefaultSchedule (
-                    'beginnerTwo'
-                  ).then (() => {
-                    this.reload ();
+                  clearCurrentUserSchedule();
+                  this.createCopyfromDefaultSchedule('beginnerTwo').then(() => {
+                    this.reload();
                   });
                 }
                 break;
               case 'intermediate':
-                clearCurrentUserSchedule ();
-                this.createCopyfromDefaultSchedule (
-                  'intermediate'
-                ).then (() => {
-                  this.reload ();
+                clearCurrentUserSchedule();
+                this.createCopyfromDefaultSchedule('intermediate').then(() => {
+                  this.reload();
                 });
                 break;
               case 'advanced':
-                clearCurrentUserSchedule ();
-                this.createCopyfromDefaultSchedule ('advanced').then (() => {
-                  this.reload ();
+                clearCurrentUserSchedule();
+                this.createCopyfromDefaultSchedule('advanced').then(() => {
+                  this.reload();
                 });
                 break;
             }
-            Alert.alert ('Cập nhật lịch tập thành công', '', [
+            Alert.alert('Cập nhật lịch tập thành công', '', [
               {
                 text: 'OK',
                 onPress: () => {},
@@ -293,89 +320,89 @@ class Schedule extends React.Component {
             ]);
           },
         },
-      ]
+      ],
     );
   };
   createCopyfromDefaultSchedule = async scheduleName => {
     let userScheduleArr = [];
-    this.state.scheduleDetails.forEach (schedule => {
+    this.state.scheduleDetails.forEach(schedule => {
       let schObj = {
         scheduleID: schedule.scheduleID,
         scheduleType: schedule.scheduleType,
       };
-      userScheduleArr.push (schObj);
+      userScheduleArr.push(schObj);
     });
 
     //console.log('userSchedule List', userScheduleArr);
 
-    await this.loadDefaultSchedulesbyName (scheduleName)
-      .then (res => {
-        res.forEach (async schedule => {
-          let scheduleIndex = userScheduleArr.findIndex (
-            userSch => userSch.scheduleType === schedule.scheduleType
+    await this.loadDefaultSchedulesbyName(scheduleName)
+      .then(res => {
+        res.forEach(async schedule => {
+          let scheduleIndex = userScheduleArr.findIndex(
+            userSch => userSch.scheduleType === schedule.scheduleType,
           );
           let newSchID = userScheduleArr[scheduleIndex].scheduleID;
-          await this.setdefaultSchedulesasNew (schedule.scheduleID, newSchID)
-            .then (resultz => {
-              resultz.forEach (document => {
-                createScheduleDetail (document)
-                  .then (result => {
-                    console.log (result);
+          await this.setdefaultSchedulesasNew(schedule.scheduleID, newSchID)
+            .then(resultz => {
+              resultz.forEach(document => {
+                createScheduleDetail(document)
+                  .then(result => {
+                    console.log(result);
                   })
-                  .catch (err => {
-                    console.log (err);
+                  .catch(err => {
+                    console.log(err);
                   });
               });
             })
-            .catch (err => {
-              console.log (err);
+            .catch(err => {
+              console.log(err);
             });
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
   };
   setdefaultSchedulesasNew = async (oldscheduleID, newScheduleID) => {
     let resultArr = [];
-    await this.loadScheduleDetailfromID (oldscheduleID).then (result => {
-      result.forEach (doc => {
+    await this.loadScheduleDetailfromID(oldscheduleID).then(result => {
+      result.forEach(doc => {
         doc.scheduleID = newScheduleID;
-        resultArr.push (doc);
+        resultArr.push(doc);
       });
     });
     return resultArr;
   };
   loadScheduleDetailfromID = async scheduleID => {
     let detailList = [];
-    await getScheduleDetailsbySchedule (scheduleID)
-      .then (res => {
-        res.forEach (doc => {
-          detailList.push (doc.data ());
+    await getScheduleDetailsbySchedule(scheduleID)
+      .then(res => {
+        res.forEach(doc => {
+          detailList.push(doc.data());
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
     return detailList;
   };
   loadDefaultSchedulesbyName = async scheduleName => {
     let ScheduleList = [];
-    await getDefautSchedulesbyName (scheduleName)
-      .then (res => {
-        res.forEach (doc => {
-          let schObj = doc.data ();
+    await getDefautSchedulesbyName(scheduleName)
+      .then(res => {
+        res.forEach(doc => {
+          let schObj = doc.data();
           schObj.scheduleID = doc.id;
-          ScheduleList.push (schObj);
+          ScheduleList.push(schObj);
           //  console.log(doc.data());
         });
       })
-      .catch (err => {
-        console.log (err);
+      .catch(err => {
+        console.log(err);
       });
     return ScheduleList;
   };
-  render () {
+  render() {
     if (this.state.isLoading)
       return (
         <View style={styles.container}>
@@ -386,9 +413,9 @@ class Schedule extends React.Component {
       <View style={styles.container}>
         <Text style={styles.headerTitle}>Lịch tập luyện</Text>
         <View style={styles.dateContainer}>
-          <Text style={styles.dateContent}>{new Date ().toDateString ()}</Text>
+          <Text style={styles.dateContent}>{new Date().toDateString()}</Text>
         </View>
-        <DropDown callDropDownValue={day => this.setDayOfWeek (day)} />
+        <DropDown callDropDownValue={day => this.setDayOfWeek(day)} />
         <View style={styles.contentContainer}>
           <FlatList
             numColumns={1}
@@ -399,12 +426,12 @@ class Schedule extends React.Component {
               <Exercise
                 data={item}
                 deleteScheduleDetail={scheduleDetailID => {
-                  this.deleteScheduleDetail (scheduleDetailID);
+                  this.deleteScheduleDetail(scheduleDetailID);
                 }}
               />
             )}
             keyExtractor={(item, index) => {
-              return index.toString ();
+              return index.toString();
             }}
           />
           <View
@@ -414,31 +441,27 @@ class Schedule extends React.Component {
               height: '15%',
               justifyContent: 'space-between',
               alignItems: 'center',
-            }}
-          >
+            }}>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                clearCurrentUserSchedule ();
-              }}
-            >
+                this.handleClearCurrentUserSchedule();
+              }}>
               <Text style={styles.addNewContent}>Xóa lịch hiện tại</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                this.handleUseRecomendedSchedule ();
-              }}
-            >
+                this.handleUseRecomendedSchedule();
+              }}>
               <Text style={styles.addNewContent}>Lịch tập đề xuất</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={styles.addNewButton}
             onPress={() => {
-              this.props.navigation.navigate ('Workout');
-            }}
-          >
+              this.props.navigation.navigate('Workout');
+            }}>
             <Text style={styles.addNewContent}>Thêm bài tập mới</Text>
           </TouchableOpacity>
         </View>
@@ -448,17 +471,17 @@ class Schedule extends React.Component {
 }
 
 class Exercise extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
     this.state = {
       infoModalVisible: false,
     };
   }
 
   onToggleInfoModal = () => {
-    this.setState ({infoModalVisible: !this.state.infoModalVisible});
+    this.setState({infoModalVisible: !this.state.infoModalVisible});
   };
-  render () {
+  render() {
     const {data} = this.props;
     let dataIconType = AbsIcon;
     switch (data.exerciseType) {
@@ -490,8 +513,7 @@ class Exercise extends React.Component {
     return (
       <TouchableOpacity
         style={styles.exerciseContainer}
-        onPress={this.onToggleInfoModal}
-      >
+        onPress={this.onToggleInfoModal}>
         <Image
           source={dataIconType}
           style={{marginLeft: '3%', width: '8%', height: '80%'}}
@@ -507,10 +529,9 @@ class Exercise extends React.Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.deleteScheduleDetail (data.scheduleDetailID);
+            this.props.deleteScheduleDetail(data.scheduleDetailID);
           }}
-          style={{width: '10%', height: '80%'}}
-        >
+          style={{width: '10%', height: '80%'}}>
           <Image
             source={DeleteIcon}
             style={{
@@ -523,13 +544,15 @@ class Exercise extends React.Component {
           <Modal
             animationType="fade"
             transparent={true}
-            visible={this.state.infoModalVisible}
-          >
+            visible={this.state.infoModalVisible}>
             <View style={styles.infoModalView}>
               <Text style={styles.infoExerciseTitle}>{data.exerciseName}</Text>
-              <Text style={styles.infoExerciseDescription}>
-                {data.exerciseDescription}
-              </Text>
+              <ScrollView style={{height: '30%'}}>
+                <Text style={styles.infoExerciseDescription}>
+                  {data.exerciseDescription}
+                </Text>
+              </ScrollView>
+
               <Image
                 source={data.exerciseImage.uri ? data.exerciseImage : TapLuyen}
                 style={{
@@ -548,8 +571,7 @@ class Exercise extends React.Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                onPress={this.onToggleInfoModal}
-              >
+                onPress={this.onToggleInfoModal}>
                 <Text style={{fontSize: 25, fontFamily: 'Roboto-Bold'}}>
                   OK
                 </Text>
@@ -562,7 +584,7 @@ class Exercise extends React.Component {
   }
 }
 
-function DropDown (props) {
+function DropDown(props) {
   const itemsList = [
     {label: 'Monday', value: 'Monday'},
     {label: 'Tuesday', value: 'Tuesday'},
@@ -572,9 +594,9 @@ function DropDown (props) {
     {label: 'Saturday', value: 'Saturday'},
     {label: 'Sunday', value: 'Sunday'},
   ];
-  const [open, setOpen] = useState (false);
-  const [value, setValue] = useState ();
-  const [items, setItems] = useState (itemsList);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState();
+  const [items, setItems] = useState(itemsList);
   return (
     <DropDownPicker
       placeholder={''}
@@ -593,15 +615,15 @@ function DropDown (props) {
         fontFamily: 'Roboto-Bold',
       }}
       onChangeValue={value => {
-        props.callDropDownValue (value.toString ());
+        props.callDropDownValue(value.toString());
       }}
     />
   );
 }
-function capitalizeFirstLetter (string) {
-  return string.charAt (0).toUpperCase () + string.slice (1);
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',

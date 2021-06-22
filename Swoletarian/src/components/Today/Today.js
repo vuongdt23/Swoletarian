@@ -546,7 +546,7 @@ class Exercise extends React.Component {
     this.setState({isChecked: check});
     let totalCalosBurned = (
       ((parseInt(data.exerciseCalories) * data.rep * data.set) / 60) *
-      25
+      40
     ).toPrecision(2);
     this.props.handleWorkoutChecked(
       parseInt(totalCalosBurned),

@@ -1476,7 +1476,7 @@
   dependencies:
     "color" "^3.1.3"
 
-"@react-navigation/native@^5.0.5", "@react-navigation/native@^5.9.4":
+"@react-navigation/native@^5.9.4":
   "integrity" "sha512-BUCrOXfZDdKWBqM8OhOKQhCX5we4HUo5XG6tCQtVqQAep+7UcApZmMUuemUXDxVe8NPESUpoUlB0RaEpyIdfTQ=="
   "resolved" "https://registry.npmjs.org/@react-navigation/native/-/native-5.9.4.tgz"
   "version" "5.9.4"
@@ -3609,6 +3609,11 @@
   "integrity" "sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
   "resolved" "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
+
+"fsevents@^2.1.2":
+  "integrity" "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
+  "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
+  "version" "2.3.2"
 
 "function-bind@^1.1.1":
   "integrity" "sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A=="
@@ -6202,7 +6207,7 @@
     "opencollective-postinstall" "^2.0.0"
     "prop-types" "^15.7.2"
 
-"react-native-gesture-handler@*", "react-native-gesture-handler@^1.10.3", "react-native-gesture-handler@>= 1.0.0":
+"react-native-gesture-handler@^1.10.3":
   "integrity" "sha512-cBGMi1IEsIVMgoox4RvMx7V2r6bNKw0uR1Mu1o7NbuHS6BRSVLq0dP34l2ecnPlC+jpWd3le6Yg1nrdCjby2Mw=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz"
   "version" "1.10.3"
@@ -6241,7 +6246,7 @@
     "lodash" "^4.17.15"
     "prop-types" "^15.7.2"
 
-"react-native-reanimated@*", "react-native-reanimated@^2.1.0", "react-native-reanimated@>= 1.0.0":
+"react-native-reanimated@^2.1.0":
   "integrity" "sha512-tlPvvcdf+X7HGQ7g/7npBFhwMznfdk7MHUc9gUB/kp2abSscXNe/kOVKlrNEOO4DS11rNOXc+llFxVFMuNk0zA=="
   "resolved" "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.1.0.tgz"
   "version" "2.1.0"
@@ -6289,7 +6294,7 @@
     "css-select" "^2.0.2"
     "css-tree" "^1.0.0-alpha.37"
 
-"react-native-tab-view@^2.16.0", "react-native-tab-view@>= 2.0.0":
+"react-native-tab-view@^2.16.0":
   "integrity" "sha512-ac2DmT7+l13wzIFqtbfXn4wwfgtPoKzWjjZyrK1t+T8sdemuUvD4zIt+UImg03fu3s3VD8Wh/fBrIdcqQyZJWg=="
   "resolved" "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-2.16.0.tgz"
   "version" "2.16.0"
@@ -6308,7 +6313,7 @@
     "prop-types" "^15.7.2"
     "yargs" "^16.1.1"
 
-"react-native@*", "react-native@>=0.50.0", "react-native@0.64.0":
+"react-native@0.64.0":
   "integrity" "sha512-8dhSHBthgGwAjU+OjqUEA49229ThPMQH7URH0u8L0xoQFCnZO2sZ9Wc6KcbxI0x9KSmjCMFFZqRe3w3QsRv64g=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.0.tgz"
   "version" "0.64.0"
@@ -6369,7 +6374,7 @@
     "react-shallow-renderer" "^16.13.1"
     "scheduler" "^0.20.1"
 
-"react@*", "react@17.0.1":
+"react@17.0.1":
   "integrity" "sha512-lG9c9UuMHdcAexXtigOZLX8exLWkW0Ku29qPRU8uhF2R9BN96dLCt0psvzPLlHc5OWkgymP3qwTRgbnw5BKx3w=="
   "resolved" "https://registry.npmjs.org/react/-/react-17.0.1.tgz"
   "version" "17.0.1"
