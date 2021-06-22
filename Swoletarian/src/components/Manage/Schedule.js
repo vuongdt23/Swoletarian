@@ -83,6 +83,9 @@ class Schedule extends React.Component {
       schedule => schedule.scheduleType === day,
     );
 
+    console.log('day is at' ,scheduleIndex);
+    
+
     //console.log('schedule index', scheduleIndex);
     let details = [
       ...this.state.scheduleDetails[scheduleIndex].scheduleDetails,
@@ -154,7 +157,7 @@ class Schedule extends React.Component {
         res.forEach(doc => {
           let tempSchObj = doc.data();
           tempSchObj.scheduleID = doc.id;
-
+          console.log(doc.data());
           tempScheduleArr.push(tempSchObj);
         });
         tempScheduleArr.forEach(schedule => {
@@ -164,9 +167,10 @@ class Schedule extends React.Component {
             scheduleDetails: [],
           };
 
-          //  console.log ('initial menu list', menuDetailList);
+           // console.log ('initial menu list', menuDetailList);
           getScheduleDetailsbySchedule(schedule.scheduleID)
             .then(res => {
+              console.log(res.empty);
               if (res.empty) finalScheduleArr.push(scheduleDetailList);
               else {
                 res.forEach(doc => {

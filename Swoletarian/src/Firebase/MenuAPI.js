@@ -6,7 +6,7 @@ export const getMenuTypes = async () => {
 };
 
 export const createMenu = menuObj => {
-  return firestore().collection('dailyMenu').add(menuObj);
+  return firestore().collection('menu').add(menuObj);
 };
 export const getMenubyCurrentUser = async () => {
   const userID = auth().currentUser.uid;
