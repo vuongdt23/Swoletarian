@@ -367,7 +367,7 @@ class ExerciseWrap extends React.Component {
               }}
               onPress={this.onToggleAddNewModal}>
               <Icon name="add" size={40} />
-              <Text style={styles.exerciseTitle}>Thêm mới</Text>
+              <Text style={styles.addNewTitle}>Thêm mới</Text>
             </TouchableOpacity>
           </View>
           <FlatList
@@ -603,7 +603,6 @@ class Exercise extends React.Component {
         style={styles.exerciseContainer}
         imageStyle={{opacity: 0.5, borderRadius: 15}}>
         <View
-          source={exercise.exerciseImage}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -869,10 +868,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: 'white',
     marginHorizontal: 10,
     width: 150,
     height: '100%',
+    backgroundColor: 'rgba(0,0,0,1)',
   },
 
   addNewExerciseButton: {
@@ -880,7 +879,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    borderColor: 'white',
+    borderColor: 'black',
     borderWidth: 3,
     marginRight: '0%',
     width: '30%',
@@ -892,10 +891,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '35%',
     textAlign: 'center',
+    color: 'white',
   },
   exerciseCalo: {
     fontSize: 18,
     fontFamily: 'Roboto-Regular',
+    color: 'white',
+  },
+  addNewTitle: {
+    fontSize: 23,
+    fontFamily: 'Roboto-Bold',
+    width: '100%',
+    height: '35%',
+    textAlign: 'center',
   },
   textInside: {
     fontSize: 23,
