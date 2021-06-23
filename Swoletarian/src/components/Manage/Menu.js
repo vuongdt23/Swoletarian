@@ -104,11 +104,11 @@ class Menu extends React.Component {
         );
         // console.log ('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
-        console.log(details);
+        //console.log(details);
         tempFoods = [];
         if (details.length === 0) {
           this.setState({Breakfast: tempFoods}, () => {
-            console.log('breakfast', this.state.Breakfast);
+            //console.log('breakfast', this.state.Breakfast);
             this.setState({currentMeal: [...this.state.Breakfast]});
           });
         } else {
@@ -117,12 +117,12 @@ class Menu extends React.Component {
               .then(res => {
                 let foodObj = res.data();
                 foodObj.menuDetailID = detail.menuDetailID;
-                console.log('food', res.data());
+                //console.log('food', res.data());
                 foodObj.amount = detail.amount;
-                console.log('Food OBject', foodObj);
+                //console.log('Food OBject', foodObj);
                 tempFoods.push(foodObj);
                 this.setState({Breakfast: tempFoods}, () => {
-                  console.log('breakfast', this.state.Breakfast);
+                  //console.log('breakfast', this.state.Breakfast);
                   this.setState({currentMeal: [...this.state.Breakfast]});
                 });
               })
@@ -136,13 +136,13 @@ class Menu extends React.Component {
         menuIndex = this.state.menuDetails.findIndex(
           menu => menu.menuType === 'lunch',
         );
-        console.log('menu index', menuIndex);
+        //console.log('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
-        console.log(details);
+        //console.log(details);
         tempFoods = [];
         if (details.length === 0) {
           this.setState({Lunch: tempFoods}, () => {
-            console.log('lunch', this.state.Lunch);
+            // console.log('lunch', this.state.Lunch);
             this.setState({currentMeal: [...this.state.Lunch]});
           });
         } else {
@@ -151,12 +151,13 @@ class Menu extends React.Component {
               .then(res => {
                 let foodObj = res.data();
                 foodObj.menuDetailID = detail.menuDetailID;
-                console.log('food', res.data());
+
+                //console.log('food', res.data());
                 foodObj.amount = detail.amount;
-                console.log('Food OBject', foodObj);
+                //console.log('Food OBject', foodObj);
                 tempFoods.push(foodObj);
                 this.setState({Lunch: tempFoods}, () => {
-                  console.log('lunch', this.state.Lunch);
+                  //console.log('lunch', this.state.Lunch);
                   this.setState({currentMeal: [...this.state.Lunch]});
                 });
               })
@@ -170,13 +171,13 @@ class Menu extends React.Component {
         menuIndex = this.state.menuDetails.findIndex(
           menu => menu.menuType === 'dinner',
         );
-        console.log('menu index', menuIndex);
+        //console.log('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
-        console.log(details);
+        // console.log(details);
         tempFoods = [];
         if (details.length === 0) {
           this.setState({Dinner: tempFoods}, () => {
-            console.log('dinner', this.state.Dinner);
+            //console.log('dinner', this.state.Dinner);
             this.setState({currentMeal: [...this.state.Dinner]});
           });
         } else {
@@ -185,12 +186,12 @@ class Menu extends React.Component {
               .then(res => {
                 let foodObj = res.data();
                 foodObj.menuDetailID = detail.menuDetailID;
-                console.log('food', res.data());
+                //console.log('food', res.data());
                 foodObj.amount = detail.amount;
-                console.log('Food OBject', foodObj);
+                //console.log('Food OBject', foodObj);
                 tempFoods.push(foodObj);
                 this.setState({Dinner: tempFoods}, () => {
-                  console.log('Dinner', this.state.Dinner);
+                  //console.log('Dinner', this.state.Dinner);
                   this.setState({currentMeal: [...this.state.Dinner]});
                 });
               })
@@ -204,13 +205,13 @@ class Menu extends React.Component {
         menuIndex = this.state.menuDetails.findIndex(
           menu => menu.menuType === 'snack',
         );
-        console.log('menu index', menuIndex);
+        //console.log('menu index', menuIndex);
         details = [...this.state.menuDetails[menuIndex].menuDetails];
-        console.log(details);
+        //console.log(details);
         tempFoods = [];
         if (details.length === 0) {
           this.setState({Snack: tempFoods}, () => {
-            console.log('snack', this.state.Snack);
+            //console.log('snack', this.state.Snack);
             this.setState({currentMeal: [...this.state.Snack]});
           });
         } else {
@@ -219,12 +220,12 @@ class Menu extends React.Component {
               .then(res => {
                 let foodObj = res.data();
                 foodObj.menuDetailID = detail.menuDetailID;
-                console.log('food', res.data());
+                //console.log('food', res.data());
                 foodObj.amount = detail.amount;
-                console.log('Food OBject', foodObj);
+                //console.log('Food OBject', foodObj);
                 tempFoods.push(foodObj);
                 this.setState({Dinner: tempFoods}, () => {
-                  console.log('Dinner', this.state.Dinner);
+                  //console.log('Dinner', this.state.Dinner);
                   this.setState({currentMeal: [...this.state.Dinner]});
                 });
               })
@@ -245,10 +246,10 @@ class Menu extends React.Component {
         indexDel = tempMealState.findIndex(
           menuDetail => menuDetail.menuDetailID === deletedMenuDetailID,
         );
-        console.log('delete at ', indexDel);
+        //console.log('delete at ', indexDel);
         if (indexDel > -1) {
           tempMealState.splice(indexDel, 1);
-          console.log('meal state after deletion', tempMealState);
+          //console.log('meal state after deletion', tempMealState);
         }
         this.setState({currentMeal: tempMealState});
         this.setState({Breakfast: tempMealState}, () => {});
@@ -258,10 +259,10 @@ class Menu extends React.Component {
         indexDel = tempMealState.findIndex(
           menuDetail => menuDetail.menuDetailID === deletedMenuDetailID,
         );
-        console.log('delete at ', indexDel);
+        //console.log('delete at ', indexDel);
         if (indexDel > -1) {
           tempMealState.splice(indexDel, 1);
-          console.log('meal state after deletion', tempMealState);
+          //console.log('meal state after deletion', tempMealState);
         }
         this.setState({currentMeal: tempMealState});
         this.setState({Lunch: tempMealState});
@@ -271,10 +272,10 @@ class Menu extends React.Component {
         indexDel = tempMealState.findIndex(
           menuDetail => menuDetail.menuDetailID === deletedMenuDetailID,
         );
-        console.log('delete at ', indexDel);
+        //console.log('delete at ', indexDel);
         if (indexDel > -1) {
           tempMealState.splice(indexDel, 1);
-          console.log('meal state after deletion', tempMealState);
+          //console.log('meal state after deletion', tempMealState);
         }
         this.setState({currentMeal: tempMealState});
         this.setState({Dinner: tempMealState});
@@ -285,10 +286,10 @@ class Menu extends React.Component {
         indexDel = tempMealState.findIndex(
           menuDetail => menuDetail.menuDetailID === deletedMenuDetailID,
         );
-        console.log('delete at ', indexDel);
+        //console.log('delete at ', indexDel);
         if (indexDel > -1) {
           tempMealState.splice(indexDel, 1);
-          console.log('meal state after deletion', tempMealState);
+          //console.log('meal state after deletion', tempMealState);
         }
         this.setState({currentMeal: tempMealState});
         this.setState({Snack: tempMealState});
@@ -319,7 +320,7 @@ class Menu extends React.Component {
           menuDetailStateNew.forEach(menu => {
             menu.menuDetails = [];
           });
-          console.log('menu state after del', menuDetailStateNew);
+          //console.log('menu state after del', menuDetailStateNew);
           this.setState({menuDetails: menuDetailStateNew});
           this.setState({currentMeal: []});
           this.setState({Breakfast: []});
@@ -473,7 +474,7 @@ class Nutrion extends React.Component {
           onPress={() => {
             this.props.deleteNutrion(data);
           }}
-          style={{width: '8%', height: '40%'}}>
+          style={{width: '10%', height: '40%'}}>
           <Image
             source={DeleteIcon}
             style={{

@@ -81,3 +81,22 @@ export const clearCurrentUserSchedule = async () => {
       console.log(err);
     });
 };
+
+export const deleteScheduleDetailsByExerciseID = exerciseID => {
+  getScheduleDetailsfromExercise(exerciseID)
+    .then(res => {
+      let batch = firestore().batch();
+      res.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    })
+    .catch(err => console.log(err));
+};
+
+export const getScheduleDetailsfromExercise = async exerciseID => {
+  return await firestore()
+    .collection('workoutScheduleDetails')
+    .where('exerciseID', '==', exerciseID)
+    .get();
+};

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {
   SafeAreaView,
@@ -59,7 +60,7 @@ class Start extends React.Component {
             }}>
             <Text
               style={{
-                fontSize: 30,
+                fontSize: 35,
                 fontFamily: 'Roboto-Thin',
                 color: '#ffffff',
               }}>

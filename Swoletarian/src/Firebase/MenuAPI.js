@@ -39,3 +39,22 @@ export const getMenuDetailsfromMenu = async menuID => {
 export const deleteMenuDetail = menuDetailID => {
   return firestore().collection('menuDetails').doc(menuDetailID).delete();
 };
+
+export const deleteMenuDetailsByFoodID = foodID => {
+  getMenuDetailsfromFood(foodID)
+    .then(res => {
+      let batch = firestore().batch();
+      res.forEach(doc => {
+        batch.delete(doc.ref);
+      });
+      return batch.commit();
+    })
+    .catch(err => console.log(err));
+};
+
+export const getMenuDetailsfromFood = async foodID => {
+  return await firestore()
+    .collection('menuDetails')
+    .where('foodID', '==', foodID)
+    .get();
+};

@@ -38,6 +38,7 @@ import {
 import {
   createScheduleDetail,
   getSchedulesbyUser,
+  deleteScheduleDetailsByExerciseID,
   getScheduleTypeNamebyID,
   getScheduleTypes,
 } from '../../Firebase/ScheduleAPI';
@@ -281,6 +282,7 @@ class ExerciseWrap extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
+          deleteScheduleDetailsByExerciseID(exercise.exerciseID);
           deleteExercise(exercise.exerciseID)
             .then(res => {
               console.log(res);
@@ -599,7 +601,7 @@ class Exercise extends React.Component {
     const {exercise} = this.props;
     return (
       <BackgroundImage
-        source={exercise.exerciseImage}
+        source={exercise.exerciseImage.uri ? exercise.exerciseImage : TapLuyen}
         style={styles.exerciseContainer}
         imageStyle={{opacity: 0.5, borderRadius: 15}}>
         <View

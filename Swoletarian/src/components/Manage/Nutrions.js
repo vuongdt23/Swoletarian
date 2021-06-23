@@ -22,7 +22,11 @@ import {
   deleteFood,
   getDefaultFoods,
 } from '../../Firebase/foodAPI';
-import {getMenubyCurrentUser, uploadMenuDetails} from '../../Firebase/MenuAPI';
+import {
+  getMenubyCurrentUser,
+  uploadMenuDetails,
+  deleteMenuDetailsByFoodID,
+} from '../../Firebase/MenuAPI';
 import {CheckBox} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -118,10 +122,11 @@ class Nutrions extends React.Component {
       {
         text: 'Xóa',
         onPress: () => {
-          console.log(Nutrion.id);
-          deleteFood(Nutrion.id.toString())
+          //console.log(Nutrion.id);
+          deleteFood(Nutrion.foodID.toString())
             .then(res => console.log('a', res))
             .catch(err => console.log('b', err));
+          deleteMenuDetailsByFoodID(Nutrion.foodID);
           this.componentDidMount();
         },
       },
@@ -245,6 +250,8 @@ class Nutrions extends React.Component {
                   Calories/100gram
                 </Text>
                 <Input
+                  keyboardType="numeric"
+                  maxLength={3}
                   onChangeText={text => (newNutrion.foodCalories = text)}
                   style={{
                     borderBottomWidth: 1,

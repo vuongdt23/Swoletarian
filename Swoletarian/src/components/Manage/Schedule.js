@@ -83,8 +83,7 @@ class Schedule extends React.Component {
       schedule => schedule.scheduleType === day,
     );
 
-    console.log('day is at' ,scheduleIndex);
-    
+    console.log('day is at', scheduleIndex);
 
     //console.log('schedule index', scheduleIndex);
     let details = [
@@ -167,10 +166,10 @@ class Schedule extends React.Component {
             scheduleDetails: [],
           };
 
-           // console.log ('initial menu list', menuDetailList);
+          // console.log ('initial menu list', menuDetailList);
           getScheduleDetailsbySchedule(schedule.scheduleID)
             .then(res => {
-              console.log(res.empty);
+              //console.log(res.empty);
               if (res.empty) finalScheduleArr.push(scheduleDetailList);
               else {
                 res.forEach(doc => {

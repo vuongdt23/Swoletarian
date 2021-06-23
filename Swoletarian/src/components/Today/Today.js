@@ -353,11 +353,12 @@ export class ScheduleWrap extends React.Component {
             uploadBurnRecap(burnObj)
               .then(res => {
                 console.log(res);
+                this.props.reload();
               })
               .catch(err => {
                 console.log(err);
               });
-            console.log(burnObj);
+            //console.log(burnObj);
           },
         },
       ],

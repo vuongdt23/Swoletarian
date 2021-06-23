@@ -72,7 +72,11 @@ class MySelf extends React.Component {
       .catch(err => console.log(err));
   }
   checkPassword = () => {
-    if (this.state.newPassword !== this.state.checkPassword) return false;
+    if (
+      this.state.newPassword !== this.state.checkPassword ||
+      this.state.newPassword.length === 0
+    )
+      return false;
     return true;
   };
   render() {
@@ -189,11 +193,11 @@ class MySelf extends React.Component {
         </View>
         <View style={styles.modalContainer}>
           <Modal
-            animationType="fade"
+            animationType="slide"
             transparent={true}
             visible={this.state.passwordModalVisible}>
             <View style={styles.modalView}>
-              <Text style={styles.headerTitle}>Thêm mới</Text>
+              <Text style={styles.headerTitle}>Đổi mật khẩu</Text>
               <View
                 style={{
                   flexDirection: 'row',
@@ -311,11 +315,12 @@ class MySelf extends React.Component {
                   </Text>
                 </Pressable>
                 <Pressable
+                  disabled={!this.checkPassword()}
                   style={{
                     width: '40%',
                     height: '45%',
                     borderRadius: 25,
-                    backgroundColor: '#C8FFFF',
+                    backgroundColor: this.checkPassword() ? '#C8FFFF' : 'gray',
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
@@ -378,7 +383,9 @@ class MySelf extends React.Component {
             Alert.alert('Đổi mật khẩu thành công', '', [
               {
                 text: 'OK',
-                onPress: () => {},
+                onPress: () => {
+                  this.ontogglePassWordModal();
+                },
                 style: 'cancel',
               },
             ]);
@@ -442,8 +449,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    height: '60%',
-    marginTop: '30%',
+    height: 550,
+    marginTop: '10%',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   headerTitle: {
     fontSize: 45,

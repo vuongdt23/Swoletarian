@@ -54,7 +54,8 @@ class CalosAnalysis extends React.Component {
   };
   componentDidMount() {
     this.loadData();
-    this.setState({userInfo: this.props.userInfo});
+    this.setState({userInfo: this.props.route.params.userInfo});
+    //console.log('user', this.props.route.params.userInfo);
   }
   calculateTDEE = () => {
     const userInfo = this.state.userInfo;
@@ -84,7 +85,7 @@ class CalosAnalysis extends React.Component {
         5 * userInfo.userAge -
         161;
     }
-    console.log('BMR', BMR, 'Z', Z);
+    //console.log('BMR', BMR, 'Z', Z);
     return Math.round(BMR * Z);
   };
   loadData = () => {
@@ -229,10 +230,25 @@ class CalosAnalysis extends React.Component {
           </View>
           <View style={styles.chartContainer}>
             <Text style={styles.chartTitle}>Biểu đồ calo in-out của bạn</Text>
-            <DropDown
-              callDropDownValue={value => {
-                this.setState({dropdownSelect: value});
-              }}></DropDown>
+            <View style={styles.noteContainer}>
+              <View
+                style={{
+                  width: '60%',
+                  height: '100%',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'flex-start',
+                  paddingLeft: '5%',
+                }}>
+                <Text style={styles.caloBurnedTitle}>Calo burned</Text>
+                <Text style={styles.caloGainedTitle}>Calo gained</Text>
+              </View>
+              <DropDown
+                callDropDownValue={value => {
+                  this.setState({dropdownSelect: value});
+                }}></DropDown>
+            </View>
+
             <Chart
               style={{height: '80%', width: '90%'}}
               data={
@@ -275,7 +291,7 @@ class CalosAnalysis extends React.Component {
                 theme={{
                   stroke: {color: '#ffa502', width: 5},
                   scatter: {
-                    default: {width: 4, height: 4, rx: 2, color: '#ffa502'},
+                    default: {width: 8, height: 8, rx: 2, color: '#ffa502'},
                   },
                 }}
               />
@@ -303,7 +319,7 @@ class CalosAnalysis extends React.Component {
                 theme={{
                   stroke: {color: '#1CA2BB', width: 5},
                   scatter: {
-                    default: {width: 4, height: 4, rx: 2, color: '#1CA2BB'},
+                    default: {width: 8, height: 8, rx: 2, color: '#1CA2BB'},
                   },
                 }}
               />
@@ -334,8 +350,6 @@ function DropDown(props) {
       maxHeight={300}
       containerStyle={{
         width: '30%',
-        height: '8%',
-        marginLeft: '50%',
       }}
       textStyle={{
         fontSize: 20,
@@ -344,7 +358,6 @@ function DropDown(props) {
       onChangeValue={value => {
         props.callDropDownValue(value.toString());
       }}
-      style={styles.dropdown}
     />
   );
 }
@@ -429,6 +442,23 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: 'Roboto-Bold',
     marginTop: '3%',
+  },
+  noteContainer: {
+    height: '8%',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  caloBurnedTitle: {
+    fontSize: 20,
+    fontFamily: 'Roboto-Bold',
+    color: '#ffa502',
+  },
+  caloGainedTitle: {
+    color: '#1CA2BB',
+    fontSize: 20,
+    fontFamily: 'Roboto-Bold',
   },
 });
 
