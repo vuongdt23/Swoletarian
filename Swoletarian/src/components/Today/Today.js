@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'column',
     paddingHorizontal: '3%',
     paddingVertical: '3%',

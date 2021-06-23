@@ -8,10 +8,10 @@ import {
 } from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
-import {logIn} from '../../Firebase/userAPI';
+import {logIn, getUserSetup} from '../../Firebase/userAPI';
 class Login extends React.Component {
-  constructor (props) {
-    super (props);
+  constructor(props) {
+    super(props);
   }
   state = {
     username: '',
@@ -22,38 +22,44 @@ class Login extends React.Component {
     showInsufficientInputErrAlert: false,
   };
   onUsernameChange = event => {
-    this.setState ({username: event.target.value});
+    this.setState({username: event.target.value});
     // console.log(event);
   };
   onPasswordChange = event => {
-    this.setState ({password: event.target.value});
+    this.setState({password: event.target.value});
     // console.log(event);
   };
   handleLogin = (username, password) => {
+    const {navigation} = this.props;
     if (this.state.password.length < 1 || this.state.username.length < 1) {
-      this.setState ({showInsufficientInputErrAlert: true});
+      this.setState({showInsufficientInputErrAlert: true});
       return;
     }
-    logIn (username, password)
-      .then (() => {
-        const {navigation} = this.props;
-        navigation.navigate ('Main');
+    logIn(username, password)
+      .then(() => {
+        getUserSetup().then(res => {
+          if (res.empty) {
+            navigation.navigate('SetUp');
+          } else {
+            navigation.navigate('Main');
+          }
+        });
       })
-      .catch (err => {
+      .catch(err => {
         if (err.code === 'auth/wrong-password') {
-          this.setState ({showWrongPasswordAlert: true});
+          this.setState({showWrongPasswordAlert: true});
         } else if (
           err.code === 'auth/user-not-found' ||
           err.code === 'auth/invalid-email'
         ) {
-          this.setState ({showUnregisteredEmailAlert: true});
+          this.setState({showUnregisteredEmailAlert: true});
         } else {
-          this.setState ({showUnknownLoginErrAleart: true});
-          console.log (err.code);
+          this.setState({showUnknownLoginErrAleart: true});
+          console.log(err.code);
         }
       });
   };
-  render () {
+  render() {
     const {navigation} = this.props;
     return (
       <View style={styles.container}>
@@ -64,7 +70,7 @@ class Login extends React.Component {
           <TextInput
             onChangeText={value => {
               //console.log(value);
-              this.setState ({username: value});
+              this.setState({username: value});
             }}
             style={styles.input}
           />
@@ -77,16 +83,16 @@ class Login extends React.Component {
             secureTextEntry
             onChangeText={value => {
               // console.log (value);
-              this.setState ({password: value});
+              this.setState({password: value});
             }}
             style={styles.input}
           />
         </View>
         <TouchableOpacity
           onPress={() =>
-            this.handleLogin (this.state.username, this.state.password)}
-          style={{width: '90%', height: '8%', marginTop: '80%'}}
-        >
+            this.handleLogin(this.state.username, this.state.password)
+          }
+          style={{width: '90%', height: '8%', marginTop: '80%'}}>
           <Text style={styles.buttonDN}>Đăng nhập</Text>
         </TouchableOpacity>
         <AwesomeAlert
@@ -101,7 +107,7 @@ class Login extends React.Component {
           confirmButtonColor="#DD6B55"
           onCancelPressed={() => {}}
           onConfirmPressed={() => {
-            this.setState ({showWrongPasswordAlert: false});
+            this.setState({showWrongPasswordAlert: false});
           }}
         />
         <AwesomeAlert
@@ -115,7 +121,7 @@ class Login extends React.Component {
           confirmText="OK"
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
-            this.setState ({showUnregisteredEmailAlert: false});
+            this.setState({showUnregisteredEmailAlert: false});
           }}
         />
         <AwesomeAlert
@@ -129,7 +135,7 @@ class Login extends React.Component {
           confirmText="OK"
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
-            this.setState ({showUnknownLoginErrAleart: false});
+            this.setState({showUnknownLoginErrAleart: false});
           }}
         />
         <AwesomeAlert
@@ -143,7 +149,7 @@ class Login extends React.Component {
           confirmText="OK"
           confirmButtonColor="#DD6B55"
           onConfirmPressed={() => {
-            this.setState ({showInsufficientInputErrAlert: false});
+            this.setState({showInsufficientInputErrAlert: false});
           }}
         />
       </View>
@@ -151,7 +157,7 @@ class Login extends React.Component {
   }
 }
 
-const styles = StyleSheet.create ({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',

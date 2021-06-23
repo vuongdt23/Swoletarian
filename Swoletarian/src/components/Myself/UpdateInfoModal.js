@@ -225,12 +225,12 @@ const styles = StyleSheet.create({
     height: '90%',
   },
   inputContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
+    backgroundColor: '#E9E9E9',
     width: '100%',
     height: '10%',
     fontSize: 25,
     color: 'black',
+    borderRadius: 15,
   },
   title: {
     fontSize: 30,

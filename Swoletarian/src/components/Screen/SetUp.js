@@ -1,3 +1,4 @@
+/* eslint-disable react/self-closing-comp */
 import React, {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import {TextInput, Alert} from 'react-native';
@@ -38,11 +39,12 @@ class SetUp extends React.Component {
       let submitValue = {...this.state};
       submitValue.ownerID = auth().currentUser.uid;
       console.log(submitValue);
-      // uploadUserSetup(submitValue)
-      //   .then(res => {
-      //     console.log(res);
-      //   })
-      //   .catch(err => console.log(err));
+      uploadUserSetup(submitValue)
+        .then(res => {
+          console.log(res);
+          this.props.navigation.navigate('Main');
+        })
+        .catch(err => console.log(err));
       Alert.alert('Cập nhật thông tin thành công', '', [
         {
           text: 'OK',
@@ -66,6 +68,7 @@ class SetUp extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <Text style={styles.headerTitle}>Nhập thông tin cá nhân</Text>
         <Text style={styles.title}>Tên</Text>
         <TextInput
           maxLength={30}
@@ -75,7 +78,7 @@ class SetUp extends React.Component {
         <TextInput
           maxLength={3}
           keyboardType="numeric"
-          onChangeText={value => this.setState({userAge: value})}
+          onChangeText={value => this.setState({userAge: parseInt(value)})}
           style={styles.inputContainer}></TextInput>
         <Text style={styles.title}>Giới Tính</Text>
         <SexDropDown
@@ -88,7 +91,7 @@ class SetUp extends React.Component {
           keyboardType="numeric"
           style={styles.inputContainer}
           onChangeText={value =>
-            this.setState({userHeight: value})
+            this.setState({userHeight: parseInt(value)})
           }></TextInput>
         <Text style={styles.title}>Cân nặng(kg)</Text>
         <TextInput
@@ -96,7 +99,7 @@ class SetUp extends React.Component {
           keyboardType="numeric"
           style={styles.inputContainer}
           onChangeText={value =>
-            this.setState({userWeight: value})
+            this.setState({userWeight: parseInt(value)})
           }></TextInput>
         <Text style={styles.title}>Bạn là ?</Text>
         <UserTypeDropDown
@@ -229,6 +232,12 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
+  },
+  headerTitle: {
+    fontSize: 45,
+    color: 'white',
+    fontFamily: 'Roboto-Bold',
+    marginVertical: '2%',
   },
 });
 

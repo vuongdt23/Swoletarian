@@ -54,6 +54,7 @@ class CalosAnalysis extends React.Component {
   };
   componentDidMount() {
     this.loadData();
+    this.setState({userInfo: this.props.userInfo});
   }
   calculateTDEE = () => {
     const userInfo = this.state.userInfo;

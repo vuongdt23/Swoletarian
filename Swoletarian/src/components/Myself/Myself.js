@@ -29,6 +29,7 @@ class MySelf extends React.Component {
     updateUserInfoModalVisible: false,
     lastPassword: '',
     newPassword: '',
+    checkPassword: '',
     user: null,
     userInfo: {
       userName: '',
@@ -70,6 +71,10 @@ class MySelf extends React.Component {
       })
       .catch(err => console.log(err));
   }
+  checkPassword = () => {
+    if (this.state.newPassword !== this.state.checkPassword) return false;
+    return true;
+  };
   render() {
     const userInfo = this.state.userInfo;
     const BMI = parseFloat(
@@ -91,8 +96,12 @@ class MySelf extends React.Component {
         <Text style={styles.headerTitle}>Cá nhân</Text>
         <View style={styles.userInfoContainer}>
           <View style={styles.userNameContainer}>
-            <Image source={userInfo.userSex === 'male' ? Male : Female}></Image>
-            <Text style={styles.userNameTitle}>{userInfo.userName}</Text>
+            <Image
+              source={userInfo.userSex === 'male' ? Male : Female}
+              style={{width: '12%'}}></Image>
+            <Text style={styles.userNameTitle}>
+              {userInfo.userName.toString()}
+            </Text>
             <TouchableOpacity
               style={styles.EditButton}
               onPress={() => {
@@ -119,14 +128,19 @@ class MySelf extends React.Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Text style={styles.userAge}>Tuổi: {userInfo.userAge}</Text>
               <Text style={styles.userAge}>
-                Giới tính: {userInfo.userSex === 'male' ? 'Nam' : 'Nữ'}
+                Tuổi: {userInfo.userAge.toString()}
+              </Text>
+              <Text style={styles.userAge}>
+                Giới tính:{' '}
+                {userInfo.userSex.toString() === 'male' ? 'Nam' : 'Nữ'}
               </Text>
             </View>
             <TouchableOpacity
               onPress={() => {
-                this.props.navigation.navigate('CalosAnalysis');
+                this.props.navigation.navigate('CalosAnalysis', {
+                  userInfo: this.state.userInfo,
+                });
               }}
               style={styles.TDEEButton}>
               <Text style={styles.TDEETitle}>TDEE</Text>
@@ -137,16 +151,20 @@ class MySelf extends React.Component {
           <View style={styles.BMIContainer}>
             <View style={styles.BMIDetail}>
               <Text style={styles.BMITitle}>BMI</Text>
-              <Text style={styles.BMI}>{BMI}</Text>
+              <Text style={styles.BMI}>{BMI.toString()}</Text>
               <Text style={styles.comment}>{temp}</Text>
             </View>
             <View style={styles.BMIStats}>
               <View>
-                <Text style={styles.useHeight}>{userInfo.userHeight} cm</Text>
+                <Text style={styles.useHeight}>
+                  {userInfo.userHeight.toString()} cm
+                </Text>
                 <Text style={styles.heightTitle}>Chiều cao</Text>
               </View>
               <View>
-                <Text style={styles.userWeight}>{userInfo.userWeight} kg</Text>
+                <Text style={styles.userWeight}>
+                  {userInfo.userWeight.toString()} kg
+                </Text>
                 <Text style={styles.heightTitle}>Cân nặng</Text>
               </View>
             </View>
@@ -184,7 +202,12 @@ class MySelf extends React.Component {
                   width: '70%',
                   margin: 10,
                 }}>
-                <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: 'Roboto-Regular',
+                    width: '40%',
+                  }}>
                   Mật khẩu cũ
                 </Text>
                 <Input
@@ -206,7 +229,12 @@ class MySelf extends React.Component {
                   width: '70%',
                   margin: 10,
                 }}>
-                <Text style={{fontSize: 20, fontFamily: 'Roboto-Regular'}}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: 'Roboto-Regular',
+                    width: '40%',
+                  }}>
                   Mật khẩu mới
                 </Text>
                 <Input
@@ -219,6 +247,45 @@ class MySelf extends React.Component {
                     borderBottomColor: 'black',
                   }}
                 />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  width: '70%',
+                  margin: 10,
+                }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontFamily: 'Roboto-Regular',
+                    width: '40%',
+                  }}>
+                  Xác nhận mật khẩu
+                </Text>
+                <Input
+                  secureTextEntry={true}
+                  onChangeText={text =>
+                    this.setState({checkPassword: text.toString().trim()})
+                  }
+                  style={{
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'black',
+                  }}
+                />
+              </View>
+              <View>
+                {this.checkPassword() ? null : (
+                  <Text
+                    style={{
+                      color: 'red',
+                      fontSize: 15,
+                      fontFamily: 'Roboto-thin',
+                    }}>
+                    Mật khẩu xác nhận không khớp
+                  </Text>
+                )}
               </View>
               <View
                 style={{
@@ -302,7 +369,8 @@ class MySelf extends React.Component {
   };
   handleChangePassword = (currentPassword, newPassword) => {
     this.reauthenticate(currentPassword)
-      .then(
+      .then(res => {
+        console.log(res);
         auth()
           .currentUser.updatePassword(newPassword)
           .then(() => {
@@ -317,24 +385,40 @@ class MySelf extends React.Component {
             navigation.navigate('Main');
           })
           .catch(err => {
-            if (err.code === 'auth/wrong-password')
-              Alert.alert('Mật khẩu cũ không chính xác!', '', [
-                {
-                  text: 'OK',
-                  onPress: () => {},
-                  style: 'cancel',
-                },
-              ]);
-            else console.log(err);
-          }),
-      )
+            Alert.alert('Đổi mật khẩu không thành công', '', [
+              {
+                text: 'OK',
+                onPress: () => {},
+                style: 'cancel',
+              },
+            ]);
+          });
+      })
       .catch(err => {
-        console.log(err);
+        console.log(err.code);
+        if (err.code === 'auth/wrong-password')
+          Alert.alert('Mật khẩu cũ không chính xác!', '', [
+            {
+              text: 'OK',
+              onPress: () => {},
+              style: 'cancel',
+            },
+          ]);
+        else {
+          Alert.alert('Đổi mật khẩu không thành công', '', [
+            {
+              text: 'OK',
+              onPress: () => {},
+              style: 'cancel',
+            },
+          ]);
+        }
       });
   };
   reauthenticate = currentPassword => {
     const user = auth().currentUser;
     const cred = auth.EmailAuthProvider.credential(user.email, currentPassword);
+    console.log(cred);
     return user.reauthenticateWithCredential(cred);
   };
 }
@@ -398,6 +482,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontFamily: 'Roboto-Bold',
     marginLeft: '5%',
+    width: '70%',
   },
   EditButton: {
     width: '12%',

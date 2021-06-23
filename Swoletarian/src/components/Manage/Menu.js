@@ -319,6 +319,7 @@ class Menu extends React.Component {
           menuDetailStateNew.forEach(menu => {
             menu.menuDetails = [];
           });
+          console.log('menu state after del', menuDetailStateNew);
           this.setState({menuDetails: menuDetailStateNew});
           this.setState({currentMeal: []});
           this.setState({Breakfast: []});
@@ -407,7 +408,9 @@ class Menu extends React.Component {
             }}
             style={styles.flatListContainer}
             showsVerticalScrollIndicator={false}
-            data={this.state.currentMeal}
+            data={
+              this.state.currentMeal.length > 0 ? this.state.currentMeal : []
+            }
             renderItem={({item}) => (
               <Nutrion
                 data={item}

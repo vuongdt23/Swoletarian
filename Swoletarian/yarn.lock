@@ -6171,6 +6171,13 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   "version" "17.0.2"
 
+"react-native-awesome-alerts@^1.5.0":
+  "integrity" "sha512-m0H0/lxiass+kJOksom97W+ltWSy8kr1bshKmBc72tHTlfvVaXNJrYaemLEHvO4gTOeNSIR+gKQnLy3DN12YqQ=="
+  "resolved" "https://registry.npmjs.org/react-native-awesome-alerts/-/react-native-awesome-alerts-1.5.0.tgz"
+  "version" "1.5.0"
+  dependencies:
+    "prop-types" "^15.7.2"
+
 "react-native-codegen@^0.0.6":
   "integrity" "sha512-cMvrUelD81wiPitEPiwE/TCNscIVauXxmt4NTGcy18HrUd0WRWXfYzAQGXm0eI87u3NMudNhqFj2NISJenxQHg=="
   "resolved" "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.0.6.tgz"
@@ -6206,6 +6213,14 @@
   dependencies:
     "opencollective-postinstall" "^2.0.0"
     "prop-types" "^15.7.2"
+
+"react-native-flash-message@^0.1.23":
+  "integrity" "sha512-T++KNGpIofXRqj3fT+/zJH/su1VgIjGcwiJerSvRsvEXwai1LdUl+O0tX7dz+Lgxi7yzswXKWcUQmY0dZrbG3g=="
+  "resolved" "https://registry.npmjs.org/react-native-flash-message/-/react-native-flash-message-0.1.23.tgz"
+  "version" "0.1.23"
+  dependencies:
+    "prop-types" "^15.7.2"
+    "react-native-iphone-x-helper" "^1.3.0"
 
 "react-native-gesture-handler@^1.10.3":
   "integrity" "sha512-cBGMi1IEsIVMgoox4RvMx7V2r6bNKw0uR1Mu1o7NbuHS6BRSVLq0dP34l2ecnPlC+jpWd3le6Yg1nrdCjby2Mw=="
