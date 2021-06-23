@@ -277,6 +277,7 @@ class Today extends React.Component {
             name="Dinh dưỡng"
             children={() => (
               <MenuWrap
+                userInfo={this.state.userInfo}
                 Breakfast={this.state.Breakfast}
                 Lunch={this.state.Lunch}
                 Dinner={this.state.Dinner}
@@ -296,8 +297,12 @@ export class ScheduleWrap extends React.Component {
   handleWorkoutChecked = (totalCalosBurned, isChecked) => {
     var newTotalCalosBurned = this.state.currentTotalCalosBurned;
     isChecked
-      ? (newTotalCalosBurned = newTotalCalosBurned - totalCalosBurned)
-      : (newTotalCalosBurned = newTotalCalosBurned + totalCalosBurned);
+      ? (newTotalCalosBurned =
+          newTotalCalosBurned -
+          Math.round((totalCalosBurned * this.props.userInfo.userWeight) / 65))
+      : (newTotalCalosBurned =
+          newTotalCalosBurned +
+          Math.round((totalCalosBurned * this.props.userInfo.userWeight) / 65));
     this.setState({currentTotalCalosBurned: newTotalCalosBurned});
   };
   calculateTDEE = () => {
