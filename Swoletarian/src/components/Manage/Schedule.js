@@ -222,6 +222,7 @@ class Schedule extends React.Component {
                   style: 'cancel',
                 },
               ]);
+              this.reload();
             })
             .catch(err => {
               console.log(err);

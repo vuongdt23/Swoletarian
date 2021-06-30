@@ -295,6 +295,7 @@ class Menu extends React.Component {
         this.setState({Snack: tempMealState});
         break;
     }
+    this.componentDidMount();
   };
   deleteCurrentMenu = () => {
     Alert.alert('Xóa thực đơn', 'Bạn muốn xóa thực đơn hiện tại?', [
