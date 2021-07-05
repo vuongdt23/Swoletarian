@@ -329,6 +329,14 @@ class Menu extends React.Component {
           this.setState({Dinner: []});
           this.setState({Snack: []});
           this.setState({currentDayName: ''});
+          this.componentDidMount();
+          Alert.alert('Xóa thành công', '', [
+            {
+              text: 'Ok',
+              onPress: () => {},
+              style: 'cancel',
+            },
+          ]);
         },
       },
     ]);

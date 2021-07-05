@@ -363,6 +363,13 @@ export class ScheduleWrap extends React.Component {
               .catch(err => {
                 console.log(err);
               });
+            Alert.alert('Đã xác nhận hoàn thành luyện tập hôm nay', '', [
+              {
+                text: 'Ok',
+                onPress: () => {},
+                style: 'cancel',
+              },
+            ]);
             //console.log(burnObj);
           },
         },
@@ -442,7 +449,7 @@ export class MenuWrap extends React.Component {
             uploadGainRecap(gainObj)
               .then(res => {
                 console.log(res);
-                Alert.alert('Xác nhận hoàn thành thành công', '', [
+                Alert.alert('Đã xác nhận hoàn thành thực đơn hôm nay', '', [
                   {
                     text: 'OK',
                     onPress: () => {},

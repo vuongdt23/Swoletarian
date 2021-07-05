@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
+    marginTop: ' 30%',
   },
 });
 
