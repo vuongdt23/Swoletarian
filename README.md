@@ -9,6 +9,8 @@ Users can add foods and manage their meal plans for the day, which then will be 
 Users can add and manage exercises and their workout schedules for the week.
 ## 3 Workout and Nutrition Progress
 Graph for week and month exercise progresses
+## 4 Personal Information Management
+User can manage their information: name, age, weight, height,BMI,TDEE,...
 
 # Harware Requirement
     - Android 8+
