@@ -19,7 +19,7 @@ Graph for week and month exercise progresses
 ## Backend
     - Google Firebase
     - Firestore NOSQL Database
-    ![Database Diagram](https://drive.google.com/uc?export=view&id=1X7BG_8I0lBu-tBxX3x1f9dU08L_xYnZp)
+   ![image](https://drive.google.com/uc?export=view&id=1X7BG_8I0lBu-tBxX3x1f9dU08L_xYnZp)
 ## About us
     We are a group of students from VNUHCM-University of Information Technology
     Contact: 18521677@gm.uit.edu.vn/18521657@gm.uit.edu.vn/18520621@gm.uit.edu.vn
