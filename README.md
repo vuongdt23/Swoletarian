@@ -3,13 +3,13 @@ React-Native workout and sport companion
 
 
 # Functionalities
-## 1 Nutritional Management
+## 1. Nutritional Management
 Users can add foods and manage their meal plans for the day, which then will be recorded for progress visulization
-## 2 Exercise Managment
+## 2. Exercise Managment
 Users can add and manage exercises and their workout schedules for the week.
-## 3 Workout and Nutrition Progress
+## 3. Workout and Nutrition Progress
 Graph for week and month exercise progresses
-## 4 Personal Information Management
+## 4. Personal Information Management
 User can manage their information: name, age, weight, height,BMI,TDEE,...
 
 # Harware Requirement
