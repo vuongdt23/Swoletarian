@@ -114,7 +114,7 @@ class SignUp extends React.Component {
         </View>
         <TouchableOpacity
           disabled={!this.checkPassword() && !this.checkEmailString()}
-          style={{width: '90%', height: '8%', marginTop: '20%'}}
+          style={{width: '90%', height: '8%', marginTop: '50%'}}
           onPress={() => {
             this.handleButtonSignUpPress(this.state.email, this.state.password);
           }}>
@@ -208,7 +208,6 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 30,
     fontFamily: 'Roboto-Thin',
-    marginTop: ' 30%',
   },
 });
 
